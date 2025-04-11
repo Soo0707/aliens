@@ -11,10 +11,15 @@ class game():
         self.clock = pygame.time.Clock()
 
         self.running = True
+
+        # sprite groups, useful for collision detection
+        self.all_sprites = pygame.sprite.Group()
+        self.map_tiles = pygame.sprite.Group()
+        self.collidables = pygame.sprite.Group()
+
     
     def setup(self):
         # TODO: load map textures, create player bla bla.
-        pass
 
     def run(self):
         while self.running:
@@ -25,7 +30,9 @@ class game():
 
             self.screen.fill("black")
 
-            pygame.display.flip() # draws
+            self.all_sprites.draw(self.screen) # draws on buffer
+
+            pygame.display.flip() # updates screen
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
