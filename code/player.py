@@ -1,17 +1,18 @@
 import pygame
-from os import walk, join
+from os import walk
+from os.path import join
 
 class Player(pygame.sprite.Sprite):
-    def init(self, location, groups):
-        super().__init__()
+    def __init__(self, location, groups):
+        super().__init__(groups)
         
-        self.image = None
+        self.image = pygame.image.load(join("..", "assets", "player", "player.png")).convert_alpha()
         self.rect = self.image.get_frect(center = location)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
         self.direction_vector = pygame.math.Vector2()
-        self.speed = 100
+        self.speed = 300
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
@@ -22,27 +23,24 @@ class Player(pygame.sprite.Sprite):
                        "W": []
                        }
 
-        for group in groups:
-            group.add(self)
-
         self.import_images()
     
     def input(self):
         keys = pygame.key.get_pressed()
 
-        self.direction_vector.x = int(keys[K_d]) - int(keys[K_a])
-        self.direction_vector.y = int(keys[K_s]) - int(keys[K_w])
+        self.direction_vector.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
+        self.direction_vector.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
 
         if self.direction_vector:
-            self.direction_vector = self.director_vector.normalize()
+            self.direction_vector = self.direction_vector.normalize()
 
         mouse = pygame.mouse.get_pressed()
 
         if mouse[0]:
-            pass
+            print("click left")
 
         if mouse[2]:
-            pass
+            print("click right")
 
     def update_bearing(self):
         if self.direction_vector.x > 0:
@@ -57,9 +55,10 @@ class Player(pygame.sprite.Sprite):
     def move(self, dt):
         self.rect.x += self.direction_vector.x * self.speed * dt
         self.rect.y += self.direction_vector.y * self.speed * dt
-
+        '''    
         self.aoe.x += self.direction_vector.x * self.speed * dt
         self.aoe.y += self.direction_vector.y * self.speed * dt
+        '''
     
     def animate(self, dt):
         if self.direction_vector:
