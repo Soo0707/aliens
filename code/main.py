@@ -1,6 +1,7 @@
 import pygame
 from pytmx.util_pygame import load_pygame
 
+from player import *
 
 class game():
     def __init__(self):
@@ -11,10 +12,18 @@ class game():
         self.clock = pygame.time.Clock()
 
         self.running = True
+
+        # sprite groups, useful for collision detection and camera later on
+        self.all_sprites = pygame.sprite.Group()
+        self.map_tiles = pygame.sprite.Group()
+        self.collidables = pygame.sprite.Group()
+        
+        self.player = Player((400, 300), self.all_sprites)
+
     
     def setup(self):
         # TODO: load map textures, create player bla bla.
-        pass
+        temp = pygame.Surface()
 
     def run(self):
         while self.running:
@@ -25,9 +34,14 @@ class game():
 
             self.screen.fill("black")
 
-            pygame.display.flip() # draws
-
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+            
+            self.all_sprites.update(dt)
+
+            self.all_sprites.draw(self.screen) # draws all sprites on buffer
+
+            pygame.display.flip() # updates screen
+
 
         pygame.quit()
 
