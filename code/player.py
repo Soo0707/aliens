@@ -55,12 +55,6 @@ class Player(pygame.sprite.Sprite):
         
     def move(self, dt):
         self.rect.x += self.direction_vector.x * self.speed * dt
-        self.rect.y += self.direction_vector.y * self.speed * dt
-        
-        '''    
-        self.aoe.x += self.direction_vector.x * self.speed * dt
-        self.aoe.y += self.direction_vector.y * self.speed * dt
-        '''
 
         for collidable in self.collidables:
             if self.rect.colliderect(collidable):
@@ -68,10 +62,22 @@ class Player(pygame.sprite.Sprite):
                     self.rect.right = collidable.rect.left
                 elif self.direction_vector.x < 0:
                     self.rect.left = collidable.rect.right
-                elif self.direction_vector.y > 0:
+        
+        self.rect.y += self.direction_vector.y * self.speed * dt
+        
+
+        for collidable in self.collidables:
+            if self.rect.colliderect(collidable):
+                if self.direction_vector.y > 0:
                     self.rect.bottom = collidable.rect.top
                 elif self.direction_vector.y < 0:
                     self.rect.top = collidable.rect.bottom
+
+
+        '''    
+        self.aoe.x += self.direction_vector.x * self.speed * dt
+        self.aoe.y += self.direction_vector.y * self.speed * dt
+        '''
 
     
     def animate(self, dt):

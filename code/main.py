@@ -3,6 +3,7 @@ from pytmx.util_pygame import load_pygame
 
 from player import *
 from collidable import *
+from allsprites import *
 
 class game():
     def __init__(self):
@@ -15,21 +16,26 @@ class game():
         self.running = True
 
         # sprite groups, useful for collision detection and camera later on
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
         self.map_tiles = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
-        
-        self.player = Player((400, 300), self.collidables, self.all_sprites)
-        self.a = Collidable((800, 400), (self.collidables, self.all_sprites))
-        self.b = Collidable((100, 60), (self.collidables, self.all_sprites))
+
+        self.setup()
+
+
+        for sprite in self.all_sprites:
+            print(sprite.rect.x, sprite.rect.y)
 
         self.health = 100
         self.powerups = {}
 
     
     def setup(self):
-        # TODO: load map textures, create player bla bla.
-        temp = pygame.Surface()
+        self.player = Player((400, 300), self.collidables, self.all_sprites)
+        
+        temp = pygame.image.load(join("..", "assets", "collidable.png")).convert_alpha()
+        self.a = Collidable((800, 400), temp, (self.collidables, self.all_sprites))
+        self.b = Collidable((100, 60), temp, (self.collidables, self.all_sprites))
 
     def run(self):
         while self.running:
@@ -44,7 +50,7 @@ class game():
             
             self.all_sprites.update(dt)
 
-            self.all_sprites.draw(self.screen) # draws all sprites on buffer
+            self.all_sprites.draw(self.screen, self.player.rect)
 
             pygame.display.flip() # updates screen
 
