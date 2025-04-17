@@ -22,10 +22,6 @@ class game():
 
         self.setup()
 
-
-        for sprite in self.all_sprites:
-            print(sprite.rect.x, sprite.rect.y)
-
         self.health = 100
         self.powerups = {}
 
