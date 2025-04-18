@@ -4,6 +4,7 @@ from pytmx.util_pygame import load_pygame
 from player import *
 from collidable import *
 from allsprites import *
+from maptiles import *
 
 class game():
     def __init__(self):
@@ -17,7 +18,6 @@ class game():
 
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites = AllSprites()
-        self.map_tiles = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
 
         self.setup()
@@ -27,11 +27,24 @@ class game():
 
     
     def setup(self):
-        self.player = Player((400, 300), self.collidables, self.all_sprites)
-        
+        '''   
         temp = pygame.image.load(join("..", "assets", "collidable.png")).convert_alpha()
         self.a = Collidable((800, 400), temp, (self.collidables, self.all_sprites))
         self.b = Collidable((100, 60), temp, (self.collidables, self.all_sprites))
+        '''
+
+        background = load_pygame(join("..", "assets", "map.tmx"))
+
+        for x, y, texture in background.get_layer_by_name("Ground").tiles():
+            MapTiles((x * 32, y * 32), texture, self.all_sprites)
+
+        for x, y, texture in background.get_layer_by_name("Walls").tiles():
+            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+
+        for x, y, texture in background.get_layer_by_name("Props").tiles():
+            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+
+        self.player = Player((400, 300), self.collidables, self.all_sprites)
 
     def run(self):
         while self.running:
