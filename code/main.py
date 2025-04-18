@@ -27,14 +27,9 @@ class game():
 
     
     def setup(self):
-        '''   
-        temp = pygame.image.load(join("..", "assets", "collidable.png")).convert_alpha()
-        self.a = Collidable((800, 400), temp, (self.collidables, self.all_sprites))
-        self.b = Collidable((100, 60), temp, (self.collidables, self.all_sprites))
-        '''
+        background = load_pygame(join("..", "assets", "map", "map.tmx"))
 
-        background = load_pygame(join("..", "assets", "map.tmx"))
-
+        # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
             MapTiles((x * 32, y * 32), texture, self.all_sprites)
 
