@@ -6,12 +6,13 @@ class Player(pygame.sprite.Sprite):
         super().__init__(groups)
         
         self.image = pygame.image.load(join("..", "assets", "player", "player.png")).convert_alpha()
-        self.rect = self.image.get_frect(center = location)
+        self.rect = self.image.get_rect(center = location)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
         self.direction_vector = pygame.math.Vector2()
         self.speed = 300
+        self.health = 100
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
