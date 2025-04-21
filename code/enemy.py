@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "enemy", "Trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_frect()
 
         self.speed = 150 # Enemy
         self.attack = 10 #Enemy attack 
