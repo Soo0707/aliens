@@ -2,6 +2,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from player import *
+from enemy import *
 from collidable import *
 from allsprites import *
 from maptiles import *
@@ -21,8 +22,6 @@ class game():
         self.collidables = pygame.sprite.Group()
 
         self.setup()
-
-        self.health = 100
         self.powerups = {}
 
     
@@ -40,6 +39,16 @@ class game():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         self.player = Player((400, 300), self.collidables, self.all_sprites)
+
+
+        enemy = Enemy(
+            player = self.player,
+            groups = self.all_sprites,
+            location = (200,200),
+            collide = self.collidables,
+            attack = 10
+
+        )
 
     def run(self):
         while self.running:
@@ -63,4 +72,5 @@ class game():
 
 if __name__ == "__main__":
     gaem = game()
+    gaem.setup()
     gaem.run()

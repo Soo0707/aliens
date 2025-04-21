@@ -6,5 +6,5 @@ class Collidable(pygame.sprite.Sprite):
         super().__init__(groups)
         
         self.image = texture
-        self.rect = self.image.get_frect(center = location)
+        self.rect = self.image.get_rect(center = location)
 

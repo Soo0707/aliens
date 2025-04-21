@@ -6,6 +6,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, location, collidable, groups):
         super().__init__(groups)
         
+
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
         self.rect = self.image.get_frect(center = location)
 
@@ -13,6 +14,7 @@ class Player(pygame.sprite.Sprite):
 
         self.direction_vector = pygame.math.Vector2()
         self.speed = 300
+        self.health = 100
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
