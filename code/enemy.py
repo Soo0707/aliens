@@ -9,26 +9,23 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "enemy", "Trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
-        self.rect = self.image.get_frect()
+        self.rect = self.image.get_frect(center = location)
 
-        self.speed = 150 # Enemy
+        self.speed = 150 
         self.attack = 10 #Enemy attack 
         self.attack_cooldown = 5000
 
         self.last_attack = 0
         self.can_attack = True
 
-
         self.player = player
         self.collidables = collide
         
 
-
     def movement(self, dt):
         #Positions
-
-        player_pos = pygame.Vector2(self.player.rect.center)
-        enemy_pos = pygame.Vector2(self.rect.center)
+        player_pos = pygame.math.Vector2(self.player.rect.center)
+        enemy_pos = pygame.math.Vector2(self.rect.center)
 
         self.direction = (player_pos - enemy_pos).normalize()
 
@@ -61,11 +58,11 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.left = self.player.rect.right
 
         #Y-Axis
-            if self.rect.colliderect(self.player.rect):
-                if self.direction.y > 0:  
-                    self.rect.bottom = self.player.rect.top
-                elif self.direction.y < 0:  
-                    self.rect.top = self.player.rect.bottom
+        if self.rect.colliderect(self.player.rect):
+            if self.direction.y > 0:  
+                self.rect.bottom = self.player.rect.top
+            elif self.direction.y < 0:  
+                self.rect.top = self.player.rect.bottom
     
 
         
