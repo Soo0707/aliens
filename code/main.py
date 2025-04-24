@@ -3,6 +3,7 @@ from pytmx.util_pygame import load_pygame
 
 from player import *
 from enemy import *
+from xp import *
 from collidable import *
 from allsprites import *
 from maptiles import *
@@ -19,6 +20,8 @@ class game():
 
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites = AllSprites()
+        self.enemies = pygame.sprite.Group()
+        self.xp = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
 
         self.setup()
@@ -40,13 +43,23 @@ class game():
 
         self.player = Player((400, 300), self.collidables, self.all_sprites)
 
+        enemy_positions = [(500, 500), (600, 600), (1000, 700)]
 
-        enemy = Enemy(
-            player = self.player,
+        for pos in enemy_positions:
+            enemy = Enemy(
+                player = self.player,
+                groups = self.all_sprites,
+                location = pos,
+                collide = self.collidables,
+                attack = 10,
+                enemies = self.enemies,
+                xp = self.xp
+            )
+
+        xp = Orb(
             groups = self.all_sprites,
-            location = (200,200),
-            collide = self.collidables,
-            attack = 10
+            location = pos,
+            xp = self.xp
 
         )
 
@@ -62,7 +75,7 @@ class game():
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
             
             self.all_sprites.update(dt)
-
+ 
             self.all_sprites.draw(self.screen, self.player.rect)
 
             pygame.display.flip() # updates screen
