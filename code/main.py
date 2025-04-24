@@ -4,16 +4,12 @@ from pytmx.util_pygame import load_pygame
 from player import *
 from enemy import *
 from xp import *
-from collidable import *
 from allsprites import *
-from maptiles import *
+from spawner import *
 
 class game():
     def __init__(self):
-        self.WINDOW_WIDTH = 1280
-        self.WINDOW_HEIGHT = 720
-        
-        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
 
         self.running = True
@@ -23,10 +19,9 @@ class game():
         self.enemies = pygame.sprite.Group()
         self.xp = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         self.setup()
-        self.powerups = {}
-
     
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
@@ -41,28 +36,30 @@ class game():
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        self.player = Player((400, 300), self.collidables, self.all_sprites)
+        #for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
+            #Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+
+        self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
 
         enemy_positions = [(500, 500), (600, 600), (1000, 700)]
 
-        for pos in enemy_positions:
-            enemy = Enemy(
-                player = self.player,
-                groups = self.all_sprites,
-                location = pos,
-                collide = self.collidables,
-                attack = 10,
-                enemies = self.enemies,
-                xp = self.xp
-            )
+    
+        enemy = Enemy(
 
-        xp = Orb(
-            groups = self.all_sprites,
-            location = pos,
-            xp = self.xp
-
+            player = self.player,
+            groups = self.all_sprites, 
+            location = (500, 200),
+            collide = self.collidables,
+            xp = self.xp,
+            attack = 10
         )
 
+        xp = Orb(
+            
+            location = (600, 300),                
+            groups = (self.all_sprites, self.xp), 
+            xp = self.xp
+        )
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
@@ -73,7 +70,7 @@ class game():
             self.screen.fill("black")
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
-            
+
             self.all_sprites.update(dt)
  
             self.all_sprites.draw(self.screen, self.player.rect)
@@ -85,5 +82,4 @@ class game():
 
 if __name__ == "__main__":
     gaem = game()
-    gaem.setup()
     gaem.run()
