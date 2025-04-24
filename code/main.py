@@ -33,8 +33,8 @@ class game():
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
-            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+        #for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
+            #Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
 
