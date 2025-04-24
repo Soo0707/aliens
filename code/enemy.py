@@ -6,8 +6,8 @@ from xp import *
 
 
 class Enemy(pygame.sprite.Sprite):
-    def _init_(self, player, groups, collide, xp, location, enemies, attack):
-        super()._init_(groups)
+    def __init__(self, player, groups, collide, xp, location, enemies, attack):
+        super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "enemy", "Trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
         self.rect = self.image.get_frect(center = location)

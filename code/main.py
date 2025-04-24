@@ -46,6 +46,7 @@ class game():
     
         enemy = Enemy(
 
+            enemies = self.enemies,
             player = self.player,
             groups = self.all_sprites, 
             location = (500, 200),
@@ -55,7 +56,7 @@ class game():
         )
 
         xp = Orb(
-            
+
             location = (600, 300),                
             groups = (self.all_sprites, self.xp), 
             xp = self.xp
