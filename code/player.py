@@ -36,12 +36,12 @@ class Player(pygame.sprite.Sprite):
         self.lmb_cooldown = 100
         self.can_lmb = True
         self.last_lmb = 0
-        self.projectile_texture = pygame.image.load(join("..", "assets", "projectile.png")).convert_alpha()
+        self.projectile_texture = pygame.image.load(join("..", "assets", "player", "projectile.png")).convert_alpha()
 
         self.rmb_cooldown = 1000
         self.can_rmb = True
         self.last_rmb = 0
-        self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "lazer.png")).convert_alpha()
+        self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
     
