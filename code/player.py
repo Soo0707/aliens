@@ -2,7 +2,7 @@ import pygame
 from os.path import join
 from os import listdir
 
-from projectile import *
+from projectiles import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, location, collidable, enemies, all_sprites, groups):
@@ -33,13 +33,17 @@ class Player(pygame.sprite.Sprite):
         self.enemies = enemies
         self.all_sprites = all_sprites
 
-        self.lmb_cooldown = 0
+        self.lmb_cooldown = 100
         self.can_lmb = True
         self.last_lmb = 0
+        self.projectile_texture = pygame.image.load(join("..", "assets", "projectile.png")).convert_alpha()
 
-        self.rmb_cooldown = 0
+        self.rmb_cooldown = 1000
         self.can_rmb = True
         self.last_rmb = 0
+        self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "lazer.png")).convert_alpha()
+        self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
+        
     
     def input(self):
         keys = pygame.key.get_pressed()
@@ -56,6 +60,7 @@ class Player(pygame.sprite.Sprite):
             mouse_pos = pygame.mouse.get_pos()
             
             Projectile(
+                    self.projectile_texture,
                     self.rect.center,
                     pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
                     self.collidables,
@@ -67,7 +72,48 @@ class Player(pygame.sprite.Sprite):
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
-            pass
+            Lazers(
+                    self.lazer_texture_horizontal,
+                    5,
+                    self.rect.center,
+                    pygame.math.Vector2(-1, 0),
+                    self.collidables,
+                    self.enemies,
+                    self.all_sprites
+                    )
+
+            Lazers(
+                    self.lazer_texture_horizontal,
+                    5,
+                    self.rect.center,
+                    pygame.math.Vector2(1, 0),
+                    self.collidables,
+                    self.enemies,
+                    self.all_sprites
+                    )
+
+            Lazers(
+                    self.lazer_texture_vertical,
+                    5,
+                    self.rect.center,
+                    pygame.math.Vector2(0, -1),
+                    self.collidables,
+                    self.enemies,
+                    self.all_sprites
+                    )
+
+            Lazers(
+                    self.lazer_texture_vertical,
+                    5,
+                    self.rect.center,
+                    pygame.math.Vector2(0, 1),
+                    self.collidables,
+                    self.enemies,
+                    self.all_sprites
+                    )
+
+            self.can_rmb = False
+            self.last_rmb = pygame.time.get_ticks()
 
     def update_bearing(self):
         if self.direction.x > 0:
@@ -98,7 +144,6 @@ class Player(pygame.sprite.Sprite):
                 elif self.direction.y < 0:
                     self.rect.top = collidable.rect.bottom
 
-
         '''    
         self.aoe.x += self.direction.x * self.speed * dt
         self.aoe.y += self.direction.y * self.speed * dt
@@ -125,6 +170,8 @@ class Player(pygame.sprite.Sprite):
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
         
+        self.old_rect = self.rect.copy()
+
         self.input()
         self.update_bearing()
         self.animate(dt)
