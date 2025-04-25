@@ -20,7 +20,7 @@ class game():
 
         self.setup()
         
-        self.powerup_list = [] # all possible powerup keys here
+        self.powerup_list = ["greenbull"] # all possible powerup keys here
         self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
     
