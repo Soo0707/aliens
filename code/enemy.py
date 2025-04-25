@@ -5,18 +5,11 @@ from player import  *
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, frames, player, groups, collide, location, attack):
+    def __init__(self, player, groups, collide, location, attack):
         super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "enemy", "Trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
         self.rect = self.image.get_frect(center = location)
-        
-        #image
-        self.frame, self.frame_index = frames, 0
-        self.images = self.frames[self.frame_index]
-        self.animation_speed = 6
-        folders = list(walk(join('images', 'enemies')))[0]
-        print(folders)
 
         self.speed = 150 
         self.attack = 10 #Enemy attack 
