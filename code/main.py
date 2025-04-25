@@ -5,7 +5,6 @@ from player import *
 from enemy import *
 from xp import *
 from allsprites import *
-from spawner import *
 
 class game():
     def __init__(self):
@@ -19,7 +18,12 @@ class game():
         self.enemies = pygame.sprite.Group()
         self.xp = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+       
+        self.powerup_list = ["greenbull"] # all possible powerup keys here
+        self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
+        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
 
         self.setup()
     
@@ -31,15 +35,16 @@ class game():
             MapTiles((x * 32, y * 32), texture, self.all_sprites)
 
         for x, y, texture in background.get_layer_by_name("Walls").tiles():
-            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+            Walls((x * 32, y * 32), texture, (self.all_sprites, self.walls))
 
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        #for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
-            #Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
+        for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
+            Spawner((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+
+        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.all_sprites)
 
         enemy_positions = [(500, 500), (600, 600), (1000, 700)]
 
@@ -55,18 +60,32 @@ class game():
             attack = 10
         )
 
+
         xp = Orb(
 
             location = (600, 300),                
             groups = (self.all_sprites, self.xp), 
             xp = self.xp
         )
+
+        
+    def check_timers(self):
+        now = pygame.time.get_ticks()
+
+        for powerup in self.powerups:
+            if powerup in self.powerup_timers:
+                if now - self.powerup_timers[powerup] <= 0:
+                    del self.powerups[powerup]
+                    del self.powerup_timers[powerup]
+                    
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+            self.check_timers()
 
             self.screen.fill("black")
 
