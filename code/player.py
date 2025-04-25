@@ -5,7 +5,7 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, walls, collidables, enemies, all_sprites, groups):
+    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, groups):
         super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
@@ -45,6 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
+        self.powerups = powerups
     
     def input(self):
         keys = pygame.key.get_pressed()
@@ -117,14 +118,18 @@ class Player(pygame.sprite.Sprite):
         
     def move(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-
+        
         self.check_collision_x(self.walls)
-        self.check_collision_x(self.collidables)
+
+        if "greenbull" not in self.powerups:
+            self.check_collision_x(self.collidables)
         
         self.rect.y += self.direction.y * self.speed * dt
         
         self.check_collision_y(self.walls)
-        self.check_collision_y(self.collidables)
+
+        if "greenbull" not in self.powerups:
+            self.check_collision_y(self.collidables)
 
         '''    
         self.aoe.x += self.direction.x * self.speed * dt

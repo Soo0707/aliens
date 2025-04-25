@@ -19,6 +19,10 @@ class game():
         self.enemies = pygame.sprite.Group()
 
         self.setup()
+        
+        self.powerup_list = [] # all possible powerup keys here
+        self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
+        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
     
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
@@ -36,7 +40,7 @@ class game():
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
             Spawner((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.all_sprites)
+        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.all_sprites)
 
 
     
@@ -47,13 +51,25 @@ class game():
             collide = self.collidables,
             attack = 10
         )
+        
+    def check_timers(self):
+        now = pygame.time.get_ticks()
 
+        for powerup in self.powerups:
+            if powerup in self.powerup_timers:
+                if now - self.powerup_timers[powerup] <= 0:
+                    del self.powerups[powerup]
+                    del self.powerup_timers[powerup]
+                
+    
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+            self.check_timers()
 
             self.screen.fill("black")
 

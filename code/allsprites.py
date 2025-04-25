@@ -18,6 +18,14 @@ class Collidable(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = location)
 
 
+class Walls(Collidable):
+    def __init__(self, location, texture, groups):
+        super().__init__(location, texture, groups)
+        
+        self.image = texture
+        self.rect = self.image.get_rect(center = location)
+       
+
 class MapTiles(pygame.sprite.Sprite):
     def __init__(self, location, texture, groups):
         super().__init__(groups)
