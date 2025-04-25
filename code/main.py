@@ -67,6 +67,29 @@ class game():
 
 
         pygame.quit()
+        
+            
+    #
+    #def Rollerskates(Player, self):
+        #if rollerskates in powerups:
+            #self.health = self.health * 0.8
+            #self.speed = self.speed * 1.2
+            
+    #def AOE_DAMAGE_BONUS(Player, self, enemy):
+        #if dmg_bonus in powerups:
+            #enemy in self.rect idk
+        
+    #def shield(PLayer, self):
+        #current_time = pygame.time.get_ticks()
+        #current_time = current_time/1000
+        #if shield in powerups:
+            #shield_health = self.health * 0.2
+            #if current_time % 15 == 0:
+                #shield_health = self.health * 0.2
+    #            
+            
+        
+    
 
 if __name__ == "__main__":
     gaem = game()

@@ -129,3 +129,4 @@ class Player(pygame.sprite.Sprite):
         self.update_bearing()
         self.animate(dt)
         self.move(dt)
+        
