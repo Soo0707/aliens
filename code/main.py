@@ -5,6 +5,11 @@ from player import *
 from enemy import *
 from allsprites import *
 #from spawner import *
+from bomber import *
+from drunkard import *
+from hooker import *
+from poison import *
+from trapper import *
 
 class game():
     def __init__(self):
@@ -39,14 +44,46 @@ class game():
         self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
 
 
-    
-        enemy = Enemy(
+        hooker = Hooker(
+            player = self.player,
+            groups = self.all_sprites,
+            location = (400, 150),
+            collide = self.collidables,
+            attack = 10    
+        )
+        
+        trapper = Trapper(
             player = self.player,
             groups = self.all_sprites,
             location = (500, 200),
             collide = self.collidables,
-            attack = 10
+            attack = 10 
         )
+        
+        bomber = Bomber(
+            player = self.player,
+            groups = self.all_sprites,
+            location = (600, 250),
+            collide = self.collidables,
+            attack = 10 
+        )
+        
+        drunkard = Drunkard(
+            player = self.player,
+            groups = self.all_sprites,
+            location = (550, 400),
+            collide = self.collidables,
+            attack = 10 
+        )
+        
+        poison = Poison(
+            player = self.player,
+            groups = self.all_sprites,
+            location = (450, 500),
+            collide = self.collidables,
+            attack = 10 
+        )
+        
 
     def run(self):
         while self.running:
@@ -69,23 +106,23 @@ class game():
         pygame.quit()
         
             
-    #
-    #def Rollerskates(Player, self):
-        #if rollerskates in powerups:
-            #self.health = self.health * 0.8
-            #self.speed = self.speed * 1.2
+    #def Items
+        #def Rollerskates(Player, self):
+            #if rollerskates in powerups:
+                #self.health = self.health * 0.8
+                #self.speed = self.speed * 1.2
             
-    #def AOE_DAMAGE_BONUS(Player, self, enemy):
-        #if dmg_bonus in powerups:
-            #enemy in self.rect idk
+        #def AOE_DAMAGE_BONUS(Player, self, enemy):
+            #if dmg_bonus in powerups:
+                #enemy in self.rect idk
         
-    #def shield(PLayer, self):
-        #current_time = pygame.time.get_ticks()
-        #current_time = current_time/1000
-        #if shield in powerups:
-            #shield_health = self.health * 0.2
-            #if current_time % 15 == 0:
+        #def shield(PLayer, self):
+            #current_time = pygame.time.get_ticks()
+            #current_time = current_time/1000
+            #if shield in powerups:
                 #shield_health = self.health * 0.2
+                #if current_time % 15 == 0:
+                    #shield_health = self.health * 0.2
     #            
             
         
