@@ -4,7 +4,6 @@ from pytmx.util_pygame import load_pygame
 from player import *
 from enemy import *
 from allsprites import *
-from spawner import *
 
 class game():
     def __init__(self):
@@ -16,6 +15,7 @@ class game():
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites = AllSprites()
         self.collidables = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
         self.setup()
@@ -28,15 +28,15 @@ class game():
             MapTiles((x * 32, y * 32), texture, self.all_sprites)
 
         for x, y, texture in background.get_layer_by_name("Walls").tiles():
-            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+            Walls((x * 32, y * 32), texture, (self.all_sprites, self.walls))
 
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
-            Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+            Spawner((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-        self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
+        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.all_sprites)
 
 
     
