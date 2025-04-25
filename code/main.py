@@ -34,7 +34,11 @@ class game():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         #for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
+<<<<<<< HEAD
         #    Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+=======
+            #Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
+>>>>>>> main
 
         self.player = Player((400, 300), self.collidables, self.enemies, self.all_sprites, self.all_sprites)
 
