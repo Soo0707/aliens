@@ -72,45 +72,18 @@ class Player(pygame.sprite.Sprite):
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
-            Lazers(
-                    self.lazer_texture_horizontal,
-                    5,
-                    self.rect.center,
-                    pygame.math.Vector2(-1, 0),
-                    self.collidables,
-                    self.enemies,
-                    self.all_sprites
-                    )
-
-            Lazers(
-                    self.lazer_texture_horizontal,
-                    5,
-                    self.rect.center,
-                    pygame.math.Vector2(1, 0),
-                    self.collidables,
-                    self.enemies,
-                    self.all_sprites
-                    )
-
-            Lazers(
-                    self.lazer_texture_vertical,
-                    5,
-                    self.rect.center,
-                    pygame.math.Vector2(0, -1),
-                    self.collidables,
-                    self.enemies,
-                    self.all_sprites
-                    )
-
-            Lazers(
-                    self.lazer_texture_vertical,
-                    5,
-                    self.rect.center,
-                    pygame.math.Vector2(0, 1),
-                    self.collidables,
-                    self.enemies,
-                    self.all_sprites
-                    )
+            directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
+            
+            for direction in directions:
+                Lazers(
+                        self.lazer_texture_horizontal,
+                        5,
+                        self.rect.center,
+                        pygame.math.Vector2(direction),
+                        self.collidables,
+                        self.enemies,
+                        self.all_sprites
+                        )
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
