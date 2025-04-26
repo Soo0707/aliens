@@ -2,10 +2,10 @@ import pygame
 from os.path import join
 from os import listdir
 
-from projectile import *
+from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, collidable, enemies, all_sprites, groups):
+    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, groups):
         super().__init__(groups)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
@@ -29,17 +29,23 @@ class Player(pygame.sprite.Sprite):
 
         self.import_images()
 
-        self.collidables = collidable
+        self.collidables = collidables
+        self.walls = walls
         self.enemies = enemies
         self.all_sprites = all_sprites
 
-        self.lmb_cooldown = 0
+        self.lmb_cooldown = 100
         self.can_lmb = True
         self.last_lmb = 0
+        self.projectile_texture = pygame.image.load(join("..", "assets", "player", "projectile.png")).convert_alpha()
 
-        self.rmb_cooldown = 0
+        self.rmb_cooldown = 1000
         self.can_rmb = True
         self.last_rmb = 0
+        self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
+        self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
+        
+        self.powerups = powerups
     
     def input(self):
         keys = pygame.key.get_pressed()
@@ -56,9 +62,10 @@ class Player(pygame.sprite.Sprite):
             mouse_pos = pygame.mouse.get_pos()
             
             Projectile(
+                    self.projectile_texture,
                     self.rect.center,
                     pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                    self.collidables,
+                    (self.collidables, self.walls),
                     self.enemies,
                     self.all_sprites
                     )
@@ -67,7 +74,21 @@ class Player(pygame.sprite.Sprite):
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
-            pass
+            directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
+            
+            for direction in directions:
+                Lazers(
+                        self.lazer_texture_horizontal,
+                        5,
+                        self.rect.center,
+                        pygame.math.Vector2(direction),
+                        (self.collidables, self.walls),
+                        self.enemies,
+                        self.all_sprites
+                        )
+
+            self.can_rmb = False
+            self.last_rmb = pygame.time.get_ticks()
 
     def update_bearing(self):
         if self.direction.x > 0:
@@ -78,26 +99,37 @@ class Player(pygame.sprite.Sprite):
             self.bearing = "S"
         elif self.direction.y < 0:
             self.bearing = "N"
-        
-    def move(self, dt):
-        self.rect.x += self.direction.x * self.speed * dt
 
-        for collidable in self.collidables:
+    def check_collision_x(self, target):
+        for collidable in target:
             if self.rect.colliderect(collidable):
                 if self.direction.x > 0:
                     self.rect.right = collidable.rect.left
                 elif self.direction.x < 0:
                     self.rect.left = collidable.rect.right
-        
-        self.rect.y += self.direction.y * self.speed * dt
-        
-        for collidable in self.collidables:
+
+    def check_collision_y(self, target):
+        for collidable in target:
             if self.rect.colliderect(collidable):
                 if self.direction.y > 0:
                     self.rect.bottom = collidable.rect.top
                 elif self.direction.y < 0:
                     self.rect.top = collidable.rect.bottom
+        
+    def move(self, dt):
+        self.rect.x += self.direction.x * self.speed * dt
+        
+        self.check_collision_x(self.walls)
 
+        if "greenbull" not in self.powerups:
+            self.check_collision_x(self.collidables)
+        
+        self.rect.y += self.direction.y * self.speed * dt
+        
+        self.check_collision_y(self.walls)
+
+        if "greenbull" not in self.powerups:
+            self.check_collision_y(self.collidables)
 
         '''    
         self.aoe.x += self.direction.x * self.speed * dt
@@ -125,6 +157,8 @@ class Player(pygame.sprite.Sprite):
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
         
+        self.old_rect = self.rect.copy()
+
         self.input()
         self.update_bearing()
         self.animate(dt)
