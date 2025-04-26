@@ -9,10 +9,10 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, player, groups, collide, location, enemies, attack, xp, health, all_sprites):
         super().__init__(groups)
         
-        self.image = pygame.image.load(join("..", "assets", "enemy", "Trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
+        self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
         self.rect = self.image.get_frect(center = location)
 
-
+        self.direction = pygame.math.Vector2()
         self.location = (500,500)
         self.health = health
 
@@ -117,16 +117,16 @@ class Enemy(pygame.sprite.Sprite):
             self.can_attack = False
             self.last_attack = now
 
-        if self.health <= 0:
-            Orb(self.rect.center, (self.all_sprites, self.xp))
-            self.kill()
-        
 
 
     def update(self, dt):
 
         now = pygame.time.get_ticks()
         
+        if self.health <= 0:
+            Orb(self.rect.center, (self.all_sprites, self.xp))
+            self.kill()
+
         if not self.can_attack and now - self.last_attack >= self.attack_cooldown:
             self.can_attack = True
 

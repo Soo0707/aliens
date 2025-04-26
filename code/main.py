@@ -13,17 +13,17 @@ class game():
 
         self.running = True
 
+        self.powerup_list = ["greenbull", "aussie"] # all possible powerup keys here
+        self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
+        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
+        
         # sprite groups, useful for collision detection and camera later on
-        self.all_sprites = AllSprites()
+        self.all_sprites = AllSprites(self.powerups)
         self.enemies = pygame.sprite.Group()
         self.xp = pygame.sprite.Group()
         self.collidables = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
-       
-        self.powerup_list = ["greenbull"] # all possible powerup keys here
-        self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
-        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
 
         self.setup()
     
@@ -50,23 +50,18 @@ class game():
 
     
         enemy = Enemy(
-
             enemies = self.enemies,
             player = self.player,
-            groups = self.all_sprites, 
+            groups = (self.all_sprites, self.enemies), 
             location = (500, 200),
             collide = self.collidables,
             xp = self.xp,
-            attack = 10
+            attack = 10,
+            all_sprites = self.all_sprites,
+            health = 100
         )
 
 
-        xp = Orb(
-
-            location = (600, 300),                
-            groups = (self.all_sprites, self.xp), 
-            xp = self.xp
-        )
 
         
     def check_timers(self):

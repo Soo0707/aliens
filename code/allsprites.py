@@ -2,12 +2,22 @@ import pygame
 from os.path import join
 
 class AllSprites(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self, powerups):
         super().__init__()
+        self.powerups = powerups
     
     def draw(self, surface, follows):
-        for sprite in self:
-            surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
+        if "aussie" in self.powerups:
+            temp = pygame.surface.Surface((1280, 720))
+
+            for sprite in self:
+                temp.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
+
+            temp_flipped = pygame.transform.flip(temp, 1, 1)
+            surface.blit(temp_flipped)
+        else:
+            for sprite in self:
+                surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360))        
 
 
 class Collidable(pygame.sprite.Sprite):
