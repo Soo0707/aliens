@@ -1,6 +1,8 @@
 import pygame
 from pytmx.util_pygame import load_pygame
+from random import choice
 
+from projectiles import *
 from player import *
 from enemy import *
 from xp import *
@@ -23,11 +25,15 @@ class game():
         self.xp = pygame.sprite.LayeredUpdates()
         self.collidables = pygame.sprite.LayeredUpdates()
         self.walls = pygame.sprite.LayeredUpdates()
+       
+        self.num_xp = 0
 
         self.setup()
+
     
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
+
 
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -40,23 +46,18 @@ class game():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
-            Spawner((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
-
+            Spawner(
+                location=(x * 32, y * 32),
+                texture=texture,
+                groups=(self.all_sprites, self.collidables),
+                player=self.player,
+                all_sprites=self.all_sprites,
+                enemies=self.enemies,
+                walls=self.walls,
+                collidables=self.collidables,
+                xp=self.xp,
+            )
         self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.all_sprites)
-
-
-    
-        enemy = Enemy(
-            enemies = self.enemies,
-            player = self.player,
-            groups = (self.all_sprites, self.enemies), 
-            location = (500, 200),
-            collide = (self.collidables, self.walls),
-            all_sprites = self.all_sprites,
-            xp = self.xp
-        )
-
-
         
     def check_timers(self):
         now = pygame.time.get_ticks()
@@ -73,6 +74,13 @@ class game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+            for orb in self.xp:
+                if self.player.rect.colliderect(orb.rect):
+                    self.num_xp = self.num_xp + 1
+                    print(self.num_xp)
+                    orb.kill()
+
 
             self.check_timers()
 

@@ -1,7 +1,9 @@
 import pygame
 from os.path import join
 
-from player import Player
+
+from allsprites import Collidable
+from player import  *
 from xp import *
 
 
@@ -10,6 +12,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(groups)
         
         self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
+
         self.rect = self.image.get_frect(center = location)
         self.old_rect = self.rect.copy()
 
@@ -26,7 +29,10 @@ class Enemy(pygame.sprite.Sprite):
 
         self.player = player
 
-        self.collidables = collide
+        self.old_rect = self.rect.copy()
+        
+        self.walls = walls
+        self.collidables = collidables
         self.enemies = enemies
         self.all_sprites = all_sprites
         self.xp = xp
@@ -93,7 +99,6 @@ class Enemy(pygame.sprite.Sprite):
                 elif self.old_rect.y >= target.old_rect.y and self.rect.y <= target.rect.y:
                     self.rect.top = self.old_rect.top
 
-
     def movement(self, dt):
         player_pos = pygame.math.Vector2(self.player.rect.center)
         enemy_pos = pygame.math.Vector2(self.rect.center)
@@ -110,7 +115,7 @@ class Enemy(pygame.sprite.Sprite):
         
         for group in self.collidables:
             self.collision_x_nonmoving(group)
- 
+
 
         self.rect.y += self.direction.y * self.speed * dt
         
@@ -122,7 +127,6 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def le_attack(self):
-
         now = pygame.time.get_ticks()
 
         if self.can_attack and self.rect.colliderect(self.player.rect):
@@ -134,15 +138,14 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, dt):
         now = pygame.time.get_ticks()
-
+        self.old_rect = self.rect.copy()
+        
         if self.health <= 0:
             Orb(self.rect.center, (self.all_sprites, self.xp))
             self.kill()
 
         if not self.can_attack and now - self.last_attack >= self.attack_cooldown:
             self.can_attack = True
-
-        self.old_rect = self.rect.copy()
 
         self.le_attack()
         self.movement(dt)
