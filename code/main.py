@@ -101,7 +101,9 @@ class game():
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
+            #update
             self.all_sprites.update(dt)
+            self.ui.update()
 
             self.all_sprites.draw(self.screen, self.player.rect)
             
