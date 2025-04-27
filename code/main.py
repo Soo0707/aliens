@@ -54,7 +54,7 @@ class game():
             player = self.player,
             groups = (self.all_sprites, self.enemies), 
             location = (500, 200),
-            collide = self.collidables,
+            collide = (self.collidables, self.walls),
             xp = self.xp,
             attack = 10,
             all_sprites = self.all_sprites,
@@ -62,14 +62,13 @@ class game():
         )
 
 
-
         
     def check_timers(self):
         now = pygame.time.get_ticks()
 
-        for powerup in self.powerups:
-            if powerup in self.powerup_timers:
-                if now - self.powerup_timers[powerup] <= 0:
+        for powerup in self.powerups.copy():
+            if powerup in self.powerup_timers.copy():
+                if self.powerup_timers[powerup] - now <= 0:
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
                     

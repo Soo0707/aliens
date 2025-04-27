@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
         self.rect = self.image.get_frect(center = location)
+        self.old_rect = self.rect.copy()
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -100,7 +101,7 @@ class Player(pygame.sprite.Sprite):
         elif self.direction.y < 0:
             self.bearing = "N"
 
-    def check_collision_x(self, target):
+    def collision_x_nonmoving(self, target):
         for collidable in target:
             if self.rect.colliderect(collidable):
                 if self.direction.x > 0:
@@ -108,28 +109,57 @@ class Player(pygame.sprite.Sprite):
                 elif self.direction.x < 0:
                     self.rect.left = collidable.rect.right
 
-    def check_collision_y(self, target):
+    def collision_y_nonmoving(self, target):
         for collidable in target:
             if self.rect.colliderect(collidable):
                 if self.direction.y > 0:
                     self.rect.bottom = collidable.rect.top
                 elif self.direction.y < 0:
                     self.rect.top = collidable.rect.bottom
+
+    def collision_x_moving(self, target):
+        for collidable in target:
+            if self.rect.colliderect(collidable.rect):
+                if self.old_rect.x <= collidable.old_rect.x and self.rect.x >= collidable.rect.x:
+                    if self.direction.x > 0:
+                        self.direction.x = 0
+                    self.rect.right = self.old_rect.right
+                elif self.old_rect.x >= collidable.old_rect.x and self.rect.x <= collidable.rect.x:
+                    if self.direction.x < 0:
+                        self.direction.x = 0
+                    self.rect.left = self.old_rect.left
+
+    def collision_y_moving(self, target):
+        for collidable in target:
+            if self.rect.colliderect(collidable.rect):
+                if self.old_rect.y <= collidable.old_rect.y and self.rect.y >= collidable.rect.y:
+                    if self.direction.y > 0:
+                        self.direction.y = 0
+                    self.rect.bottom = self.old_rect.bottom
+                elif self.old_rect.y >= collidable.old_rect.y and self.rect.y <= collidable.rect.y:
+                    if self.direction.y < 0:
+                        self.direction.y = 0
+                    self.rect.top = self.old_rect.top
         
     def move(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        
-        self.check_collision_x(self.walls)
 
         if "greenbull" not in self.powerups:
             self.check_collision_x(self.collidables)
         
+        self.collision_x_moving(self.enemies)
+        self.collision_x_nonmoving(self.walls)
+        
+        
         self.rect.y += self.direction.y * self.speed * dt
         
-        self.check_collision_y(self.walls)
-
         if "greenbull" not in self.powerups:
             self.check_collision_y(self.collidables)
+
+        self.collision_y_moving(self.enemies)
+        self.collision_y_nonmoving(self.walls)
+
+
 
         '''    
         self.aoe.x += self.direction.x * self.speed * dt
@@ -137,7 +167,7 @@ class Player(pygame.sprite.Sprite):
         '''
     
     def animate(self, dt):
-        if self.direction:
+        if self.direction and "greenbull" not in self.powerups:
             self.image_index += 10 * dt
             self.image = self.images[self.bearing][int(self.image_index) % len(self.images[self.bearing])]
         else:
