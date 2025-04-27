@@ -26,7 +26,7 @@ class game():
         self.enemies = pygame.sprite.Group()
         
         #ui 
-        self.ui = Menu()
+        self.ui = UI()
 
         self.setup()
     
