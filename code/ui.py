@@ -20,7 +20,7 @@ class UI:
         cols, rows = 1, 3
         for col in range(cols):
             for row in range(rows):
-                x = rect.left + rect.width / 4 
+                x = rect.left + rect.width / 5
                 y = rect.top + (rect.height / 4) + (rect.height / 4) * row
                 text_surf = self.font.render('option', True, 'black')
                 text_rect = text_surf.get_frect(center = (x,y))
