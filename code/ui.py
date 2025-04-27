@@ -17,11 +17,11 @@ class UI:
         pygame.draw.rect(self.display_surface, 'gray', rect, 4, 4)
         
         #menu
-        cols, rows = 1, 2
+        cols, rows = 1, 3
         for col in range(cols):
             for row in range(rows):
                 x = rect.left + rect.width / 4 
-                y = rect.top + (rect.height / 4) + (rect.height / 2) * row
+                y = rect.top + (rect.height / 4) + (rect.height / 4) * row
                 text_surf = self.font.render('option', True, 'black')
                 text_rect = text_surf.get_frect(center = (x,y))
                 self.display_surface.blit(text_surf, text_rect)
