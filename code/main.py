@@ -11,6 +11,8 @@ from hooker import *
 from poison import *
 from trapper import *
 
+from ui import *
+
 class game():
     def __init__(self):
         self.screen = pygame.display.set_mode((1280, 720))
@@ -22,6 +24,9 @@ class game():
         self.all_sprites = AllSprites()
         self.collidables = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+        
+        #ui 
+        self.ui = Menu()
 
         self.setup()
     
@@ -99,7 +104,11 @@ class game():
             self.all_sprites.update(dt)
 
             self.all_sprites.draw(self.screen, self.player.rect)
-
+            
+            self.ui.draw()
+            
+                    
+                
             pygame.display.flip() # updates screen
 
 
