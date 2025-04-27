@@ -6,4 +6,4 @@ from enemy import *
 
 class Trapper(Enemy):
     def __init__(self, player, groups, collide, location, attack):
-        super().__init__(player, groups, collide, location, attack)
+        super().__init__(groups)

@@ -21,11 +21,10 @@ class Projectile(pygame.sprite.Sprite):
     def update(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         self.rect.y += self.direction.y * self.speed * dt
-        
-        for groups in self.collidables:
-            for collidable in groups:
-                if self.rect.colliderect(collidable):
-                    self.kill()
+
+        for collidable in self.collidables:
+            if self.rect.colliderect(collidable):
+                self.kill()
 
         for enemy in self.enemies:
             if self.rect.colliderect(enemy):
@@ -52,10 +51,9 @@ class Lazers(pygame.sprite.Sprite):
         self.rect.x += self.direction.x * self.speed * dt
         self.rect.y += self.direction.y * self.speed * dt
 
-        for groups in self.collidables:
-            for collidable in groups:
-                if self.rect.colliderect(collidable):
-                    self.kill()
+        for collidable in self.collidables:
+            if self.rect.colliderect(collidable):
+                self.kill()
 
         for enemy in self.enemies:
             if self.rect.colliderect(enemy):
