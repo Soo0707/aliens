@@ -1,14 +1,25 @@
 import pygame
 from os.path import join
 
+from enemy import Enemy
 
-class AllSprites(pygame.sprite.Group):
-    def __init__(self):
+class AllSprites(pygame.sprite.LayeredUpdates):
+    def __init__(self, powerups):
         super().__init__()
+        self.powerups = powerups
     
     def draw(self, surface, follows):
-        for sprite in self:
-            surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
+        if "aussie" in self.powerups:
+            temp = pygame.surface.Surface((1280, 720))
+
+            for sprite in self:
+                temp.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
+
+            temp_flipped = pygame.transform.flip(temp, 1, 1)
+            surface.blit(temp_flipped)
+        else:
+            for sprite in self:
+                surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360))        
 
 
 class Collidable(pygame.sprite.Sprite):
@@ -18,13 +29,11 @@ class Collidable(pygame.sprite.Sprite):
         self.image = texture
         self.rect = self.image.get_rect(center = location)
 
-
+        
+        
 class Walls(Collidable):
     def __init__(self, location, texture, groups):
         super().__init__(location, texture, groups)
-        
-        self.image = texture
-        self.rect = self.image.get_rect(center = location)
        
 
 class MapTiles(pygame.sprite.Sprite):
@@ -56,7 +65,6 @@ class Spawner(Collidable):
 
     def update(self, dt):
         if self.can_spawn:
-            from enemy import Enemy
 
             Enemy(
                 player=self.player,
@@ -64,9 +72,7 @@ class Spawner(Collidable):
                 collidables=self.collidables,
                 location=self.rect.center,
                 enemies=self.enemies,
-                attack=10,
                 xp=self.xp,
-                health=100,
                 walls=self.walls,
                 all_sprites=self.all_sprites
             )
