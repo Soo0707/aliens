@@ -1,7 +1,6 @@
 import pygame
 from os.path import *
 
-
 class Orb(pygame.sprite.Sprite):
     def __init__(self, location, groups):
        super().__init__(groups)

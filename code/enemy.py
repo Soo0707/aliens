@@ -6,7 +6,7 @@ from xp import *
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, collide, location, enemies, all_sprites, groups):
+    def __init__(self, player, collide, location, enemies, xp, all_sprites, groups):
         super().__init__(groups)
         
         self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
@@ -15,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2()
         self.location = location
-        self.health = health
+        self.health = 100
 
         self.speed = 150 # Enemy
         self.attack = 10 #Enemy attack 
@@ -25,7 +25,6 @@ class Enemy(pygame.sprite.Sprite):
         self.can_attack = True
 
         self.player = player
-        self.player_group = pygame.sprite.Group.add(player) 
 
         self.collidables = collide
         self.enemies = enemies

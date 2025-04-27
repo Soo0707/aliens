@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 
-class AllSprites(pygame.sprite.Group):
+class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
         super().__init__()
         self.powerups = powerups
@@ -27,13 +27,11 @@ class Collidable(pygame.sprite.Sprite):
         self.image = texture
         self.rect = self.image.get_rect(center = location)
 
-
+        
+        
 class Walls(Collidable):
     def __init__(self, location, texture, groups):
         super().__init__(location, texture, groups)
-        
-        self.image = texture
-        self.rect = self.image.get_rect(center = location)
        
 
 class MapTiles(pygame.sprite.Sprite):

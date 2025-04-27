@@ -7,6 +7,8 @@ from projectiles import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, groups):
         super().__init__(groups)
+        
+        all_sprites.change_layer(self, 1)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
         self.rect = self.image.get_frect(center = location)
@@ -145,7 +147,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.direction.x * self.speed * dt
 
         if "greenbull" not in self.powerups:
-            self.check_collision_x(self.collidables)
+            self.collision_x_nonmoving(self.collidables)
         
         self.collision_x_moving(self.enemies)
         self.collision_x_nonmoving(self.walls)
@@ -154,7 +156,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.direction.y * self.speed * dt
         
         if "greenbull" not in self.powerups:
-            self.check_collision_y(self.collidables)
+            self.collision_y_nonmoving(self.collidables)
 
         self.collision_y_moving(self.enemies)
         self.collision_y_nonmoving(self.walls)

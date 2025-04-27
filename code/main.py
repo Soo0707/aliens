@@ -19,11 +19,10 @@ class game():
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites = AllSprites(self.powerups)
-        self.enemies = pygame.sprite.Group()
-        self.xp = pygame.sprite.Group()
-        self.collidables = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
-        self.enemies = pygame.sprite.Group()
+        self.enemies = pygame.sprite.LayeredUpdates()
+        self.xp = pygame.sprite.LayeredUpdates()
+        self.collidables = pygame.sprite.LayeredUpdates()
+        self.walls = pygame.sprite.LayeredUpdates()
 
         self.setup()
     
@@ -40,13 +39,11 @@ class game():
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
-
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
             Spawner((x * 32, y * 32), texture, (self.all_sprites, self.collidables))
 
         self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.all_sprites)
 
-        enemy_positions = [(500, 500), (600, 600), (1000, 700)]
 
     
         enemy = Enemy(
@@ -55,10 +52,8 @@ class game():
             groups = (self.all_sprites, self.enemies), 
             location = (500, 200),
             collide = (self.collidables, self.walls),
-            xp = self.xp,
-            attack = 10,
             all_sprites = self.all_sprites,
-            health = 100
+            xp = self.xp
         )
 
 
