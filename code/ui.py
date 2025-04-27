@@ -16,6 +16,7 @@ class UI:
         self.state = 'general'
         
     def input(self):
+        #The codes below are for knowing which "button" we are on
         keys = pygame.key.get_just_pressed()
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
