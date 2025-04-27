@@ -13,13 +13,14 @@ class UI:
         #control
         self.general_options = ['powerup 1', 'powerup 2', 'powerup 3']
         self.general_index = {'col': 0, 'row': 0}
+        self.state = 'general'
         
     def input(self):
         keys = pygame.key.get_just_pressed()
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
         if keys[pygame.K_SPACE]:
-            print(self.general_options[self.general_index['row']])
+            self.state = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
         
     def general(self):
         #background
@@ -33,7 +34,7 @@ class UI:
             for row in range(rows):
                 x = rect.left + rect.width / 5
                 y = rect.top + (rect.height / 4) + (rect.height / 4) * row
-                i = row 
+                i = row     #the equation for i/index will change depending on the amount of rows and columns
                 if col == self.general_index['col'] and row == self.general_index['row']: 
                     color = pygame.Color(190, 190, 190, 255)
                 else: 
@@ -48,4 +49,5 @@ class UI:
                 
         
     def draw(self):
-        self.general()
+        match self.state:
+            case 'general': self.general()
