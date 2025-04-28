@@ -1,12 +1,12 @@
 import pygame
 from pytmx.util_pygame import load_pygame
-from random import choice
 
 from projectiles import *
 from player import *
-from enemy import *
 from xp import *
 from allsprites import *
+
+from collisions import *
 
 class game():
     def __init__(self):
@@ -25,7 +25,9 @@ class game():
         self.xp = pygame.sprite.LayeredUpdates()
         self.collidables = pygame.sprite.LayeredUpdates()
         self.walls = pygame.sprite.LayeredUpdates()
-       
+        self.player_group = pygame.sprite.LayeredUpdates()
+        self.projectiles = pygame.sprite.LayeredUpdates()
+
         self.num_xp = 0
 
         self.setup()
@@ -34,6 +36,7 @@ class game():
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
 
+        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.projectiles, (self.all_sprites, self.player_group))
 
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -55,9 +58,8 @@ class game():
                 enemies=self.enemies,
                 walls=self.walls,
                 collidables=self.collidables,
-                xp=self.xp,
+                xp=self.xp
             )
-        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.all_sprites)
         
     def check_timers(self):
         now = pygame.time.get_ticks()
@@ -81,15 +83,44 @@ class game():
                     print(self.num_xp)
                     orb.kill()
 
-
+            
             self.check_timers()
 
             self.screen.fill("black")
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+            
+            
+            collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
 
+            self.player.move_x(dt)
+            
+            collision_x_nonmoving(self.player_group, self.collidables)
+            collision_x_nonmoving(self.player_group, self.walls)
+            collision_x(self.player_group, self.enemies)
+            
+            for enemy in self.enemies:
+                enemy.move_x(dt)
+
+            collision_x_nonmoving(self.enemies, self.collidables)
+            collision_x_nonmoving(self.enemies, self.walls)
+            collision_x(self.enemies, self.enemies)
+            
+            self.player.move_y(dt)
+            collision_y_nonmoving(self.player_group, self.collidables)
+            collision_y_nonmoving(self.player_group, self.walls)
+            collision_y(self.player_group, self.enemies)
+            
+            for enemy in self.enemies:
+                enemy.move_y(dt)
+
+            collision_y_nonmoving(self.enemies, self.collidables)
+            collision_y_nonmoving(self.enemies, self.walls)
+            collision_y(self.enemies, self.enemies)
+            
+            
+            
             self.all_sprites.update(dt)
- 
             self.all_sprites.draw(self.screen, self.player.rect)
 
             pygame.display.flip() # updates screen

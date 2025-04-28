@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 
-from enemy import Enemy
+from enemy import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -29,8 +29,6 @@ class Collidable(pygame.sprite.Sprite):
         self.image = texture
         self.rect = self.image.get_rect(center = location)
 
-        
-        
 class Walls(Collidable):
     def __init__(self, location, texture, groups):
         super().__init__(location, texture, groups)
@@ -42,17 +40,13 @@ class MapTiles(pygame.sprite.Sprite):
         self.image = texture
         self.rect = self.image.get_frect(center = location)
 
-
 class Spawner(Collidable):
-    def __init__(self, location, texture, groups, player, walls, enemies, all_sprites, collidables, xp, attack):
+    def __init__(self, location, texture, groups, player, walls, enemies, all_sprites, collidables, xp):
         super().__init__(location, texture, groups)
         
-        self.image = texture
-        self.rect = self.image.get_rect(center = location)
-
         self.last_spawn = 0
-        self.can_spawn = True
-        self.timeout_ticks = 20000
+        self.can_spawn = False
+        self.timeout_ticks = 2000
 
 
         self.player = player
@@ -61,24 +55,21 @@ class Spawner(Collidable):
         self.all_sprites = all_sprites
         self.collidables = collidables
         self.xp = xp
-        self.attack = attack
 
     def update(self, dt):
         if self.can_spawn:
-
             Enemy(
                 player=self.player,
                 groups=(self.all_sprites, self.enemies),
-                collidables=self.collidables,
+                collidables=(self.collidables, self.walls),
                 location=self.rect.center,
                 enemies=self.enemies,
                 xp=self.xp,
-                walls=self.walls,
                 all_sprites=self.all_sprites
             )
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 
-        elif not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks:
+        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks:
             self.can_spawn = True

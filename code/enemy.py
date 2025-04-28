@@ -1,14 +1,12 @@
 import pygame
 from os.path import join
 
-
-from allsprites import Collidable
+from allsprites import *
 from player import  *
 from xp import *
 
-
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, collide, location, enemies, xp, all_sprites, groups):
+    def __init__(self, player, collidables, location, enemies, xp, all_sprites, groups):
         super().__init__(groups)
         
         self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
@@ -29,77 +27,12 @@ class Enemy(pygame.sprite.Sprite):
 
         self.player = player
 
-        self.old_rect = self.rect.copy()
-        
-        self.walls = walls
         self.collidables = collidables
         self.enemies = enemies
         self.all_sprites = all_sprites
         self.xp = xp
 
-    def collision_x_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable.rect):
-                if self.direction.x > 0:  
-                    self.rect.right = collidable.rect.left
-                elif self.direction.x < 0:  
-                    self.rect.left = collidable.rect.right
-
-    def collision_y_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable):
-                if self.direction.y > 0:
-                    self.rect.bottom = collidable.rect.top
-                elif self.direction.y < 0:
-                    self.rect.top = collidable.rect.bottom
-    
-    def collision_x_moving(self, target, iterable):
-        if iterable:
-            for collidable in target:
-                if collidable == self:
-                    continue
-
-                if self.rect.colliderect(collidable.rect):
-                    self.direction.x = 0
-                    self.direction.y = 0
-                    if self.old_rect.x <= collidable.old_rect.x and self.rect.x >= collidable.rect.x:
-                        self.rect.right = self.old_rect.right
-                    elif self.old_rect.x >= collidable.old_rect.x and self.rect.x <= collidable.rect.x:
-                        self.rect.left = self.old_rect.left
-        else:
-            if self.rect.colliderect(target.rect):
-                self.direction.x = 0
-                self.direction.y = 0
-                if self.old_rect.x <= target.old_rect.x and self.rect.x >= target.rect.x:
-                    self.rect.right = self.old_rect.right
-                elif self.old_rect.x >= target.old_rect.x and self.rect.x <= target.rect.x:
-                    self.rect.left = self.old_rect.left
-
-
-    def collision_y_moving(self, target, iterable):
-        if iterable:
-            for collidable in target:
-                if collidable == self:
-                    continue
-
-                if self.rect.colliderect(collidable.rect):
-                    self.direction.x = 0
-                    self.direction.y = 0
-                    if self.old_rect.y <= collidable.old_rect.y and self.rect.y >= collidable.rect.y:
-                        self.rect.bottom = self.old_rect.bottom
-                    elif self.old_rect.y >= collidable.old_rect.y and self.rect.y <= collidable.rect.y:
-                        self.rect.top = self.old_rect.top
-
-        else: 
-            if self.rect.colliderect(target.rect):
-                self.direction.x = 0
-                self.direction.y = 0
-                if self.old_rect.y <= target.old_rect.y and self.rect.y >= target.rect.y:
-                    self.rect.bottom = self.old_rect.bottom
-                elif self.old_rect.y >= target.old_rect.y and self.rect.y <= target.rect.y:
-                    self.rect.top = self.old_rect.top
-
-    def movement(self, dt):
+    def set_direction(self):
         player_pos = pygame.math.Vector2(self.player.rect.center)
         enemy_pos = pygame.math.Vector2(self.rect.center)
 
@@ -108,23 +41,12 @@ class Enemy(pygame.sprite.Sprite):
         if self.direction:
             self.direction = self.direction.normalize()
         
+        
+    def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        
-        self.collision_x_moving(self.enemies, True)
-        self.collision_x_moving(self.player, False)
-        
-        for group in self.collidables:
-            self.collision_x_nonmoving(group)
 
-
+    def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-        
-        self.collision_y_moving(self.enemies, True)
-        self.collision_y_moving(self.player, False)
-
-        for group in self.collidables:
-            self.collision_y_nonmoving(group)
-
 
     def le_attack(self):
         now = pygame.time.get_ticks()
@@ -148,4 +70,4 @@ class Enemy(pygame.sprite.Sprite):
             self.can_attack = True
 
         self.le_attack()
-        self.movement(dt)
+        self.set_direction()

@@ -5,14 +5,17 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, groups):
+    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, projectiles, groups):
         super().__init__(groups)
         
         all_sprites.change_layer(self, 1)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
-        self.rect = self.image.get_frect(center = location)
+
+        self.rect = self.image.get_rect(center = location)
         self.old_rect = self.rect.copy()
+
+        self.pos = pygame.math.Vector2(self.rect.topleft)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -49,6 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
         self.powerups = powerups
+        self.projectiles = projectiles
     
     def input(self):
         keys = pygame.key.get_pressed()
@@ -70,7 +74,7 @@ class Player(pygame.sprite.Sprite):
                     pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
                     (self.collidables, self.walls),
                     self.enemies,
-                    self.all_sprites
+                    (self.all_sprites, self.projectiles)
                     )
 
             self.can_lmb = False
@@ -87,7 +91,7 @@ class Player(pygame.sprite.Sprite):
                         pygame.math.Vector2(direction),
                         (self.collidables, self.walls),
                         self.enemies,
-                        self.all_sprites
+                        (self.all_sprites, self.projectiles)
                         )
 
             self.can_rmb = False
@@ -103,70 +107,14 @@ class Player(pygame.sprite.Sprite):
         elif self.direction.y < 0:
             self.bearing = "N"
 
-    def collision_x_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable):
-                if self.direction.x > 0:
-                    self.rect.right = collidable.rect.left
-                elif self.direction.x < 0:
-                    self.rect.left = collidable.rect.right
-
-    def collision_y_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable):
-                if self.direction.y > 0:
-                    self.rect.bottom = collidable.rect.top
-                elif self.direction.y < 0:
-                    self.rect.top = collidable.rect.bottom
-
-    def collision_x_moving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable.rect):
-                if self.old_rect.x <= collidable.old_rect.x and self.rect.x >= collidable.rect.x:
-                    if self.direction.x > 0:
-                        self.direction.x = 0
-                    self.rect.right = self.old_rect.right
-                elif self.old_rect.x >= collidable.old_rect.x and self.rect.x <= collidable.rect.x:
-                    if self.direction.x < 0:
-                        self.direction.x = 0
-                    self.rect.left = self.old_rect.left
-
-    def collision_y_moving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable.rect):
-                if self.old_rect.y <= collidable.old_rect.y and self.rect.y >= collidable.rect.y:
-                    if self.direction.y > 0:
-                        self.direction.y = 0
-                    self.rect.bottom = self.old_rect.bottom
-                elif self.old_rect.y >= collidable.old_rect.y and self.rect.y <= collidable.rect.y:
-                    if self.direction.y < 0:
-                        self.direction.y = 0
-                    self.rect.top = self.old_rect.top
         
-    def move(self, dt):
+    def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-
-        if "greenbull" not in self.powerups:
-            self.collision_x_nonmoving(self.collidables)
-        
-        self.collision_x_moving(self.enemies)
-        self.collision_x_nonmoving(self.walls)
-        
-        
+        #self.aoe.x += self.direction.x * self.speed * dt
+    def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
+        #self.aoe.y += self.direction.y * self.speed * dt
         
-        if "greenbull" not in self.powerups:
-            self.collision_y_nonmoving(self.collidables)
-
-        self.collision_y_moving(self.enemies)
-        self.collision_y_nonmoving(self.walls)
-
-
-
-        '''    
-        self.aoe.x += self.direction.x * self.speed * dt
-        self.aoe.y += self.direction.y * self.speed * dt
-        '''
     
     def animate(self, dt):
         if self.direction and "greenbull" not in self.powerups:
@@ -194,4 +142,3 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.update_bearing()
         self.animate(dt)
-        self.move(dt)
