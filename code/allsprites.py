@@ -41,19 +41,16 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, groups, player, walls, enemies, all_sprites, collidables, xp):
+    def __init__(self, location, texture, player, enemies, all_sprites, xp, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
-        self.can_spawn = False
+        self.can_spawn = True
         self.timeout_ticks = 2000
 
-
         self.player = player
-        self.walls = walls 
         self.enemies = enemies
         self.all_sprites = all_sprites
-        self.collidables = collidables
         self.xp = xp
 
     def update(self, dt):
@@ -61,9 +58,7 @@ class Spawner(Collidable):
             Enemy(
                 player=self.player,
                 groups=(self.all_sprites, self.enemies),
-                collidables=(self.collidables, self.walls),
                 location=self.rect.center,
-                enemies=self.enemies,
                 xp=self.xp,
                 all_sprites=self.all_sprites
             )
@@ -72,4 +67,4 @@ class Spawner(Collidable):
             self.can_spawn = False
 
         if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks:
-            self.can_spawn = True
+           self.can_spawn = True

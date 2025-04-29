@@ -5,7 +5,7 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, projectiles, groups):
+    def __init__(self, location, collidables, all_sprites, powerups, projectiles, groups):
         super().__init__(groups)
         
         all_sprites.change_layer(self, 1)
@@ -14,8 +14,6 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center = location)
         self.old_rect = self.rect.copy()
-
-        self.pos = pygame.math.Vector2(self.rect.topleft)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -35,10 +33,8 @@ class Player(pygame.sprite.Sprite):
 
         self.import_images()
 
-        self.collidables = collidables
-        self.walls = walls
-        self.enemies = enemies
         self.all_sprites = all_sprites
+        self.collidables = collidables
 
         self.lmb_cooldown = 100
         self.can_lmb = True
@@ -72,8 +68,6 @@ class Player(pygame.sprite.Sprite):
                     self.projectile_texture,
                     self.rect.center,
                     pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                    (self.collidables, self.walls),
-                    self.enemies,
                     (self.all_sprites, self.projectiles)
                     )
 
@@ -89,8 +83,6 @@ class Player(pygame.sprite.Sprite):
                         5,
                         self.rect.center,
                         pygame.math.Vector2(direction),
-                        (self.collidables, self.walls),
-                        self.enemies,
                         (self.all_sprites, self.projectiles)
                         )
 

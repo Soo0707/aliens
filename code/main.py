@@ -1,3 +1,4 @@
+import multiprocessing
 import pygame
 from pytmx.util_pygame import load_pygame
 
@@ -16,7 +17,7 @@ class game():
         self.running = True
 
         self.powerup_list = ["greenbull", "aussie"] # all possible powerup keys here
-        self.powerups = {} # key would be powerup name, value can be whatever you deem necessary to make it work, we'd add powerups to this dict using a ui
+        self.powerups = {} # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
@@ -36,7 +37,7 @@ class game():
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
 
-        self.player = Player((400, 300), self.walls, self.collidables, self.enemies, self.all_sprites, self.powerups, self.projectiles, (self.all_sprites, self.player_group))
+        self.player = Player((400, 300), self.collidables, self.all_sprites, self.powerups, self.projectiles, (self.all_sprites, self.player_group))
 
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -55,10 +56,8 @@ class game():
                 groups=(self.all_sprites, self.collidables),
                 player=self.player,
                 all_sprites=self.all_sprites,
-                enemies=self.enemies,
-                walls=self.walls,
-                collidables=self.collidables,
-                xp=self.xp
+                xp=self.xp,
+                enemies = self.enemies
             )
         
     def check_timers(self):
@@ -80,7 +79,6 @@ class game():
             for orb in self.xp:
                 if self.player.rect.colliderect(orb.rect):
                     self.num_xp = self.num_xp + 1
-                    print(self.num_xp)
                     orb.kill()
 
             
@@ -95,28 +93,24 @@ class game():
 
             self.player.move_x(dt)
             
-            collision_x_nonmoving(self.player_group, self.collidables)
-            collision_x_nonmoving(self.player_group, self.walls)
-            collision_x(self.player_group, self.enemies)
+            collision_x(self.player_group, self.collidables)
+            collision_x(self.player_group, self.walls)
             
             for enemy in self.enemies:
                 enemy.move_x(dt)
 
-            collision_x_nonmoving(self.enemies, self.collidables)
-            collision_x_nonmoving(self.enemies, self.walls)
-            collision_x(self.enemies, self.enemies)
+            collision_x(self.enemies, self.collidables)
+            collision_x(self.enemies, self.walls)
             
             self.player.move_y(dt)
-            collision_y_nonmoving(self.player_group, self.collidables)
-            collision_y_nonmoving(self.player_group, self.walls)
-            collision_y(self.player_group, self.enemies)
+            collision_y(self.player_group, self.collidables)
+            collision_y(self.player_group, self.walls)
             
             for enemy in self.enemies:
                 enemy.move_y(dt)
 
-            collision_y_nonmoving(self.enemies, self.collidables)
-            collision_y_nonmoving(self.enemies, self.walls)
-            collision_y(self.enemies, self.enemies)
+            collision_y(self.enemies, self.collidables)
+            collision_y(self.enemies, self.walls)
             
             
             
