@@ -14,6 +14,8 @@ from trapper import *
 from ui import *
 from menu import *
 
+from time import sleep
+
 class game():
     def __init__(self):
         self.screen = pygame.display.set_mode((1280, 720))
@@ -94,13 +96,22 @@ class game():
             attack = 10 
         )
         
-
+    def pause(self):
+        while True:
+            keys = pygame.key.get_just_pressed()
+            if keys[pygame.K_ESCAPE] == True:
+                self.menu.draw()
+                sleep(0.5)
+                break
+    
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                    
+            
 
             self.screen.fill("black")
 
@@ -115,7 +126,6 @@ class game():
             
             self.ui.draw()
             self.menu.draw()
-            
                     
                 
             pygame.display.flip() # updates screen
