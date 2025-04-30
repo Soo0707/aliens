@@ -11,7 +11,7 @@ from hooker import *
 from poison import *
 from trapper import *
 
-#from ui import *
+from ui import *
 from menu import *
 
 class game():
@@ -27,7 +27,9 @@ class game():
         self.enemies = pygame.sprite.Group()
         
         #ui 
-        #self.ui = UI()
+        self.ui = UI()
+        
+        #pause
         self.menu = MENU()
        
 
@@ -106,12 +108,12 @@ class game():
 
             #update
             self.all_sprites.update(dt)
-            #self.ui.update()
+            self.ui.update()
             self.menu.update()
 
             self.all_sprites.draw(self.screen, self.player.rect)
             
-            #self.ui.draw()
+            self.ui.draw()
             self.menu.draw()
             
                     

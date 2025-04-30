@@ -10,16 +10,16 @@ class MENU:
         self.top = 310
         #self.powerup = powerup
         
+        #control
+        self.state = 'resume'
         
     def input(self):
         #The codes below are for knowing which "button" we are on
         keys = pygame.key.get_just_pressed()
-        self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
-        self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
         if keys[pygame.K_ESCAPE]:
-            self.state = "pause"
+            self.state = 'pause'
         elif keys[pygame.K_SPACE]:
-            self.state = "resume"
+            self.state = 'resume'
         
     def general(self):
         left_rect = pygame.FRect((self.left - 25), self.top, 35, 100)
