@@ -6,44 +6,35 @@ class MENU:
     def __init__(self): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
-        self.left = 400
-        self.top = 110
+        self.left = 640
+        self.top = 310
         #self.powerup = powerup
         
-        #control
-        self.general_options = ['option 1', 'option 2', 'option 3']
-        self.general_index = {'col': 0, 'row': 0}
-        self.state = 'general'
         
     def input(self):
         #The codes below are for knowing which "button" we are on
         keys = pygame.key.get_just_pressed()
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
-        if keys[pygame.K_SPACE]:
-            self.state = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+        if keys[pygame.K_ESCAPE]:
+            self.state = "pause"
+        elif keys[pygame.K_SPACE]:
+            self.state = "resume"
         
     def general(self):
-        #background
-        rect = pygame.FRect(self.left, self.top, 480, 500)
-        pygame.draw.rect(self.display_surface, 'light gray', rect, 0, 4)
-        pygame.draw.rect(self.display_surface, 'gray', rect, 4, 4)
+        left_rect = pygame.FRect((self.left - 25), self.top, 35, 100)
+        pygame.draw.rect(self.display_surface, 'light gray', left_rect, 0, 4)
+        pygame.draw.rect(self.display_surface, 'gray', left_rect, 4, 4)
         
-        #menu
-        cols, rows = 1, 3
-        for col in range(cols):
-            for row in range(rows):
-                x = rect.left + rect.width / 2
-                y = rect.top + (rect.height / 4) + (rect.height / 4) * row
-                i = row     #the equation for i/index will change depending on the amount of rows and columns
-                if col == self.general_index['col'] and row == self.general_index['row']: 
-                    color = pygame.Color(190, 190, 190, 255)
-                else: 
-                    color = pygame.Color(0, 0, 0, 255),
-                
-                text_surf = self.font.render(self.general_options[i], True, color)
-                text_rect = text_surf.get_frect(center = (x,y))
-                self.display_surface.blit(text_surf, text_rect)
+        right_rect = pygame.FRect((self.left + 25), self.top, 35, 100)
+        pygame.draw.rect(self.display_surface, 'light gray', right_rect, 0, 4)
+        pygame.draw.rect(self.display_surface, 'gray', right_rect, 4, 4)
+        
+        pause_text_surf = self.font.render('PAUSE', True, 'light gray')
+        pause_text_rect = pause_text_surf.get_frect(center = (640 + 20, 360 + 70))
+        self.display_surface.blit(pause_text_surf, pause_text_rect)
+        
+
                 
     def update(self):
         self.input()            
@@ -51,4 +42,4 @@ class MENU:
         
     def draw(self):
         match self.state:
-            case 'general': self.general()
+            case 'pause': self.general()
