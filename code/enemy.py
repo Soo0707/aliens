@@ -20,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         self.location = location
         self.health = 100
 
-        self.speed = 150 # Enemy
+        self.speed = 300 # Enemy
         self.attack = 10 #Enemy attack 
         self.attack_cooldown = 5000 #attack cooldown
         

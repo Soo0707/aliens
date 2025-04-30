@@ -20,7 +20,8 @@ class game():
 
         self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width"] # all possible powerup keys here
         self.powerups = {
-                "lazer_width" : 1
+                "lazer_width" : 5,
+                "greenbull": 0
                 } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
@@ -42,6 +43,8 @@ class game():
                 "trapper": [],
                 "xp": []
                 }
+        
+        self.turn = 1
 
         self.setup()
 
@@ -95,11 +98,6 @@ class game():
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            for orb in self.xp:
-                if self.player.rect.colliderect(orb.rect):
-                    self.num_xp = self.num_xp + 1
-                    orb.kill()
-
             
             self.check_timers()
 
@@ -107,9 +105,8 @@ class game():
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
             
-            collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
-            
             self.player.move_x(dt)
+            
             if "greenbull" not in self.powerups:
                 collision_x(self.player, self.collidables, False)
             collision_x(self.player, self.walls, False)
@@ -119,17 +116,27 @@ class game():
                 collision_y(self.player, self.collidables, False)
             collision_y(self.player, self.walls, False)
 
-            for enemy in self.enemies:
-                enemy.move_x(dt)
-
-            collision_x(self.enemies, self.collidables, True) 
-            collision_x(self.enemies, self.walls, True) 
+            if self.turn == 1:               
+                for orb in self.xp:
+                    if self.player.rect.colliderect(orb.rect):
+                        self.num_xp = self.num_xp + 1
+                        orb.kill()
             
-            for enemy in self.enemies:
-                enemy.move_y(dt)
+                collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
+                self.turn = 2
+            elif self.turn == 2:
+                for enemy in self.enemies:
+                    enemy.move_x(dt)
 
-            collision_y(self.enemies, self.collidables, True)
-            collision_y(self.enemies, self.walls, True)
+                collision_x(self.enemies, self.collidables, True) 
+                collision_x(self.enemies, self.walls, True) 
+                
+                for enemy in self.enemies:
+                    enemy.move_y(dt)
+
+                collision_y(self.enemies, self.collidables, True)
+                collision_y(self.enemies, self.walls, True)
+                self.turn = 1
 
             self.all_sprites.update(dt)
 
