@@ -16,8 +16,8 @@ class game():
 
         self.running = True
 
-        self.powerup_list = ["greenbull", "aussie"] # all possible powerup keys here
-        self.powerups = {} # key = powerup name, value = any stuff you need to make it work
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk"] # all possible powerup keys here
+        self.powerups = {"drunk"} # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on

@@ -1,5 +1,5 @@
 import pygame
-from os.path import *
+from os import join
 
 class Orb(pygame.sprite.Sprite):
     def __init__(self, location, groups):
