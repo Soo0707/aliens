@@ -1,12 +1,12 @@
 import pygame
 pygame.font.init()
-from ui import *
+from main import *
 
-class MENU(UI):
+class MENU:
     def __init__(self): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
-        self.left = 215
+        self.left = 400
         self.top = 110
         #self.powerup = powerup
         
@@ -25,7 +25,7 @@ class MENU(UI):
         
     def general(self):
         #background
-        rect = pygame.FRect(self.left, self.top, 850, 500)
+        rect = pygame.FRect(self.left, self.top, 480, 500)
         pygame.draw.rect(self.display_surface, 'light gray', rect, 0, 4)
         pygame.draw.rect(self.display_surface, 'gray', rect, 4, 4)
         
