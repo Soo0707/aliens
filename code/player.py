@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, location, collidables, all_sprites, powerups, projectiles, groups):
         super().__init__(groups)
         
-        all_sprites.change_layer(self, 1)
+        all_sprites.change_layer(self, 2)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
@@ -79,7 +79,7 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            5,
+                            self.powerups["lazer_width"],
                             self.rect.center,
                             pygame.math.Vector2(direction),
                             (self.all_sprites, self.projectiles)
@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            5,
+                            self.powerups["lazer_width"],
                             self.rect.center,
                             pygame.math.Vector2(direction),
                             (self.all_sprites, self.projectiles)

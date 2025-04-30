@@ -1,6 +1,5 @@
 import pygame
 from os.path import join
-
 from enemy import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
@@ -41,7 +40,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemies, all_sprites, xp, groups):
+    def __init__(self, location, texture, player, enemies, all_sprites, xp, enemy_textures, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -53,6 +52,8 @@ class Spawner(Collidable):
         self.enemies = enemies
         self.all_sprites = all_sprites
         self.xp = xp
+        
+        self.enemy_textures = enemy_textures
 
     def update(self, dt):
         if self.can_spawn:
@@ -61,7 +62,9 @@ class Spawner(Collidable):
                 groups=(self.all_sprites, self.enemies),
                 location=self.rect.center,
                 xp=self.xp,
-                all_sprites=self.all_sprites
+                all_sprites=self.all_sprites,
+                xp_texture = self.enemy_textures["xp"][0],
+                textures = None
             )
 
             self.last_spawn = pygame.time.get_ticks()

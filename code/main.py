@@ -5,8 +5,10 @@ from projectiles import *
 from player import *
 from xp import *
 from allsprites import *
-
 from collisions import *
+
+from os.path import join
+from os import listdir
 
 class game():
     def __init__(self):
@@ -16,8 +18,10 @@ class game():
 
         self.running = True
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk"] # all possible powerup keys here
-        self.powerups = {"drunk"} # key = powerup name, value = any stuff you need to make it work
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width"] # all possible powerup keys here
+        self.powerups = {
+                "lazer_width" : 1
+                } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
@@ -26,10 +30,18 @@ class game():
         self.xp = pygame.sprite.LayeredUpdates()
         self.collidables = pygame.sprite.LayeredUpdates()
         self.walls = pygame.sprite.LayeredUpdates()
-        self.player_group = pygame.sprite.LayeredUpdates()
         self.projectiles = pygame.sprite.LayeredUpdates()
-
+        
         self.num_xp = 0
+
+        self.textures = {
+                "bomber": [],
+                "drunkard": [],
+                "hooker": [],
+                "poison": [],
+                "trapper": [],
+                "xp": []
+                }
 
         self.setup()
 
@@ -37,7 +49,7 @@ class game():
     def setup(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
 
-        self.player = Player((400, 300), self.collidables, self.all_sprites, self.powerups, self.projectiles, (self.all_sprites, self.player_group))
+        self.player = Player((400, 300), self.collidables, self.all_sprites, self.powerups, self.projectiles, self.all_sprites)
 
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -57,8 +69,14 @@ class game():
                 player=self.player,
                 all_sprites=self.all_sprites,
                 xp=self.xp,
-                enemies = self.enemies
+                enemies = self.enemies,
+                enemy_textures = self.textures
             )
+        
+        for key in self.textures:
+            for item in sorted(listdir(join("..", "assets", "enemy", key))):
+                self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
+           
 
 
     def check_timers(self):
@@ -114,8 +132,8 @@ class game():
             collision_y(self.enemies, self.walls, True)
 
             self.all_sprites.update(dt)
-            self.all_sprites.draw(self.screen, self.player.rect)
 
+            self.all_sprites.draw(self.screen, self.player.rect)
             pygame.display.flip() # updates screen
 
 
