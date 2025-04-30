@@ -5,14 +5,14 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, walls, collidables, enemies, all_sprites, powerups, groups):
+    def __init__(self, location, collidables, all_sprites, powerups, projectiles, groups):
         super().__init__(groups)
         
-        all_sprites.change_layer(self, 1)
+        all_sprites.change_layer(self, 2)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
-        self.rect = self.image.get_frect(center = location)
-        self.old_rect = self.rect.copy()
+
+        self.rect = self.image.get_rect(center = location)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -32,10 +32,9 @@ class Player(pygame.sprite.Sprite):
 
         self.import_images()
 
-        self.collidables = collidables
-        self.walls = walls
-        self.enemies = enemies
         self.all_sprites = all_sprites
+        self.collidables = collidables
+        self.projectiles = projectiles
 
         self.lmb_cooldown = 100
         self.can_lmb = True
@@ -55,6 +54,10 @@ class Player(pygame.sprite.Sprite):
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+        
+        if "drunk" in self.powerups:
+            self.direction.x = -self.direction.x
+            self.direction.y = -self.direction.y
 
         if self.direction:
             self.direction = self.direction.normalize()
@@ -63,31 +66,47 @@ class Player(pygame.sprite.Sprite):
 
         if mouse[0] and self.can_lmb:
             mouse_pos = pygame.mouse.get_pos()
-            
-            Projectile(
-                    self.projectile_texture,
-                    self.rect.center,
-                    pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                    (self.collidables, self.walls),
-                    self.enemies,
-                    self.all_sprites
-                    )
+            directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
+            if "drunk" not in self.powerups:
+                Projectile(
+                        self.projectile_texture,
+                        self.rect.center,
+                        pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+                        (self.all_sprites, self.projectiles)
+                        )
+            else:
+                for direction in directions:
+                    Lazers(
+                            self.lazer_texture_horizontal,
+                            self.powerups["lazer_width"],
+                            self.rect.center,
+                            pygame.math.Vector2(direction),
+                            (self.all_sprites, self.projectiles)
+                            )
+            
             self.can_lmb = False
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
+            mouse_pos = pygame.mouse.get_pos()
             directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
-            
-            for direction in directions:
-                Lazers(
-                        self.lazer_texture_horizontal,
-                        5,
+
+            if "drunk" not in self.powerups:
+                for direction in directions:
+                    Lazers(
+                            self.lazer_texture_horizontal,
+                            self.powerups["lazer_width"],
+                            self.rect.center,
+                            pygame.math.Vector2(direction),
+                            (self.all_sprites, self.projectiles)
+                            )
+            else:
+                Projectile(
+                        self.projectile_texture,
                         self.rect.center,
-                        pygame.math.Vector2(direction),
-                        (self.collidables, self.walls),
-                        self.enemies,
-                        self.all_sprites
+                        pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+                        (self.all_sprites, self.projectiles)
                         )
 
             self.can_rmb = False
@@ -103,70 +122,14 @@ class Player(pygame.sprite.Sprite):
         elif self.direction.y < 0:
             self.bearing = "N"
 
-    def collision_x_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable):
-                if self.direction.x > 0:
-                    self.rect.right = collidable.rect.left
-                elif self.direction.x < 0:
-                    self.rect.left = collidable.rect.right
-
-    def collision_y_nonmoving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable):
-                if self.direction.y > 0:
-                    self.rect.bottom = collidable.rect.top
-                elif self.direction.y < 0:
-                    self.rect.top = collidable.rect.bottom
-
-    def collision_x_moving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable.rect):
-                if self.old_rect.x <= collidable.old_rect.x and self.rect.x >= collidable.rect.x:
-                    if self.direction.x > 0:
-                        self.direction.x = 0
-                    self.rect.right = self.old_rect.right
-                elif self.old_rect.x >= collidable.old_rect.x and self.rect.x <= collidable.rect.x:
-                    if self.direction.x < 0:
-                        self.direction.x = 0
-                    self.rect.left = self.old_rect.left
-
-    def collision_y_moving(self, target):
-        for collidable in target:
-            if self.rect.colliderect(collidable.rect):
-                if self.old_rect.y <= collidable.old_rect.y and self.rect.y >= collidable.rect.y:
-                    if self.direction.y > 0:
-                        self.direction.y = 0
-                    self.rect.bottom = self.old_rect.bottom
-                elif self.old_rect.y >= collidable.old_rect.y and self.rect.y <= collidable.rect.y:
-                    if self.direction.y < 0:
-                        self.direction.y = 0
-                    self.rect.top = self.old_rect.top
         
-    def move(self, dt):
+    def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-
-        if "greenbull" not in self.powerups:
-            self.collision_x_nonmoving(self.collidables)
-        
-        self.collision_x_moving(self.enemies)
-        self.collision_x_nonmoving(self.walls)
-        
-        
+        #self.aoe.x += self.direction.x * self.speed * dt
+    def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
+        #self.aoe.y += self.direction.y * self.speed * dt
         
-        if "greenbull" not in self.powerups:
-            self.collision_y_nonmoving(self.collidables)
-
-        self.collision_y_moving(self.enemies)
-        self.collision_y_nonmoving(self.walls)
-
-
-
-        '''    
-        self.aoe.x += self.direction.x * self.speed * dt
-        self.aoe.y += self.direction.y * self.speed * dt
-        '''
     
     def animate(self, dt):
         if self.direction and "greenbull" not in self.powerups:
@@ -188,10 +151,7 @@ class Player(pygame.sprite.Sprite):
 
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
-        
-        self.old_rect = self.rect.copy()
 
         self.input()
         self.update_bearing()
         self.animate(dt)
-        self.move(dt)
