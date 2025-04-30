@@ -12,9 +12,10 @@ from poison import *
 from trapper import *
 
 from ui import *
-from menu import *
+from pause import *
 
-from time import sleep
+import time
+import os
 
 class game():
     def __init__(self):
@@ -32,7 +33,7 @@ class game():
         self.ui = UI()
         
         #pause
-        self.menu = MENU()
+        self.pause = Pause()
        
 
         self.setup()
@@ -96,13 +97,20 @@ class game():
             attack = 10 
         )
         
-    def pause(self):
-        while True:
-            keys = pygame.key.get_just_pressed()
-            if keys[pygame.K_ESCAPE] == True:
-                self.menu.draw()
-                sleep(0.5)
-                break
+    '''def pause_menu(self):
+        self.pause.draw()
+        is_paused = True
+
+        while is_paused:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        is_paused = False
+                        
+                if event.type == pygame.QUIT:
+                    is_paused = False
+                    self.running = False'''
+
     
     def run(self):
         while self.running:
@@ -118,14 +126,19 @@ class game():
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
             #update
+            self.state = 'resume'
             self.all_sprites.update(dt)
             self.ui.update()
-            self.menu.update()
+            self.pause.update()
 
             self.all_sprites.draw(self.screen, self.player.rect)
             
             self.ui.draw()
-            self.menu.draw()
+            self.pause.draw()
+            
+            '''keys = pygame.key.get_just_pressed()
+            if keys[pygame.K_ESCAPE]:
+                self.pause_menu()'''
                     
                 
             pygame.display.flip() # updates screen
