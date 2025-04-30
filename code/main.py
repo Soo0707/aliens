@@ -12,6 +12,7 @@ from poison import *
 from trapper import *
 
 from ui import *
+from esc import *
 
 class game():
     def __init__(self):
