@@ -25,6 +25,10 @@ class UI:
         
     def general(self):
         #background
+        bg = pygame.Surface((1280,720))
+        bg.set_alpha(128)
+        bg.fill((0, 0, 0))
+        self.display_surface.blit(bg, (0,0))
         rect = pygame.FRect(self.left, self.top, 850, 550)
         pygame.draw.rect(self.display_surface, 'light gray', rect, 0, 4)
         pygame.draw.rect(self.display_surface, 'gray', rect, 4, 4)

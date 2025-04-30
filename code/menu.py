@@ -22,6 +22,12 @@ class MENU:
             self.state = 'resume'
         
     def general(self):
+        bg = pygame.Surface((1280,720))
+        bg.set_alpha(128)
+        bg.fill((0, 0, 0))
+        self.display_surface.blit(bg, (0,0))
+        
+        
         left_rect = pygame.FRect((self.left - 25), self.top, 35, 100)
         pygame.draw.rect(self.display_surface, 'light gray', left_rect, 0, 4)
         pygame.draw.rect(self.display_surface, 'gray', left_rect, 4, 4)
