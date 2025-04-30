@@ -1,4 +1,3 @@
-import multiprocessing
 import pygame
 from pytmx.util_pygame import load_pygame
 
@@ -13,6 +12,7 @@ class game():
     def __init__(self):
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
+        self.dt = 0
 
         self.running = True
 
@@ -59,7 +59,8 @@ class game():
                 xp=self.xp,
                 enemies = self.enemies
             )
-        
+
+
     def check_timers(self):
         now = pygame.time.get_ticks()
 
@@ -88,32 +89,30 @@ class game():
 
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
             
-            
             collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
-
+            
             self.player.move_x(dt)
-            
-            collision_x(self.player_group, self.collidables)
-            collision_x(self.player_group, self.walls)
-            
+            if "greenbull" not in self.powerups:
+                collision_x(self.player, self.collidables, False)
+            collision_x(self.player, self.walls, False)
+
+            self.player.move_y(dt)
+            if "greenbull" not in self.powerups:
+                collision_y(self.player, self.collidables, False)
+            collision_y(self.player, self.walls, False)
+
             for enemy in self.enemies:
                 enemy.move_x(dt)
 
-            collision_x(self.enemies, self.collidables)
-            collision_x(self.enemies, self.walls)
-            
-            self.player.move_y(dt)
-            collision_y(self.player_group, self.collidables)
-            collision_y(self.player_group, self.walls)
+            collision_x(self.enemies, self.collidables, True) 
+            collision_x(self.enemies, self.walls, True) 
             
             for enemy in self.enemies:
                 enemy.move_y(dt)
 
-            collision_y(self.enemies, self.collidables)
-            collision_y(self.enemies, self.walls)
-            
-            
-            
+            collision_y(self.enemies, self.collidables, True)
+            collision_y(self.enemies, self.walls, True)
+
             self.all_sprites.update(dt)
             self.all_sprites.draw(self.screen, self.player.rect)
 

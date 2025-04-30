@@ -46,6 +46,7 @@ class Spawner(Collidable):
         
         self.last_spawn = 0
         self.can_spawn = True
+        self.fps_limited = False
         self.timeout_ticks = 2000
 
         self.player = player
@@ -66,5 +67,10 @@ class Spawner(Collidable):
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 
-        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks:
+        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and not self.fps_limited:
            self.can_spawn = True
+        
+        if dt > 0.02: # ~ 45 fps
+            self.fps_limited = True
+        else:
+            self.fps_limited = False

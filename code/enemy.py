@@ -12,7 +12,6 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
 
         self.rect = self.image.get_frect(center = location)
-        self.old_rect = self.rect.copy()
 
         self.direction = pygame.math.Vector2()
         self.location = location
@@ -54,11 +53,8 @@ class Enemy(pygame.sprite.Sprite):
             self.can_attack = False
             self.last_attack = now
 
-
-
     def update(self, dt):
         now = pygame.time.get_ticks()
-        self.old_rect = self.rect.copy()
         
         if self.health <= 0:
             Orb(self.rect.center, (self.all_sprites, self.xp))

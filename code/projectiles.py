@@ -16,8 +16,7 @@ class Projectile(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        self.rect.y += self.direction.y * self.speed * dt
-        
+        self.rect.y += self.direction.y * self.speed * dt       
 
 
 class Lazers(pygame.sprite.Sprite):

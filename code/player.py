@@ -13,7 +13,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
         self.rect = self.image.get_rect(center = location)
-        self.old_rect = self.rect.copy()
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -35,6 +34,7 @@ class Player(pygame.sprite.Sprite):
 
         self.all_sprites = all_sprites
         self.collidables = collidables
+        self.projectiles = projectiles
 
         self.lmb_cooldown = 100
         self.can_lmb = True
@@ -48,7 +48,6 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
         self.powerups = powerups
-        self.projectiles = projectiles
     
     def input(self):
         keys = pygame.key.get_pressed()
@@ -128,8 +127,6 @@ class Player(pygame.sprite.Sprite):
 
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
-        
-        self.old_rect = self.rect.copy()
 
         self.input()
         self.update_bearing()
