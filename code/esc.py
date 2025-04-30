@@ -1,7 +1,7 @@
 import pygame
 pygame.font.init()
 from main import *
-from ui import *
+from ui.py import *
 
 class ESC(UI):
     def __init__(self): #add powerup as attribute when done

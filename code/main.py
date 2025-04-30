@@ -28,6 +28,9 @@ class game():
         
         #ui 
         self.ui = UI()
+        
+        #esc
+       
 
         self.setup()
     
