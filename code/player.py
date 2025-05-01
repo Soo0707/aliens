@@ -44,7 +44,11 @@ class Player(pygame.sprite.Sprite):
         self.last_rmb = 0
         self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
-        
+
+        self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
+        self.orb = 0
+        self.orb_spawn = True
+
         self.powerups = powerups
     
     def input(self):
@@ -55,6 +59,8 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
+
+
 
         mouse = pygame.mouse.get_pressed()
 
@@ -89,6 +95,20 @@ class Player(pygame.sprite.Sprite):
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
+
+
+
+        if self.orb == 0 and mouse[1]:
+            self.orb += 1
+            Circle(
+                self.circle_texture,
+                5.0, #size multiplier
+                self, #Player Instance, for player         
+                (self.collidables, self.all_sprites),
+                self.enemies,
+                self.all_sprites,
+            )
+
 
     def update_bearing(self):
         if self.direction.x > 0:

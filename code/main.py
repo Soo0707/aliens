@@ -65,7 +65,7 @@ class game():
 
     
         enemy = Enemy(
-            location = (500,500),
+            location = (x * 32, y * 32),
             walls = self.walls,
             player = self.player,
             enemies = self.enemies,

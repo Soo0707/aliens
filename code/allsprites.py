@@ -59,20 +59,22 @@ class Spawner(Collidable):
             from enemy import Enemy
 
             Enemy(
+                
                 player=self.player,
+                enemies=self.enemies,
                 groups=(self.all_sprites, self.enemies),
                 collidables=self.collidables,
                 location=self.rect.center,
-                enemies=self.enemies,
                 attack=10,
                 xp=self.xp,
                 health=100,
                 walls=self.walls,
-                all_sprites=self.all_sprites
-            )
+                all_sprites=self.all_sprites,
+
+                )
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 
         elif not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks:
-            self.can_spawn = True
+            self.can_spawn = True #sigma
