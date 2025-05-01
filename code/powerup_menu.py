@@ -2,7 +2,7 @@ import pygame
 pygame.font.init()
 from main import *
 
-class UI:
+class Powerup_Menu:
     def __init__(self): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
