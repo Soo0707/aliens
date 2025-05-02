@@ -58,9 +58,12 @@ class Spawner(Collidable):
     def update(self, dt):
         if self.can_spawn:
             Enemy(
+                
                 player=self.player,
+                enemies=self.enemies,
                 groups=(self.all_sprites, self.enemies),
                 location=self.rect.center,
+              
                 xp=self.xp,
                 all_sprites=self.all_sprites,
                 xp_texture = self.enemy_textures["xp"][0],
@@ -69,6 +72,7 @@ class Spawner(Collidable):
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
+
 
         if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and not self.fps_limited:
            self.can_spawn = True

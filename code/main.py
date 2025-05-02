@@ -87,7 +87,6 @@ class game():
                 self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
            
 
-
     def check_timers(self):
         now = pygame.time.get_ticks()
 
