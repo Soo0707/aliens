@@ -6,6 +6,8 @@ from player import *
 from xp import *
 from allsprites import *
 from collisions import *
+from powerup_menu import *
+from pause import *
 
 from os.path import join
 from os import listdir
@@ -45,6 +47,10 @@ class game():
                 }
         
         self.turn = 1
+        
+        self.powerup_menu = Powerup_Menu()
+        self.pause = Pause()
+        
 
         self.setup()
 
@@ -97,7 +103,6 @@ class game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
             
             self.check_timers()
 
@@ -139,8 +144,13 @@ class game():
                 self.turn = 1
 
             self.all_sprites.update(dt)
+            self.powerup_menu.update()
+            self.pause.update()
+
 
             self.all_sprites.draw(self.screen, self.player.rect)
+            self.powerup_menu.draw()
+            self.pause.draw()
             pygame.display.flip() # updates screen
 
 
