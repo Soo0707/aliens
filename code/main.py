@@ -109,7 +109,7 @@ class game():
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.is_paused = False
                     
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: #<--- needs an event where it will activate self.menu_paused
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: #<--- needs an event where it will activate self.menu_pausedsda
                     self.menu_paused = False
             
             if self.is_paused:
