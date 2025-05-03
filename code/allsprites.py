@@ -40,7 +40,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemies, all_sprites, xp, enemy_textures, groups):
+    def __init__(self, location, texture, player, enemy_textures, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -49,9 +49,9 @@ class Spawner(Collidable):
         self.timeout_ticks = 2000
 
         self.player = player
-        self.enemies = enemies
-        self.all_sprites = all_sprites
-        self.xp = xp
+        self.all_sprites_group = all_sprites_group
+        self.enemy_group = enemy_group
+        self.xp_group = xp_group
         
         self.enemy_textures = enemy_textures
 
@@ -60,14 +60,13 @@ class Spawner(Collidable):
             Enemy(
                 
                 player=self.player,
-                enemies=self.enemies,
-                groups=(self.all_sprites, self.enemies),
+                groups=(self.all_sprites_group, self.enemy_group),
                 location=self.rect.center,
               
-                xp=self.xp,
-                all_sprites=self.all_sprites,
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
-                textures = None
+                textures = self.enemy_textures["trapper"]
             )
 
             self.last_spawn = pygame.time.get_ticks()
