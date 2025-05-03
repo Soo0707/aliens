@@ -50,7 +50,8 @@ class game():
         
         self.powerup_menu = Powerup_Menu()
         self.pause = Pause()
-        
+        self.is_paused = False #<--- condition for pausing
+        self.menu_paused = False #<--- condition for pausing
 
         self.setup()
 
@@ -103,54 +104,66 @@ class game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.is_paused = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.is_paused = False
+                    
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: #<--- needs an event where it will activate self.menu_paused
+                    self.menu_paused = False
             
-            self.check_timers()
-
-            self.screen.fill("black")
-
-            dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
-            
-            self.player.move_x(dt)
-            
-            if "greenbull" not in self.powerups:
-                collision_x(self.player, self.collidables, False)
-            collision_x(self.player, self.walls, False)
-
-            self.player.move_y(dt)
-            if "greenbull" not in self.powerups:
-                collision_y(self.player, self.collidables, False)
-            collision_y(self.player, self.walls, False)
-
-            if self.turn == 1:               
-                for orb in self.xp:
-                    if self.player.rect.colliderect(orb.rect):
-                        self.num_xp = self.num_xp + 1
-                        orb.kill()
-            
-                collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
-                self.turn = 2
-            elif self.turn == 2:
-                for enemy in self.enemies:
-                    enemy.move_x(dt)
-
-                collision_x(self.enemies, self.collidables, True) 
-                collision_x(self.enemies, self.walls, True) 
+            if self.is_paused:
+                self.pause.do_pause()
                 
-                for enemy in self.enemies:
-                    enemy.move_y(dt)
+            elif self.menu_paused:
+                self.powerup_menu.update()  
+                self.powerup_menu.draw()              
+                
+            else:
+                self.check_timers
+                self.screen.fill("black")                    
+            
 
-                collision_y(self.enemies, self.collidables, True)
-                collision_y(self.enemies, self.walls, True)
-                self.turn = 1
+                dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+            
+                self.player.move_x(dt)
+            
+                if "greenbull" not in self.powerups:
+                    collision_x(self.player, self.collidables, False)
+                collision_x(self.player, self.walls, False)
 
-            self.all_sprites.update(dt)
-            self.powerup_menu.update()
-            self.pause.update()
+                self.player.move_y(dt)
+                if "greenbull" not in self.powerups:
+                    collision_y(self.player, self.collidables, False)
+                collision_y(self.player, self.walls, False)
+
+                if self.turn == 1:               
+                    for orb in self.xp:
+                        if self.player.rect.colliderect(orb.rect):
+                            self.num_xp = self.num_xp + 1
+                            orb.kill()
+            
+                    collision_projectile(self.projectiles, self.enemies, (self.collidables, self.walls))
+                    self.turn = 2
+                elif self.turn == 2:
+                    for enemy in self.enemies:
+                        enemy.move_x(dt)
+
+                    collision_x(self.enemies, self.collidables, True) 
+                    collision_x(self.enemies, self.walls, True) 
+                
+                    for enemy in self.enemies:
+                        enemy.move_y(dt)
+
+                    collision_y(self.enemies, self.collidables, True)
+                    collision_y(self.enemies, self.walls, True)
+                    self.turn = 1
+
+                self.all_sprites.update(dt)
 
 
-            self.all_sprites.draw(self.screen, self.player.rect)
-            self.powerup_menu.draw()
-            self.pause.draw()
+                self.all_sprites.draw(self.screen, self.player.rect)
+
             pygame.display.flip() # updates screen
 
 

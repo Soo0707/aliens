@@ -8,6 +8,21 @@ class Pause:
         self.font = pygame.font.Font(None, 40)
         self.left = 640
         self.top = 310
+        
+        self.temp_surface = pygame.Surface((1280,720))
+        self.temp_surface.fill((0, 0, 0))
+        
+        left_rect = pygame.FRect((self.left - 25), self.top, 35, 100)
+        pygame.draw.rect(self.temp_surface, 'light gray', left_rect, 0, 4)
+        pygame.draw.rect(self.temp_surface, 'gray', left_rect, 4, 4)
+        
+        right_rect = pygame.FRect((self.left + 25), self.top, 35, 100)
+        pygame.draw.rect(self.temp_surface, 'light gray', right_rect, 0, 4)
+        pygame.draw.rect(self.temp_surface, 'gray', right_rect, 4, 4)
+        
+        pause_text_surf = self.font.render('PAUSE', True, 'light gray')
+        pause_text_rect = pause_text_surf.get_frect(center = (640 + 20, 360 + 70))
+        self.temp_surface.blit(pause_text_surf, pause_text_rect)
         #self.powerup = powerup
         
         #control
@@ -21,26 +36,9 @@ class Pause:
         elif keys[pygame.K_SPACE]:
             self.state = 'resume'
         
-    def general(self):
-        bg = pygame.Surface((1280,720))
-        bg.set_alpha(128)
-        bg.fill((0, 0, 0))
-        self.display_surface.blit(bg, (0,0))
+    def do_pause(self):
+        self.display_surface.blit(self.temp_surface, (0,0))
         
-        
-        left_rect = pygame.FRect((self.left - 25), self.top, 35, 100)
-        pygame.draw.rect(self.display_surface, 'light gray', left_rect, 0, 4)
-        pygame.draw.rect(self.display_surface, 'gray', left_rect, 4, 4)
-        
-        right_rect = pygame.FRect((self.left + 25), self.top, 35, 100)
-        pygame.draw.rect(self.display_surface, 'light gray', right_rect, 0, 4)
-        pygame.draw.rect(self.display_surface, 'gray', right_rect, 4, 4)
-        
-        pause_text_surf = self.font.render('PAUSE', True, 'light gray')
-        pause_text_rect = pause_text_surf.get_frect(center = (640 + 20, 360 + 70))
-        self.display_surface.blit(pause_text_surf, pause_text_rect)
-        
-
                 
     def update(self):
         self.input()            
@@ -48,4 +46,6 @@ class Pause:
         
     def draw(self):
         match self.state:
-            case 'pause': self.general()
+            case 'pause': 
+                self.do_pause()
+                print(self.state)
