@@ -5,10 +5,10 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, collidables, all_sprites, powerups, projectiles, groups):
+    def __init__(self, location, collidable_group, all_sprites_group, powerups, projectile_group, groups):
         super().__init__(groups)
         
-        all_sprites.change_layer(self, 2)
+        all_sprites_group.change_layer(self, 2)
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
@@ -32,9 +32,9 @@ class Player(pygame.sprite.Sprite):
 
         self.import_images()
 
-        self.all_sprites = all_sprites
-        self.collidables = collidables
-        self.projectiles = projectiles
+        self.all_sprites_group = all_sprites_group
+        self.collidable_group = collidable_group
+        self.projectile_group = projectile_group
 
         self.lmb_cooldown = 100
         self.can_lmb = True
@@ -66,8 +66,6 @@ class Player(pygame.sprite.Sprite):
         if self.direction:
             self.direction = self.direction.normalize()
 
-
-
         mouse = pygame.mouse.get_pressed()
 
         if mouse[0] and self.can_lmb:
@@ -79,7 +77,7 @@ class Player(pygame.sprite.Sprite):
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                        (self.all_sprites, self.projectiles)
+                        (self.all_sprites_group, self.projectile_group)
                         )
             else:
                 for direction in directions:
@@ -88,7 +86,7 @@ class Player(pygame.sprite.Sprite):
                             self.powerups["lazer_width"],
                             self.rect.center,
                             pygame.math.Vector2(direction),
-                            (self.all_sprites, self.projectiles)
+                            (self.all_sprites_group, self.projectile_group)
                             )
             
             self.can_lmb = False
@@ -105,14 +103,14 @@ class Player(pygame.sprite.Sprite):
                             self.powerups["lazer_width"],
                             self.rect.center,
                             pygame.math.Vector2(direction),
-                            (self.all_sprites, self.projectiles)
+                            (self.all_sprites_group, self.projectile_group)
                             )
             else:
                 Projectile(
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                        (self.all_sprites, self.projectiles)
+                        (self.all_sprites_group, self.projectile_group)
                         )
 
             self.can_rmb = False
@@ -124,11 +122,9 @@ class Player(pygame.sprite.Sprite):
             self.orb += 1
             Circle(
                 self.circle_texture,
-                5.0, #size multiplier
-                self, #Player Instance, for player         
-                (self.collidables, self.all_sprites),
-                self.enemies,
-                self.all_sprites,
+                1, #size multiplier
+                self,
+                (self.projectile_group, self.all_sprites_group),
             )
 
 
