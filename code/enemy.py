@@ -32,6 +32,7 @@ class Enemy(pygame.sprite.Sprite):
         self.collidables = collidables
         self.enemies = enemies
         self.all_sprites = all_sprites
+        self.fps_low = True
         self.xp = xp
 
 
@@ -121,14 +122,26 @@ class Enemy(pygame.sprite.Sprite):
             self.player.health = self.player.health - self.attack
             self.can_attack = False
             self.last_attack = now
+    
 
         if self.health <= 0:
-            Orb(self.rect.center, (self.all_sprites, self.xp))
             self.kill()
+            if not self.fps_low:
+                Orb(self.rect.center, (self.all_sprites, self.xp))
+            elif self.fps_low:
+                print("Fps too low to spawn orb")
+            
         
 
 
     def update(self, dt):
+
+        if dt > 0.02:
+            self.fps_low = True
+        else:
+            self.fps_low = False
+
+        print(dt)
 
         self.old_rect = self.rect.copy()
 
