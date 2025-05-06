@@ -46,3 +46,12 @@ def collision_projectile(projectiles, enemies, props):
             if projectile.rect.colliderect(enemy):
                 enemy.health -= 100
                 projectile.kill()
+
+
+def le_attack(player, enemy_group, powerups):
+    now = pygame.time.get_ticks()
+    for enemy in enemy_group:
+        if enemy.can_attack and enemy.rect.colliderect(player.rect):
+            player.health -= enemy.attack
+            enemy.can_attack = False
+            enemy.last_attack = now

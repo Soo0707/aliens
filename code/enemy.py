@@ -50,13 +50,6 @@ class Enemy(pygame.sprite.Sprite):
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
 
-    def le_attack(self):
-        now = pygame.time.get_ticks()
-
-        if self.can_attack and self.rect.colliderect(self.player.rect):
-            self.player.health = self.player.health - self.attack
-            self.can_attack = False
-            self.last_attack = now
 
     def update(self, dt):
         now = pygame.time.get_ticks()
