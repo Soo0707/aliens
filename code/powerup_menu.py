@@ -14,7 +14,7 @@ class Powerup_Menu:
         #control
         self.powerup_list = powerup_list
         self.powerups = powerups
-        self.general_options = random.choices(self.powerup_list, k = 3)
+        self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
         
@@ -24,7 +24,9 @@ class Powerup_Menu:
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
         if keys[pygame.K_SPACE]:
-            self.state = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+            powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+            self.apply_powerups(powerup=powerup)
+            self.state = 'done'
             
         
     def general(self):
@@ -60,8 +62,9 @@ class Powerup_Menu:
     def draw(self):
         match self.state:
             case 'general': self.general()
-        if self.state != 'general':
-            if self.state in self.powerups:
-                self.powerups[self.state] += 1
-            else:
-                self.powerups.update({self.state: 0})
+    
+    def apply_powerups(self, powerup):
+        if self.state in self.powerups:
+            self.powerups[powerup] += 1
+        else:
+            self.powerups.update({powerup: 0})

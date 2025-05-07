@@ -20,7 +20,7 @@ class game():
 
         self.running = True
 
-        self.powerup_list = [ "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
         self.powerups = {
                 "lazer_width" : 5,
                 "greenbull": 0,
@@ -55,7 +55,7 @@ class game():
                                          )
         self.pause = Pause()
         self.is_paused = False #<--- condition for pausing
-        self.menu_paused = False #<--- condition for pausing
+        self.powerup_menu_activation = True #<--- condition for pausing
 
         self.setup()
 
@@ -113,16 +113,10 @@ class game():
                     self.is_paused = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.is_paused = False
-                    
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: #<--- needs an event where it will activate self.menu_pausedsda
-                    self.menu_paused = False
+
             
             if self.is_paused:
-                self.pause.do_pause()
-                
-            elif self.menu_paused:
-                self.powerup_menu.update()  
-                self.powerup_menu.draw()              
+                self.pause.do_pause()            
                 
             else:
                 self.check_timers
@@ -168,8 +162,11 @@ class game():
 
 
                 self.all_sprites.draw(self.screen, self.player.rect)
-                self.powerup_menu.update()  
-                self.powerup_menu.draw() 
+                
+                if self.powerup_menu_activation:
+                    self.powerup_menu.update()  
+                    self.powerup_menu.draw() 
+                    
             pygame.display.flip() # updates screen
 
 
