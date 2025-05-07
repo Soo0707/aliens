@@ -24,8 +24,6 @@ class game():
         self.powerups = {
                 "lazer_width" : 5,
                 "greenbull": 0,
-                "blood_sacrifice" : 0,
-                "blood_regeneration" : 0,
                 } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         

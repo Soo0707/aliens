@@ -46,14 +46,9 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
         self.powerups = powerups
-        if "blood_sacrifice" in self.powerups:
-            self.speed = 300 + (50* (1 + powerups["blood_sacrifice"]))
-            self.health = 80
-            self.health_permanent = 80
-        else:
-            self.speed = 300
-            self.health = 100
-            self.health_permanent = 100
+        self.speed = 300
+        self.health = 100
+        self.health_permanent = 100
     
     
     def input(self):
@@ -69,6 +64,11 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
+            
+        if "blood_sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+            self.health = 80
+            self.health_permanent = 80
 
         mouse = pygame.mouse.get_pressed()
 

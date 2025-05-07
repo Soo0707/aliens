@@ -34,7 +34,6 @@ class Enemy(pygame.sprite.Sprite):
         
         self.xp_texture = xp_texture
         self.powerups = powerups
-        self.heal = (2*(1 + powerups["blood_regeneration"]))
 
 
     def set_direction(self):
@@ -68,6 +67,7 @@ class Enemy(pygame.sprite.Sprite):
             Orb(self.xp_texture, self.rect.center, (self.all_sprites, self.xp))
             self.kill()
             if "blood_regeneration" in self.powerups:
+                self.heal = (2*(1 + self.powerups["blood_regeneration"]))
                 if self.player.health < self.player.health_permanent:
                     self.player.health = self.player.health + self.heal
                     if self.player.health > self.player.health_permanent:
