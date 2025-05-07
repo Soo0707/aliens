@@ -39,6 +39,7 @@ class Circle(pygame.sprite.Sprite):
     def __init__(self, texture, multiplier, player, groups):
         super().__init__(groups)
         self.speed = 6
+        self.multiplier = 10
 
         self.angle = 5
         self.radius = 50

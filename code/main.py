@@ -20,10 +20,11 @@ class game():
 
         self.running = True
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width" , "circle_orb" ] # all possible powerup keys here
         self.powerups = {
                 "lazer_width" : 5,
-                "greenbull": 0
+                "greenbull": 0,
+                "circle_orb" : 5,
                 } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
@@ -74,12 +75,13 @@ class game():
             Spawner(
                 location=(x * 32, y * 32),
                 texture=texture,
-                groups=(self.all_sprites, self.collidables),
                 player=self.player,
-                all_sprites=self.all_sprites,
-                xp=self.xp,
-                enemies = self.enemies,
-                enemy_textures = self.textures
+                enemy_textures = self.textures,
+                enemy_group = self.enemies,
+                all_sprites_group = self.all_sprites,
+                xp_group = self.xp,
+                groups=(self.all_sprites, self.collidables), 
+                
             )
         
         for key in self.textures:
