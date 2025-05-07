@@ -17,8 +17,6 @@ class Player(pygame.sprite.Sprite):
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
-        self.speed = 300
-        self.health = 100
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
@@ -48,6 +46,13 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
         
         self.powerups = powerups
+        if "speed_sacrifice" in self.powerups:
+            self.speed = 400
+            self.health = 70
+        else:
+            self.speed = 300
+            self.health = 100
+    
     
     def input(self):
         keys = pygame.key.get_pressed()
