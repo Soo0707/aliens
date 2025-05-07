@@ -4,7 +4,7 @@ import random
 from main import *
 
 class Powerup_Menu:
-    def __init__(self, powerup_list): #add powerup as attribute when done
+    def __init__(self, powerup_list, powerups): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -13,6 +13,7 @@ class Powerup_Menu:
         
         #control
         self.powerup_list = powerup_list
+        self.powerups = powerups
         self.general_options = random.choices(self.powerup_list, k = 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
@@ -59,3 +60,8 @@ class Powerup_Menu:
     def draw(self):
         match self.state:
             case 'general': self.general()
+        if self.state != 'general':
+            if self.state in self.powerups:
+                self.powerups[self.state] += 1
+            else:
+                self.powerups.update({self.state: 0})
