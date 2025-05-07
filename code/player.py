@@ -5,14 +5,17 @@ from os import listdir
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, collidables, all_sprites, powerups, projectiles, groups):
+    def __init__(self, location, collidable_group, all_sprites_group, powerups, projectile_group, groups):
         super().__init__(groups)
         
-        all_sprites.change_layer(self, 2)
+        all_sprites_group.change_layer(self, 2)
+
+        self.powerups = powerups
 
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
         self.rect = self.image.get_rect(center = location)
+        self.spawner_aoe = pygame.rect.Rect(self.rect.left, self.rect.top, 50 * 32, 33 * 32)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -30,26 +33,29 @@ class Player(pygame.sprite.Sprite):
 
         self.import_images()
 
-        self.all_sprites = all_sprites
-        self.collidables = collidables
-        self.projectiles = projectiles
+        self.all_sprites_group = all_sprites_group
+        self.collidable_group = collidable_group
+        self.projectile_group = projectile_group
 
-        self.lmb_cooldown = 100
+        self.lmb_cooldown = self.powerups["projectiles"][1]
         self.can_lmb = True
         self.last_lmb = 0
         self.projectile_texture = pygame.image.load(join("..", "assets", "player", "projectile.png")).convert_alpha()
 
-        self.rmb_cooldown = 1000
+        self.rmb_cooldown = self.powerups["lazers"][1]
         self.can_rmb = True
         self.last_rmb = 0
         self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
-        
+
         self.powerups = powerups
         self.speed = 300
         self.health = 100
         self.health_permanent = 100
-    
+
+        self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
+        self.orb = 0
+        self.orb_spawn = True
     
     def input(self):
         print(self.health)
@@ -78,19 +84,20 @@ class Player(pygame.sprite.Sprite):
 
             if "drunk" not in self.powerups:
                 Projectile(
+                        self.powerups["projectiles"][0],
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                        (self.all_sprites, self.projectiles)
+                        (self.all_sprites_group, self.projectile_group)
                         )
             else:
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            self.powerups["lazer_width"],
+                            self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
-                            (self.all_sprites, self.projectiles)
+                            (self.all_sprites_group, self.projectile_group)
                             )
             
             self.can_lmb = False
@@ -104,21 +111,34 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            self.powerups["lazer_width"],
+                            self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
-                            (self.all_sprites, self.projectiles)
+                            (self.all_sprites_group, self.projectile_group)
                             )
             else:
                 Projectile(
+                        self.powerups["projectiles"][0],
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-                        (self.all_sprites, self.projectiles)
+                        (self.all_sprites_group, self.projectile_group)
                         )
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
+
+
+
+        if self.orb == 0 and mouse[1]:
+            self.orb += 1
+            Circle(
+                self.circle_texture,
+                1, #size multiplier
+                self,
+                (self.projectile_group, self.all_sprites_group),
+            )
+
 
     def update_bearing(self):
         if self.direction.x > 0:
@@ -133,9 +153,13 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
+        self.spawner_aoe.x += self.direction.x * self.speed * dt
+        
         #self.aoe.x += self.direction.x * self.speed * dt
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
+        self.spawner_aoe.y += self.direction.y * self.speed * dt
+
         #self.aoe.y += self.direction.y * self.speed * dt
         
     

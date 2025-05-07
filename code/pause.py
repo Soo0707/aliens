@@ -1,10 +1,10 @@
 import pygame
-pygame.font.init()
-from main import *
 
 class Pause:
     def __init__(self): #add powerup as attribute when done
+        pygame.font.init()
         self.display_surface = pygame.display.get_surface()
+
         self.font = pygame.font.Font(None, 40)
         self.left = 640
         self.top = 310
@@ -48,4 +48,3 @@ class Pause:
         match self.state:
             case 'pause': 
                 self.do_pause()
-                print(self.state)
