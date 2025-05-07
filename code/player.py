@@ -47,14 +47,17 @@ class Player(pygame.sprite.Sprite):
         
         self.powerups = powerups
         if "blood_sacrifice" in self.powerups:
-            self.speed = 400
+            self.speed = 300 + (50* (1 + powerups["blood_sacrifice"]))
             self.health = 80
+            self.health_permanent = 80
         else:
             self.speed = 300
             self.health = 100
+            self.health_permanent = 100
     
     
     def input(self):
+        print(self.health)
         keys = pygame.key.get_pressed()
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])

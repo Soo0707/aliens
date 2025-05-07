@@ -67,7 +67,8 @@ class Enemy(pygame.sprite.Sprite):
             Orb(self.xp_texture, self.rect.center, (self.all_sprites, self.xp))
             self.kill()
             if "blood_regeneration" in self.powerups:
-                self.player.health = self.player.health + 5
+                if self.player.health < self.player.health_permanent:
+                    self.player.health = self.player.health + 2
 
         if not self.can_attack and now - self.last_attack >= self.attack_cooldown:
             self.can_attack = True
