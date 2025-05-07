@@ -20,7 +20,7 @@ class game():
 
         self.running = True
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazer_width", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
         self.powerups = {
                 "lazer_width" : 5,
                 "greenbull": 0,
@@ -50,10 +50,10 @@ class game():
         
         self.turn = 1
         
-        self.powerup_menu = Powerup_Menu()
+        self.powerup_menu = Powerup_Menu(powerup_list = self.powerup_list)
         self.pause = Pause()
         self.is_paused = False #<--- condition for pausing
-        self.menu_paused = False #<--- condition for pausing
+        self.menu_paused = True #<--- condition for pausing
 
         self.setup()
 

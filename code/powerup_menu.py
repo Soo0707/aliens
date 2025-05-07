@@ -1,9 +1,10 @@
 import pygame
 pygame.font.init()
+import random
 from main import *
 
 class Powerup_Menu:
-    def __init__(self): #add powerup as attribute when done
+    def __init__(self, powerup_list): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -11,7 +12,8 @@ class Powerup_Menu:
         #self.powerup = powerup
         
         #control
-        self.general_options = ['powerup 1', 'powerup 2', 'powerup 3']
+        self.powerup_list = powerup_list
+        self.general_options = random.choices(self.powerup_list, k = 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
         
