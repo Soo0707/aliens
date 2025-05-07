@@ -34,6 +34,7 @@ class Enemy(pygame.sprite.Sprite):
         
         self.xp_texture = xp_texture
         self.powerups = powerups
+        self.heal = (2*(1 + powerups["blood_regeneration"]))
 
 
     def set_direction(self):
@@ -68,7 +69,9 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
             if "blood_regeneration" in self.powerups:
                 if self.player.health < self.player.health_permanent:
-                    self.player.health = self.player.health + 2
+                    self.player.health = self.player.health + self.heal
+                    if self.player.health > self.player.health_permanent:
+                        self.player.health = self.player.health_permanent
 
         if not self.can_attack and now - self.last_attack >= self.attack_cooldown:
             self.can_attack = True
