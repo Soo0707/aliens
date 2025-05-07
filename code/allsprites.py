@@ -57,6 +57,7 @@ class Spawner(Collidable):
         self.enemy_projectile_group = enemy_projectile_group
 
         self.enemy_textures = enemy_textures
+        self.powerups = powerups
 
     def update(self, dt):
         if self.can_spawn:
