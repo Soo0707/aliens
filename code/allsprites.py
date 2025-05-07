@@ -1,6 +1,8 @@
 import pygame
 from os.path import join
 from enemy import *
+from australian import *
+from drunkard import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -40,7 +42,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemy_textures, enemy_group, all_sprites_group, xp_group, groups):
+    def __init__(self, location, texture, player, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -52,7 +54,8 @@ class Spawner(Collidable):
         self.all_sprites_group = all_sprites_group
         self.enemy_group = enemy_group
         self.xp_group = xp_group
-        
+        self.enemy_projectile_group = enemy_projectile_group
+
         self.enemy_textures = enemy_textures
 
     def update(self, dt):
@@ -66,8 +69,30 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
-                textures = self.enemy_textures["trapper"]
             )
+            Australian(
+                
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                location=self.rect.center,
+                textures = self.enemy_textures["australian"],
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+            )
+
+            Drunkard(
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                location=self.rect.center,
+                textures = self.enemy_textures["drunkard"],
+                beer_textures = self.enemy_textures["beer"],
+                enemy_projectile_group = self.enemy_projectile_group,
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+            )
+
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False

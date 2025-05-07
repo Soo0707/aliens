@@ -1,5 +1,8 @@
 import pygame
 
+from australian import *
+from projectiles import *
+
 def collision_x(target1, target2, iterable):
     if iterable:
         for item1 in target1:
@@ -47,11 +50,34 @@ def collision_projectile(projectiles, enemies, props):
                 enemy.health -= 100
                 projectile.kill()
 
+def toggle_spawners(player, spawner_group):
+    for spawner in spawner_group:
+        if spawner.rect.colliderect(player.rect):
+            spawner.can_spawn = True
+        else:
+            spawner.can_spawn = False
 
-def le_attack(player, enemy_group, powerups):
+def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls):
+    now = pygame.time.get_ticks()
+    for projectile in enemy_projectile_group:
+        if projectile.rect.colliderect(player.rect):
+            if type(projectile) == Beer:
+                powerups["drunk"] = 0
+                powerup_timers["drunk"] = now + 1000
+            projectile.kill()
+
+        for wall in walls:
+            if projectile.rect.colliderect(wall.rect):
+                projectile.kill()
+
+def le_attack(player, enemy_group, powerups, powerup_timers):
     now = pygame.time.get_ticks()
     for enemy in enemy_group:
-        if enemy.can_attack and enemy.rect.colliderect(player.rect):
+        if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
             player.health -= enemy.attack
-            enemy.can_attack = False
-            enemy.last_attack = now
+            enemy.can_attack_primary = False
+            enemy.last_attack_primary = now
+
+            if type(enemy) == Australian:
+                powerups["aussie"] = 0
+                powerup_timers["aussie"] = now + 500
