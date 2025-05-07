@@ -24,7 +24,8 @@ class game():
         self.powerups = {
                 "lazer_width" : 5,
                 "greenbull": 0,
-                "blood_sacrifice" : 0
+                "blood_sacrifice" : 0,
+                "blood_regeneration" : 0
                 } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
@@ -81,7 +82,8 @@ class game():
                 all_sprites=self.all_sprites,
                 xp=self.xp,
                 enemies = self.enemies,
-                enemy_textures = self.textures
+                enemy_textures = self.textures,
+                powerups= self.powerups
             )
         
         for key in self.textures:

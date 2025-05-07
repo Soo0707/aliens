@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.powerups = powerups
         if "blood_sacrifice" in self.powerups:
             self.speed = 400
-            self.health = 70
+            self.health = 80
         else:
             self.speed = 300
             self.health = 100

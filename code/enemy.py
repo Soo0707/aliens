@@ -6,7 +6,7 @@ from player import  *
 from xp import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, location, xp, all_sprites, textures, xp_texture, groups):
+    def __init__(self, player, location, xp, all_sprites, textures, xp_texture, groups, powerups):
         super().__init__(groups)
         
         all_sprites.change_layer(self, 1)
@@ -33,6 +33,7 @@ class Enemy(pygame.sprite.Sprite):
         self.xp = xp
         
         self.xp_texture = xp_texture
+        self.powerups = powerups
 
 
     def set_direction(self):
@@ -65,6 +66,8 @@ class Enemy(pygame.sprite.Sprite):
         if self.health <= 0:
             Orb(self.xp_texture, self.rect.center, (self.all_sprites, self.xp))
             self.kill()
+            if "blood_regeneration" in self.powerups:
+                self.player.health = self.player.health + 5
 
         if not self.can_attack and now - self.last_attack >= self.attack_cooldown:
             self.can_attack = True
