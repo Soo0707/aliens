@@ -20,7 +20,8 @@ class game():
 
         self.running = True
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles"] # all possible powerup keys here
+
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000] # index: width, cooldown
@@ -53,11 +54,16 @@ class game():
         
         self.turn = 1
         
-        self.powerup_menu = Powerup_Menu()
-        
-        self.pause_menu = Pause()
-        self.paused = False
 
+        self.powerup_menu = Powerup_Menu(
+                                         powerup_list = self.powerup_list,
+                                         powerups = self.powerups
+                                        )
+        self.pause = Pause()
+        self.is_paused = False #<--- condition for pausing
+        self.powerup_menu_activation = True #<--- condition for pausing
+        
+        self.powerup_menu = Powerup_Menu()
         self.setup()
 
     
@@ -82,6 +88,7 @@ class game():
                 texture=texture,
                 groups=(self.all_sprites_group, self.collidable_group, self.spawners_group),
                 player=self.player,
+                powerups= self.powerups
                 enemy_projectile_group = self.enemy_projectile_group,
                 all_sprites_group=self.all_sprites_group,
                 xp_group=self.xp_group,
@@ -109,16 +116,15 @@ class game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
+                
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    if self.paused:
-                        self.paused = False
-                    else:
-                        self.paused = True
+                    self.is_paused = True
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.is_paused = False
 
             
-            if self.paused:
-                self.pause_menu.do_pause()
+            if self.is_paused:
+                self.pause.do_pause()  
             else:
                 self.screen.fill("black")
 
@@ -163,9 +169,17 @@ class game():
                     collision_y(self.enemy_group, self.walls_group, True)
                     self.turn = 1
 
+                self.all_sprites.update(dt)
+
+                self.all_sprites.draw(self.screen, self.player.rect)
+                
+                if self.powerup_menu_activation:
+                    self.powerup_menu.update()  
+                    self.powerup_menu.draw() 
+
                 self.all_sprites_group.update(dt)
                 self.all_sprites_group.draw(self.screen, self.player.rect)
-            
+
             pygame.display.flip() # updates screen
 
         pygame.quit()
