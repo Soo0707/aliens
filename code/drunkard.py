@@ -14,6 +14,14 @@ class Drunkard(Enemy):
 
         self.enemy_projectile_group = enemy_projectile_group
 
+    def animate(self, dt):
+        if self.direction:
+            self.image_index += 10 * dt
+            self.image = self.images[int(self.image_index) % len(self.images)]
+        else:
+            self.image_index = 0
+            self.image = self.images[0] # the 0th image is always the idle frame
+    
     def secondary(self):
         player_pos = pygame.math.Vector2(self.player.rect.center)
         self_pos = pygame.math.Vector2(self.rect.center)
