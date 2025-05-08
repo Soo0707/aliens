@@ -6,6 +6,7 @@ from player import  *
 from xp import *
 
 class Enemy(pygame.sprite.Sprite):
+
     def __init__(self, player, location, powerups, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(groups)
         
@@ -66,6 +67,12 @@ class Enemy(pygame.sprite.Sprite):
         if self.health <= 0:
             Orb(self.xp_texture, self.rect.center, (self.all_sprites_group, self.xp_group))
             self.kill()
+            if "blood_regeneration" in self.powerups:
+                self.heal = (2*(1 + self.powerups["blood_regeneration"]))
+                if self.player.health < self.player.health_permanent:
+                    self.player.health = self.player.health + self.heal
+                    if self.player.health > self.player.health_permanent:
+                        self.player.health = self.player.health_permanent
 
         if not self.can_attack_primary and now - self.last_attack_primary >= self.attack_cooldown_primary:
             self.can_attack_primary = True
