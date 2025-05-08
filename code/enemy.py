@@ -6,7 +6,7 @@ from player import  *
 from xp import *
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, player, location, xp_texture, xp_group, all_sprites_group, groups):
+    def __init__(self, player, location, powerups, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(groups)
         
         all_sprites_group.change_layer(self, 1)
@@ -36,6 +36,7 @@ class Enemy(pygame.sprite.Sprite):
         self.xp_group = xp_group
         
         self.xp_texture = xp_texture
+        self.powerups = powerups
 
 
     def set_direction(self):

@@ -20,8 +20,6 @@ class Player(pygame.sprite.Sprite):
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
-        self.speed = 300
-        self.health = 100
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
@@ -50,12 +48,17 @@ class Player(pygame.sprite.Sprite):
         self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
 
+        self.powerups = powerups
+        self.speed = 300
+        self.health = 100
+        self.health_permanent = 100
+
         self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
         self.orb = 0
         self.orb_spawn = True
-
     
     def input(self):
+        print(self.health)
         keys = pygame.key.get_pressed()
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
@@ -67,6 +70,11 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
+            
+        if "blood_sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+            self.health = 80
+            self.health_permanent = 80
 
         mouse = pygame.mouse.get_pressed()
 

@@ -1,5 +1,5 @@
 import pygame
-from os.path import join
+
 from enemy import *
 from australian import *
 from drunkard import *
@@ -57,15 +57,14 @@ class Spawner(Collidable):
         self.enemy_projectile_group = enemy_projectile_group
 
         self.enemy_textures = enemy_textures
+        self.powerups = powerups
 
     def update(self, dt):
         if self.can_spawn:
             Enemy(
-                
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
                 location=self.rect.center,
-              
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
