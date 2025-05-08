@@ -4,8 +4,8 @@ from enemy import *
 from projectiles import Beer
 
 class Drunkard(Enemy):
-    def __init__(self, player, location, textures, beer_textures, enemy_projectile_group, xp_texture, xp_group, all_sprites_group, groups):
-        super().__init__(player, location, xp_texture, xp_group, all_sprites_group, groups)
+    def __init__(self, player, location, powerups, textures, beer_textures, enemy_projectile_group, xp_texture, xp_group, all_sprites_group, groups):
+        super().__init__(player, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.images = textures
         self.image = self.images[0]
