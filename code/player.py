@@ -10,15 +10,16 @@ class Player(pygame.sprite.Sprite):
         
         all_sprites_group.change_layer(self, 2)
 
+        self.powerups = powerups
+
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
         self.rect = self.image.get_rect(center = location)
+        self.spawner_aoe = pygame.rect.Rect(self.rect.left, self.rect.top, 50 * 32, 33 * 32)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
-        self.speed = 300
-        self.health = 100
 
         self.bearing = 'S' # either N, S, E, W
         self.image_index = 0
@@ -36,24 +37,28 @@ class Player(pygame.sprite.Sprite):
         self.collidable_group = collidable_group
         self.projectile_group = projectile_group
 
-        self.lmb_cooldown = 100
+        self.lmb_cooldown = self.powerups["projectiles"][1]
         self.can_lmb = True
         self.last_lmb = 0
         self.projectile_texture = pygame.image.load(join("..", "assets", "player", "projectile.png")).convert_alpha()
 
-        self.rmb_cooldown = 1000
+        self.rmb_cooldown = self.powerups["lazers"][1]
         self.can_rmb = True
         self.last_rmb = 0
         self.lazer_texture_horizontal = pygame.image.load(join("..", "assets", "player", "lazer.png")).convert_alpha()
         self.lazer_texture_vertical = pygame.transform.rotate(self.lazer_texture_horizontal, 90)
 
+        self.powerups = powerups
+        self.speed = 300
+        self.health = 100
+        self.health_permanent = 100
+
         self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
         self.orb = 0
         self.orb_spawn = True
-
-        self.powerups = powerups
     
     def input(self):
+        print(self.health)
         keys = pygame.key.get_pressed()
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
@@ -65,6 +70,11 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
+            
+        if "blood_sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+            self.health = 80
+            self.health_permanent = 80
 
         mouse = pygame.mouse.get_pressed()
 
@@ -74,6 +84,7 @@ class Player(pygame.sprite.Sprite):
 
             if "drunk" not in self.powerups:
                 Projectile(
+                        self.powerups["projectiles"][0],
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
@@ -83,7 +94,7 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            self.powerups["lazer_width"],
+                            self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
                             (self.all_sprites_group, self.projectile_group)
@@ -100,13 +111,14 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
-                            self.powerups["lazer_width"],
+                            self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
                             (self.all_sprites_group, self.projectile_group)
                             )
             else:
                 Projectile(
+                        self.powerups["projectiles"][0],
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
@@ -141,9 +153,13 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
+        self.spawner_aoe.x += self.direction.x * self.speed * dt
+        
         #self.aoe.x += self.direction.x * self.speed * dt
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
+        self.spawner_aoe.y += self.direction.y * self.speed * dt
+
         #self.aoe.y += self.direction.y * self.speed * dt
         
     

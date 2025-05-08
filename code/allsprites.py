@@ -1,6 +1,9 @@
 import pygame
 from os.path import join
 from enemy import *
+from australian import *
+from drunkard import *
+from bomber import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -40,7 +43,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemy_textures, enemy_group, all_sprites_group, xp_group, groups):
+    def __init__(self, location, texture, player, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -52,29 +55,32 @@ class Spawner(Collidable):
         self.all_sprites_group = all_sprites_group
         self.enemy_group = enemy_group
         self.xp_group = xp_group
-        
+        self.enemy_projectile_group = enemy_projectile_group
+
         self.enemy_textures = enemy_textures
 
     def update(self, dt):
         if self.can_spawn:
-            Enemy(
-                
+
+
+            Bomber(
                 player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
+                textures=self.enemy_textures["bomber"],
+                bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 location=self.rect.center,
-              
+                xp_texture=self.enemy_textures["xp"][0],
                 xp_group=self.xp_group,
-                all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                textures = self.enemy_textures["trapper"]
+                all_sprites_group=self.all_sprites_group,
+                groups=(self.all_sprites_group, self.enemy_group)
             )
+
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 
 
         if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and not self.fps_limited:
-           self.can_spawn = True
+           self.can_spawn = False
         
         if dt > 0.02: # ~ 45 fps
             self.fps_limited = True
