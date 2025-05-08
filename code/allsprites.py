@@ -1,5 +1,5 @@
 import pygame
-from os.path import join
+
 from enemy import *
 from australian import *
 from drunkard import *
