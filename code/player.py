@@ -53,7 +53,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.health_permanent = 100
 
-        self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
+        #self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
         self.orb = 0
         self.orb_spawn = True
     

@@ -1,5 +1,5 @@
 import pygame
-
+from os.path import join
 from enemy import *
 from australian import *
 from drunkard import *
@@ -42,7 +42,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
+    def __init__(self, location, texture, player, powerups, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -65,6 +65,7 @@ class Spawner(Collidable):
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
                 location=self.rect.center,
+                powerups=self.powerups,
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
@@ -78,6 +79,7 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
+                powerups=self.powerups
             )
 
             Drunkard(
@@ -90,6 +92,7 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
+                powerups=self.powerups
             )
 
 
