@@ -38,24 +38,16 @@ def collision_y(target1, target2, iterable):
                     target1.rect.top = item.rect.bottom
 
 
-def collision_projectile(projectiles, enemies, props):
+def collision_projectile(projectiles, enemies, walls):
     for projectile in projectiles:
-        for groups in props:
-            for collidable in groups:
-                if projectile.rect.colliderect(collidable):
-                    projectile.kill()
+        for wall in walls:
+            if projectile.rect.colliderect(wall):
+                projectile.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
                 enemy.health -= 100
                 projectile.kill()
-
-def toggle_spawners(player, spawner_group):
-    for spawner in spawner_group:
-        if spawner.rect.colliderect(player.rect):
-            spawner.can_spawn = True
-        else:
-            spawner.can_spawn = False
 
 def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls):
     now = pygame.time.get_ticks()

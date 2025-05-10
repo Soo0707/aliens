@@ -25,8 +25,8 @@ class game():
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000] # index: width, cooldown
-                } # key = powerup name, value = any stuff you need to make it work
-        self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
+                } 
+        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -38,8 +38,9 @@ class game():
         self.enemy_projectile_group = pygame.sprite.LayeredUpdates()
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
+        self.player = Player((1024, 4032), self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
 
-        self.num_xp_group = 0
+        self.num_xp = 0
 
         self.textures = {
                 "bomber": [],
@@ -61,16 +62,13 @@ class game():
                                         )
         self.pause_menu = Pause()
         self.is_paused = False #<--- condition for pausing
-        self.powerup_menu_activation = True #<--- condition for pausing
+        self.powerup_menu_activation = False #<--- condition for pausing
         
-        self.setup()
+        self.load_map()
+        self.load_textures()
 
-    
-    def setup(self):
+    def load_map(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
-
-        self.player = Player((400, 300), self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
-
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
             MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
@@ -94,7 +92,8 @@ class game():
                 enemy_group = self.enemy_group,
                 enemy_textures = self.textures,               
             )
-        
+
+    def load_textures(self):
         for key in self.textures:
             for item in sorted(listdir(join("..", "assets", "enemy", key))):
                 self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
@@ -123,17 +122,15 @@ class game():
                         self.is_paused = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.is_paused = False
-
+            
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
             else:
                 self.screen.fill("black")
-
                 dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
-                self.player.move_x(dt)
-                
+                self.player.move_x(dt)               
                 if "greenbull" not in self.powerups:
                     collision_x(self.player, self.collidable_group, False)
                 collision_x(self.player, self.walls_group, False)
@@ -143,19 +140,22 @@ class game():
                     collision_y(self.player, self.collidable_group, False)
                 collision_y(self.player, self.walls_group, False)
 
+ #               print(self.enemy_group, self.clock.get_fps())
+
+                self.player.update(dt)
+                
                 if self.turn == 1:
                     self.check_timers()
                     for orb in self.xp_group:
                         if self.player.rect.colliderect(orb.rect):
-                            self.num_xp_group = self.num_xp_group + 1
+                            self.num_xp = self.num_xp + 1
                             orb.kill()
                 
-                    collision_projectile(self.projectile_group, self.enemy_group, (self.collidable_group, self.walls_group))
-
+                    collision_projectile(self.projectile_group, self.enemy_group, self.walls_group)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers)
+
                     self.turn = 2
                 elif self.turn == 2:
-                    toggle_spawners(self.player, self.spawners_group)
                     check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group)
 
                     for enemy in self.enemy_group:
@@ -169,9 +169,24 @@ class game():
 
                     collision_y(self.enemy_group, self.collidable_group, True)
                     collision_y(self.enemy_group, self.walls_group, True)
+
+                    self.turn = 3
+                elif self.turn == 3:
+                    if self.player.rect.x < 160 and self.player.rect.y > 3968:
+                        self.running = False
+                    elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
+                        self.player.rect.x = 400
+                        self.player.rect.y = 300
+
+                    self.spawners_group.update(dt)
+                    self.enemy_group.update(dt)
+                    
                     self.turn = 1
 
-                self.all_sprites_group.update(dt)
+
+                self.projectile_group.update(dt)
+                self.enemy_projectile_group.update(dt)
+
                 self.all_sprites_group.draw(self.screen, self.player.rect)
                 
                 if self.powerup_menu_activation:

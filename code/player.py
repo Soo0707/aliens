@@ -15,7 +15,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(join("..", "assets", "player", "S", "0.png")).convert_alpha()
 
         self.rect = self.image.get_rect(center = location)
-        self.spawner_aoe = pygame.rect.Rect(self.rect.left, self.rect.top, 50 * 32, 33 * 32)
 
         self.aoe = None # for later when we have aoe effects, we'd probably want another rect
 
@@ -53,12 +52,11 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.health_permanent = 100
 
-        #self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
+        self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
         self.orb = 0
         self.orb_spawn = True
     
     def input(self):
-        print(self.health)
         keys = pygame.key.get_pressed()
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
