@@ -13,9 +13,9 @@ class Enemy(pygame.sprite.Sprite):
 
         self.state = state
 
-        self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
+        #self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
 
-        self.rect = self.image.get_rect(center = location)
+        #self.rect = self.image.get_rect(center = location)
         
         self.direction = pygame.math.Vector2()
         self.location = location

@@ -46,7 +46,7 @@ def collision_y(target1, target2, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, state):
     for projectile in projectiles:
-        if projectile.state != state:
+        if hasattr(projectile, "state") and projectile.state != state:
             continue
 
         for wall in walls:
@@ -65,7 +65,7 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
             continue
 
         if projectile.rect.colliderect(player.rect):
-            if type(projectile) == Beer:
+            if type(projectile) == Beer and "milk" not in powerups:
                 powerups["drunk"] = 0
                 powerup_timers["drunk"] = now + 1000
             projectile.kill()
@@ -85,6 +85,6 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state):
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
 
-            if type(enemy) == Australian:
+            if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500

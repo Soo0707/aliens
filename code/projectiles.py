@@ -39,12 +39,13 @@ class Lazers(pygame.sprite.Sprite):
         self.rect.y += self.direction.y * self.speed * dt
 
 class Circle(pygame.sprite.Sprite):
-    def __init__(self, texture, multiplier, player, groups):
+    def __init__(self, texture, state, multiplier, player, groups):
         super().__init__(groups)
         self.speed = 6
 
         self.angle = 5
         self.radius = 50
+        self.state = state
 
         self.player = player
         

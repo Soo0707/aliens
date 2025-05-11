@@ -74,6 +74,7 @@ class Spawner(Collidable):
 
     def update(self, dt, state):
         if self.can_spawn:
+            '''
             Enemy(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
@@ -84,8 +85,8 @@ class Spawner(Collidable):
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
             )
+            '''
             Australian(
-                
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
                 state = state,

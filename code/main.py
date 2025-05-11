@@ -24,21 +24,21 @@ class game():
         self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
-                "lazers" : [5, 1000] # index: width, cooldown
+                "lazers" : [5, 1000], # index: width, cooldown
                 } 
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
+        
         self.enemy_group = StatedGroup()
+        self.projectile_group = StatedGroup()
+        self.enemy_projectile_group = StatedGroup()
+
         self.xp_group = pygame.sprite.LayeredUpdates()
         self.collidable_group = pygame.sprite.LayeredUpdates()
         self.walls_group = pygame.sprite.LayeredUpdates()
-        self.projectile_group = StatedGroup()
-        self.enemy_projectile_group = StatedGroup()
         self.spawners_group = pygame.sprite.LayeredUpdates()
-
-        self.player = Player((1024, 4032), self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
 
         self.num_xp = 0
 
@@ -50,21 +50,33 @@ class game():
                 "trapper": [],
                 "australian":[],
                 "beer": [],
-                "xp": []
+                "xp": [],
+                "player" : {
+                    "N": [],
+                    "S": [],
+                    "E": [],
+                    "W": [],
+                    "lazer": [],
+                    "projectile": [],
+                    "circle": []
+                    }
                 }
         
+        self.load_textures()
+        
+        self.player = Player((1024, 4032), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
         self.turn = 1
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
-                                         powerups = self.powerups
+                                         powerups = self.powerups,
+                                         powerup_timers = self.powerup_timers
                                         )
         self.pause_menu = Pause()
         self.is_paused = False #<--- condition for pausing
-        self.powerup_menu_activation = False #<--- condition for pausing
-        
+        self.powerup_menu_activation = True
+
         self.load_map()
-        self.load_textures()
 
     def load_map(self):
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
@@ -94,9 +106,15 @@ class game():
 
     def load_textures(self):
         for key in self.textures:
+            if key == "player":
+                continue
+
             for item in sorted(listdir(join("..", "assets", "enemy", key))):
                 self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
            
+        for key in self.textures["player"]:
+            for item in sorted(listdir(join("..", "assets", "player", key))):
+                self.textures["player"][key].append(pygame.image.load(join("..", "assets", "player", key, item)).convert_alpha())
 
     def check_timers(self):
         now = pygame.time.get_ticks()
@@ -174,6 +192,7 @@ class game():
                     collision_y(self.enemy_group, self.collidable_group, True, self.state)
                     collision_y(self.enemy_group, self.walls_group, True, self.state)
 
+                    self.enemy_group.update(dt, self.state)
                     self.turn = 3
                 elif self.turn == 3:
                     if self.player.rect.x < 160 and self.player.rect.y > 3968:
@@ -183,10 +202,8 @@ class game():
                         self.player.rect.y = 300
 
                     self.spawners_group.update(dt, self.state)
-                    self.enemy_group.update(dt, self.state)
                     
                     self.turn = 1
-
 
                 self.projectile_group.update(dt, self.state)
                 self.enemy_projectile_group.update(dt, self.state)
