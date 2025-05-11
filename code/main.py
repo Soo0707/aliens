@@ -162,8 +162,6 @@ class game():
                     collision_y(self.player, self.collidable_group, False, self.state)
                 collision_y(self.player, self.walls_group, False, self.state)
 
- #               print(self.enemy_group, self.clock.get_fps())
-
                 self.player.update(dt, self.state)
                 
                 if self.turn == 1:

@@ -81,5 +81,8 @@ class Powerup_Menu:
             elif powerup == "projectiles":
                 self.powerups["projectiles"][0] += 100 # speed
                 self.powerups["projectiles"][1] -= 10 # cooldown
+            elif powerup == "greenbull":
+                self.powerups["greenbull"] = 0
+                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
         else:
             self.powerups.update({powerup: 0})
