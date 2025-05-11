@@ -67,8 +67,13 @@ class Player(pygame.sprite.Sprite):
 
         mouse = pygame.mouse.get_pressed()
 
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+        
+        if mouse_direction:
+            mouse_direction = mouse_direction.normalize()
+
         if mouse[0] and self.can_lmb:
-            mouse_pos = pygame.mouse.get_pos()
             directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
             if "drunk" not in self.powerups:
@@ -77,7 +82,7 @@ class Player(pygame.sprite.Sprite):
                         state,
                         self.projectile_texture,
                         self.rect.center,
-                        pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+                        mouse_direction,
                         (self.all_sprites_group, self.projectile_group)
                         )
             else:
@@ -114,7 +119,7 @@ class Player(pygame.sprite.Sprite):
                         state,
                         self.projectile_texture,
                         self.rect.center,
-                        pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+                        mouse_direction,
                         (self.all_sprites_group, self.projectile_group)
                         )
 

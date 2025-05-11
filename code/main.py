@@ -190,7 +190,6 @@ class game():
                     collision_y(self.enemy_group, self.collidable_group, True, self.state)
                     collision_y(self.enemy_group, self.walls_group, True, self.state)
 
-                    self.enemy_group.update(dt, self.state)
                     self.turn = 3
                 elif self.turn == 3:
                     if self.player.rect.x < 160 and self.player.rect.y > 3968:
@@ -199,6 +198,7 @@ class game():
                         self.player.rect.x = 400
                         self.player.rect.y = 300
 
+                    self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
                     
                     self.turn = 1
