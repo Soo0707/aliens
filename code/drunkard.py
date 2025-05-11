@@ -4,8 +4,8 @@ from enemy import *
 from projectiles import Beer
 
 class Drunkard(Enemy):
-    def __init__(self, player, location, powerups, textures, beer_textures, enemy_projectile_group, xp_texture, xp_group, all_sprites_group, groups):
-        super().__init__(player, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
+    def __init__(self, player, state, location, powerups, textures, beer_textures, enemy_projectile_group, xp_texture, xp_group, all_sprites_group, groups):
+        super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.images = textures
         self.image = self.images[0]
@@ -32,7 +32,7 @@ class Drunkard(Enemy):
             direction = direction.normalize()
 
         if self.can_attack_secondary:
-            Beer(self.beer_textures, self.rect.center, direction, (self.enemy_projectile_group, self.all_sprites_group))
+            Beer(self.beer_textures, self.state, self.rect.center, direction, (self.enemy_projectile_group, self.all_sprites_group))
             self.last_attack_secondary = pygame.time.get_ticks()
             self.can_attack_secondary = False
 

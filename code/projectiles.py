@@ -2,10 +2,12 @@ import pygame
 from math import atan
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, speed, texture, location, direction, groups):
+    def __init__(self, speed, state, texture, location, direction, groups):
         super().__init__(groups)       
         self.speed = speed
         self.direction = direction
+
+        self.state = state
 
         if not self.direction.x:
             self.image = pygame.transform.rotate(texture, -atan(self.direction.y) * 180 / 3.142)
@@ -20,10 +22,11 @@ class Projectile(pygame.sprite.Sprite):
 
 
 class Lazers(pygame.sprite.Sprite):
-    def __init__(self, texture, multiplier, location, direction, groups):
+    def __init__(self, texture, state, multiplier, location, direction, groups):
         super().__init__(groups)
         self.speed = 3000
         self.direction = direction
+        self.state = state
 
         self.texture = texture
         
@@ -58,10 +61,12 @@ class Circle(pygame.sprite.Sprite):
         self.rect.center = self.player.rect.center + offset
 
 class Beer(pygame.sprite.Sprite):
-    def __init__(self, textures, location, direction, groups):
+    def __init__(self, textures, state, location, direction, groups):
         super().__init__(groups)
         self.image_index = 0
         self.textures = textures
+
+        self.state = state
         
         self.image = self.textures[0]
         self.direction = direction

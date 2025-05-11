@@ -9,17 +9,21 @@ class AllSprites(pygame.sprite.LayeredUpdates):
         super().__init__()
         self.powerups = powerups
     
-    def draw(self, surface, follows):
+    def draw(self, surface, follows, state):
         if "aussie" in self.powerups:
             temp = pygame.surface.Surface((1280, 720))
 
             for sprite in self:
+                if hasattr(sprite, "state") and sprite.state != state:
+                    continue
                 temp.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
 
             temp_flipped = pygame.transform.flip(temp, 1, 1)
             surface.blit(temp_flipped)
         else:
             for sprite in self:
+                if hasattr(sprite, "state") and sprite.state != state:
+                    continue
                 surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360))        
 
 
@@ -41,6 +45,16 @@ class MapTiles(pygame.sprite.Sprite):
         self.image = texture
         self.rect = self.image.get_frect(center = location)
 
+class StatedGroup(pygame.sprite.LayeredUpdates):
+    def __init__(self):
+        super().__init__()
+
+    def update(self, dt, state):
+        for sprite in self:
+            if sprite.state != state:
+                continue
+            sprite.update(dt)
+
 class Spawner(Collidable):
     def __init__(self, location, texture, player, powerups, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
@@ -58,11 +72,12 @@ class Spawner(Collidable):
         self.enemy_textures = enemy_textures
         self.powerups = powerups
 
-    def update(self, dt):
+    def update(self, dt, state):
         if self.can_spawn:
             Enemy(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
+                state = state,
                 location=self.rect.center,
                 powerups=self.powerups,
                 xp_group=self.xp_group,
@@ -73,6 +88,7 @@ class Spawner(Collidable):
                 
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
+                state = state,
                 location=self.rect.center,
                 textures = self.enemy_textures["australian"],
                 xp_group=self.xp_group,
@@ -84,6 +100,7 @@ class Spawner(Collidable):
             Drunkard(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
+                state = state,
                 location=self.rect.center,
                 textures = self.enemy_textures["drunkard"],
                 beer_textures = self.enemy_textures["beer"],

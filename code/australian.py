@@ -3,8 +3,8 @@ from player import  *
 from enemy import *
 
 class Australian(Enemy):
-    def __init__(self, player, location, powerups, textures, xp_texture, xp_group, all_sprites_group, groups):
-        super().__init__(player, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
+    def __init__(self, player, state, location, powerups, textures, xp_texture, xp_group, all_sprites_group, groups):
+        super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.images = textures
         self.image = self.images[0]

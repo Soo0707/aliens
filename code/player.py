@@ -56,7 +56,7 @@ class Player(pygame.sprite.Sprite):
         self.orb = 0
         self.orb_spawn = True
     
-    def input(self):
+    def input(self, state):
         keys = pygame.key.get_pressed()
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
@@ -83,6 +83,7 @@ class Player(pygame.sprite.Sprite):
             if "drunk" not in self.powerups:
                 Projectile(
                         self.powerups["projectiles"][0],
+                        state,
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
@@ -92,6 +93,7 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
+                            state,
                             self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
@@ -109,6 +111,7 @@ class Player(pygame.sprite.Sprite):
                 for direction in directions:
                     Lazers(
                             self.lazer_texture_horizontal,
+                            state,
                             self.powerups["lazers"][0],
                             self.rect.center,
                             pygame.math.Vector2(direction),
@@ -117,6 +120,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 Projectile(
                         self.powerups["projectiles"][0],
+                        state,
                         self.projectile_texture,
                         self.rect.center,
                         pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360).normalize(), # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
@@ -151,12 +155,10 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        self.spawner_aoe.x += self.direction.x * self.speed * dt
         
         #self.aoe.x += self.direction.x * self.speed * dt
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-        self.spawner_aoe.y += self.direction.y * self.speed * dt
 
         #self.aoe.y += self.direction.y * self.speed * dt
         
@@ -175,13 +177,13 @@ class Player(pygame.sprite.Sprite):
             for item in sorted(listdir(join("..", "assets", "player", key))):
                 self.images[key].append(pygame.image.load(join("..", "assets", "player", key, item)).convert_alpha())
 
-    def update(self, dt):
+    def update(self, dt, state):
         if not self.can_lmb and pygame.time.get_ticks() - self.last_lmb >= self.lmb_cooldown:
             self.can_lmb = True
 
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
 
-        self.input()
+        self.input(state)
         self.update_bearing()
         self.animate(dt)
