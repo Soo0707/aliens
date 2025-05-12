@@ -3,8 +3,8 @@ from player import  *
 from enemy import *
 
 class Bomber(Enemy):
-    def __init__(self, player, textures,bomber_explosion_texture, location, xp_texture, xp_group, all_sprites_group, groups):
-        super().__init__(player, textures, location, xp_texture, xp_group, all_sprites_group, groups)
+    def __init__(self, player, location,powerups, textures,bomber_explosion_texture, xp_texture, xp_group, all_sprites_group, groups):
+        super().__init__(player, textures, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.player = player
         self.images = textures
@@ -32,6 +32,8 @@ class Bomber(Enemy):
         self.plode_index += 10 * dt
 
         self.image = self.explode_images[int(self.plode_index) % len(self.explode_images)]
+        if self.plode_index >= len(self.explode_images):
+            self.kill()
         
     
     def update(self, dt):

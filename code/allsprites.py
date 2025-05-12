@@ -43,7 +43,7 @@ class MapTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = location)
 
 class Spawner(Collidable):
-    def __init__(self, location, texture, player, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
+    def __init__(self, location, texture, player, powerups, enemy_textures, enemy_projectile_group, enemy_group, all_sprites_group, xp_group, groups):
         super().__init__(location, texture, groups)
         
         self.last_spawn = 0
@@ -58,20 +58,42 @@ class Spawner(Collidable):
         self.enemy_projectile_group = enemy_projectile_group
 
         self.enemy_textures = enemy_textures
+        self.powerups = powerups
 
     def update(self, dt):
         if self.can_spawn:
+            Enemy(
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                location=self.rect.center,
+                powerups=self.powerups,
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+            )
+            Australian(
+                
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                location=self.rect.center,
+                textures = self.enemy_textures["australian"],
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+                powerups=self.powerups
+            )
 
 
             Bomber(
                 player=self.player,
                 textures=self.enemy_textures["bomber"],
-                bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 location=self.rect.center,
+                powerups=self.powerups,
                 xp_texture=self.enemy_textures["xp"][0],
                 xp_group=self.xp_group,
-                all_sprites_group=self.all_sprites_group,
-                groups=(self.all_sprites_group, self.enemy_group)
+                bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
+                all_sprites_group = self.all_sprites_group,
+                groups=(self.all_sprites_group, self.enemy_group),
             )
 
 

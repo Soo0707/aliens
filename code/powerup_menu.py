@@ -1,9 +1,10 @@
 import pygame
 pygame.font.init()
+import random
 from main import *
 
 class Powerup_Menu:
-    def __init__(self): #add powerup as attribute when done
+    def __init__(self, powerup_list, powerups): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -11,7 +12,9 @@ class Powerup_Menu:
         #self.powerup = powerup
         
         #control
-        self.general_options = ['powerup 1', 'powerup 2', 'powerup 3']
+        self.powerup_list = powerup_list
+        self.powerups = powerups
+        self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
         
@@ -21,7 +24,10 @@ class Powerup_Menu:
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
         if keys[pygame.K_SPACE]:
-            self.state = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+            powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+            self.apply_powerups(powerup=powerup)
+            self.state = 'done'
+            
         
     def general(self):
         #background
@@ -56,3 +62,9 @@ class Powerup_Menu:
     def draw(self):
         match self.state:
             case 'general': self.general()
+    
+    def apply_powerups(self, powerup):
+        if powerup in self.powerups: 
+            self.powerups[powerup] += 1 #does not add 1, doesn't work
+        else:
+            self.powerups.update({powerup: 0})
