@@ -103,7 +103,7 @@ class game():
                 enemy_group = self.enemy_group,
                 enemy_textures = self.textures,               
             )
-
+    
     def load_textures(self):
         for key in self.textures:
             if key == "player":
@@ -125,6 +125,40 @@ class game():
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
                     
+    def start(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+            
+            
+            self.screen.fill("black")
+            dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+
+            self.player.move_x(dt)               
+            collision_x(self.player, self.collidable_group, False, self.state)
+            collision_x(self.player, self.walls_group, False, self.state)
+
+            self.player.move_y(dt)
+            collision_y(self.player, self.collidable_group, False, self.state)
+            collision_y(self.player, self.walls_group, False, self.state)
+
+            self.player.update(dt, self.state)
+            
+            if self.player.rect.x < 160 and self.player.rect.y > 3968:
+                self.running = False
+            elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
+                self.player.rect.x = 400
+                self.player.rect.y = 300
+                return
+
+            self.projectile_group.update(dt, self.state)
+            self.enemy_projectile_group.update(dt, self.state)
+
+            self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
+
+            pygame.display.flip() 
+
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
@@ -192,12 +226,6 @@ class game():
 
                     self.turn = 3
                 elif self.turn == 3:
-                    if self.player.rect.x < 160 and self.player.rect.y > 3968:
-                        self.running = False
-                    elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
-                        self.player.rect.x = 400
-                        self.player.rect.y = 300
-
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
                     
@@ -218,4 +246,6 @@ class game():
 
 if __name__ == "__main__":
     gaem = game()
+    gaem.start()
     gaem.run()
+
