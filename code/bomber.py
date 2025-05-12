@@ -3,13 +3,15 @@ from player import  *
 from enemy import *
 
 class Bomber(Enemy):
-    def __init__(self, player, location,powerups, textures,bomber_explosion_texture, xp_texture, xp_group, all_sprites_group, groups):
-        super().__init__(player, textures, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
+    def __init__(self, player,state,location,powerups, textures,bomber_explosion_texture, xp_texture, xp_group, all_sprites_group, groups):
+        super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.player = player
         self.images = textures
         self.image = self.images[0]
         self.image_index = 0
+        self.speed = 900
+        self.rect = self.image.get_rect(center = location)
 
         self.plode = False
         self.plode_index = 0

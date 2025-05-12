@@ -4,9 +4,12 @@ from bomber import *
 from australian import *
 from projectiles import *
 
-def collision_x(target1, target2, iterable):
+def collision_x(target1, target2, iterable, state):
     if iterable:
-        for item1 in target1:
+        for item1 in target1: 
+            if item1.state != state: # used for enemies, the player transcends states, so the else case doesn't have it
+                continue
+
             for item2 in target2:
                 if item1.rect.colliderect(item2.rect):
                     if item1.direction.x > 0:
@@ -21,9 +24,12 @@ def collision_x(target1, target2, iterable):
                 elif target1.direction.x < 0:
                     target1.rect.left = item.rect.right
 
-def collision_y(target1, target2, iterable):
+def collision_y(target1, target2, iterable, state):
     if iterable:
         for item1 in target1:
+            if item1.state != state:
+                continue
+            
             for item2 in target2:
                 if item1.rect.colliderect(item2.rect):
                     if item1.direction.y > 0:
@@ -39,30 +45,28 @@ def collision_y(target1, target2, iterable):
                     target1.rect.top = item.rect.bottom
 
 
-def collision_projectile(projectiles, enemies, props):
+def collision_projectile(projectiles, enemies, walls, state):
     for projectile in projectiles:
-        for groups in props:
-            for collidable in groups:
-                if projectile.rect.colliderect(collidable):
-                    projectile.kill()
+        if hasattr(projectile, "state") and projectile.state != state:
+            continue
+
+        for wall in walls:
+            if projectile.rect.colliderect(wall):
+                projectile.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
                 enemy.health -= 100
                 projectile.kill()
 
-def toggle_spawners(player, spawner_group):
-    for spawner in spawner_group:
-        if spawner.rect.colliderect(player.rect):
-            spawner.can_spawn = True
-        else:
-            spawner.can_spawn = False
-
-def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls):
+def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls, state):
     now = pygame.time.get_ticks()
     for projectile in enemy_projectile_group:
+        if projectile.state != state:
+            continue
+
         if projectile.rect.colliderect(player.rect):
-            if type(projectile) == Beer:
+            if type(projectile) == Beer and "milk" not in powerups:
                 powerups["drunk"] = 0
                 powerup_timers["drunk"] = now + 1000
             projectile.kill()
@@ -71,15 +75,18 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
             if projectile.rect.colliderect(wall.rect):
                 projectile.kill()
 
-def le_attack(player, enemy_group, powerups, powerup_timers , dt):
+def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
     now = pygame.time.get_ticks()
     for enemy in enemy_group:
+        if enemy.state != state:
+            continue
+
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
             player.health -= enemy.attack
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
 
-            if type(enemy) == Australian:
+            if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             

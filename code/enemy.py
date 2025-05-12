@@ -6,13 +6,16 @@ from player import  *
 from xp import *
 
 class Enemy(pygame.sprite.Sprite):
-
-    def __init__(self, player, location, powerups, xp_texture, xp_group, all_sprites_group, groups):
+    def __init__(self, player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(groups)
         
         all_sprites_group.change_layer(self, 1)
-        self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
-        self.rect = self.image.get_rect(center = location)
+
+        self.state = state
+
+        #self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
+
+        #self.rect = self.image.get_rect(center = location)
         
         self.direction = pygame.math.Vector2()
         self.location = location
@@ -47,11 +50,13 @@ class Enemy(pygame.sprite.Sprite):
         if self.direction:
             self.direction = self.direction.normalize()
         
-    def move_x(self, dt):
-        self.rect.x += self.direction.x * self.speed * dt
+    def move_x(self, dt, state):
+        if self.state == state:
+            self.rect.x += self.direction.x * self.speed * dt
 
-    def move_y(self, dt):
-        self.rect.y += self.direction.y * self.speed * dt
+    def move_y(self, dt, state):
+        if self.state == state:
+            self.rect.y += self.direction.y * self.speed * dt
 
     def animate(self, dt):
         pass
