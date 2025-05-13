@@ -10,3 +10,11 @@ class Poison(Enemy):
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
+
+    def animate(self, dt):
+        if self.direction:
+            self.image_index += 10 * dt
+            self.image = self.images[int(self.image_index) % len(self.images)]
+        else:
+            self.image_index = 0
+            self.image = self.images[0] # the 0th image is always the idle frame

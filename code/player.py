@@ -50,6 +50,7 @@ class Player(pygame.sprite.Sprite):
     
     def input(self, state):
         keys = pygame.key.get_pressed()
+        print(self.health)
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
