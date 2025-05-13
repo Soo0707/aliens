@@ -31,7 +31,7 @@ class Bomber(Enemy):
             self.image = self.images[0] # the 0th image is always the idle frame
 
     def explode(self , dt):
-        self.plode_index += 10 * dt
+        self.plode_index += 50 * dt
 
         self.image = self.explode_images[int(self.plode_index) % len(self.explode_images)]
         if self.plode_index >= len(self.explode_images):

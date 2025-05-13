@@ -41,6 +41,9 @@ class game():
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
         self.num_xp = 0
+        self.level = 0
+        self.level_up = 10
+        
 
         self.textures = {
                 "bomber": [],
@@ -80,6 +83,7 @@ class game():
         self.load_map()
 
     def load_map(self):
+        
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -179,6 +183,13 @@ class game():
                     self.state += 1
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state -= 1
+                
+            if self.num_xp >= self.level_up:
+                self.level_up += 10
+                self.level += 1
+                self.num_xp = 0
+            
+            print(self.level)
             
             
             if self.is_paused:
