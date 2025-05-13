@@ -25,7 +25,7 @@ class game():
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                } # key = powerup name, value = any stuff you need to make it work
+                "Shield": 0,} # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
@@ -207,6 +207,7 @@ class game():
                 
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+                    AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
 
                     self.turn = 2
                 elif self.turn == 2:

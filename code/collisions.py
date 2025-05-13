@@ -82,20 +82,29 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state):
             continue
 
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
-            if "poison" in powerups:
-                player.health -= enemy.attack # <---- need to try and think of a way to create the poison system
-                enemy.can_attack_primary = False
-                enemy.last_attack_primary = now
-            else:
-                player.health -= enemy.attack
-                enemy.can_attack_primary = False
-                enemy.last_attack_primary = now
+            #if "poison" in powerups:
+            #    player.health -= enemy.attack # <---- need to try and think of a way to create the poison system
+            #    enemy.can_attack_primary = False
+            #    enemy.last_attack_primary = now
+            #else:
+            player.health -= enemy.attack
+            enemy.can_attack_primary = False
+            enemy.last_attack_primary = now
             
                     
             if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             
-            if type(enemy) == Poison and "milk" not in powerups:
-                powerups["posion"] = 0
-                powerup_timers["poison"] = now + 1000
+            #if type(enemy) == Poison and "milk" not in powerups:
+                #powerups["posion"] = 0
+                #powerup_timers["poison"] = now + 1000
+
+def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
+    now = pygame.time.get_ticks()
+    for enemy in enemy_group:
+        if enemy.state != state:
+            continue
+
+        if enemy.rect.colliderect(player.aoe):
+            player.health = 0 
