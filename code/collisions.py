@@ -94,4 +94,10 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 enemy.plode = True
                 enemy.explode(dt)
                 print('GAY')
+
+def collect_xp(self):
+    for orb in self.xp_group:
+                        if self.player.rect.colliderect(orb.rect):
+                            self.num_xp = self.num_xp + 1
+                            orb.kill()
                 
