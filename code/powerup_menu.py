@@ -64,7 +64,8 @@ class Powerup_Menu:
             case 'general': self.general()
     
     def apply_powerups(self, powerup):
+
         if powerup in self.powerups: 
             self.powerups[powerup] += 1 #does not add 1, doesn't work
         else:
-            self.powerups.update({powerup: 0})
+            self.powerups[powerup] = 0

@@ -52,6 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 300
         self.health = 100
         self.health_permanent = 100
+        self.health_permanent_shield = 0
 
         #self.circle_texture = pygame.image.load(join("..","assets","player","circle.png")).convert_alpha()
         self.orb = 0
@@ -75,6 +76,16 @@ class Player(pygame.sprite.Sprite):
             self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
             self.health = 80
             self.health_permanent = 80
+            
+        if "Shield" in self.powerups:
+            now = pygame.time.get_ticks()
+            if now % 240 == 0:
+                self.shield = 20 * (1 + self.powerups["Shield"])
+                self.health = self.health + self.shield
+                if self.health_permanent_shield < self.health_permanent + self.shield:
+                    self.health_permanent_shield = self.health_permanent + self.shield
+                if self.health > self.health_permanent_shield:
+                    self.health = self.health_permanent_shield
 
         mouse = pygame.mouse.get_pressed()
 
