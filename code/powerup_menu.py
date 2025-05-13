@@ -4,16 +4,16 @@ import random
 from main import *
 
 class Powerup_Menu:
-    def __init__(self, powerup_list, powerups): #add powerup as attribute when done
+    def __init__(self, powerup_list, powerups, powerup_timers): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
         self.top = 85
-        #self.powerup = powerup
         
         #control
         self.powerup_list = powerup_list
         self.powerups = powerups
+        self.powerup_timers = powerup_timers
         self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
@@ -64,8 +64,27 @@ class Powerup_Menu:
             case 'general': self.general()
     
     def apply_powerups(self, powerup):
+        if powerup in self.powerups:
+            if powerup == "milk":
+                if "drunk" in self.powerups:
+                    del self.powerups["drunk"]
 
-        if powerup in self.powerups: 
-            self.powerups[powerup] += 1 #does not add 1, doesn't work
+                if "aussie" in self.powerups:
+                    del self.powerups["aussie"]
+                
+                self.powerups[powerup] = 0
+                self.powerup_timers[powerup] = pygame.time.get_ticks() + 10000
+
+            elif powerup == "lazers":
+                self.powerups["lazers"][0] += 1 # width
+                self.powerups["lazers"][1] -= 100 # cooldown
+            elif powerup == "projectiles":
+                self.powerups["projectiles"][0] += 100 # speed
+                self.powerups["projectiles"][1] -= 10 # cooldown
+            elif powerup == "greenbull":
+                self.powerups["greenbull"] = 0
+                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
+            else:
+                self.powerups[powerup] += 1
         else:
-            self.powerups[powerup] = 0
+            self.powerups.update({powerup: 0})
