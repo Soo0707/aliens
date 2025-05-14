@@ -21,7 +21,7 @@ class game():
         self.running = True
         self.state = 0
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
+        self.powerup_list = ["blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown

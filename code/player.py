@@ -63,20 +63,6 @@ class Player(pygame.sprite.Sprite):
         if self.direction:
             self.direction = self.direction.normalize()
             
-        if "blood_sacrifice" in self.powerups:
-            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
-            self.health = 80
-            self.health_permanent = 80
-            
-        if "Shield" in self.powerups:
-            now = pygame.time.get_ticks()
-            if now % 240 == 0:
-                self.shield = 20 * (1 + self.powerups["Shield"])
-                self.health = self.health + self.shield
-                if self.health_permanent_shield < self.health_permanent + self.shield:
-                    self.health_permanent_shield = self.health_permanent + self.shield
-                if self.health > self.health_permanent_shield:
-                    self.health = self.health_permanent_shield
 
         mouse = pygame.mouse.get_pressed()
 
@@ -188,6 +174,21 @@ class Player(pygame.sprite.Sprite):
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
 
+        if "blood_sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+            self.health = 80
+            self.health_permanent = 80
+            
+        if "Shield" in self.powerups:
+            now = pygame.time.get_ticks()
+            if now % 240 == 0:
+                self.shield = 20 * (1 + self.powerups["Shield"])
+                self.health = self.health + self.shield
+                if self.health_permanent_shield < self.health_permanent + self.shield:
+                    self.health_permanent_shield = self.health_permanent + self.shield
+                if self.health > self.health_permanent_shield:
+                    self.health = self.health_permanent_shield
+            
         self.input(state)
         self.update_bearing()
         self.animate(dt)
