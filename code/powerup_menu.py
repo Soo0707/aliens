@@ -27,6 +27,8 @@ class Powerup_Menu:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
             self.apply_powerups(powerup=powerup)
             self.state = 'done'
+            if self.state == 'done':
+                self.general_options = random.sample(self.powerup_list, 3)
             
         
     def general(self):
