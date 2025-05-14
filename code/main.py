@@ -21,12 +21,12 @@ class game():
         self.running = True
         self.state = 0
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                } 
-        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
+                "Shield": 0,} # key = powerup name, value = any stuff you need to make it work
+        self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -244,6 +244,7 @@ class game():
                     collect_xp(self)
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
+                    AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
 
                     self.turn = 2
                 elif self.turn == 2:

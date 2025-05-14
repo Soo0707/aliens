@@ -3,6 +3,7 @@ from os.path import join
 from enemy import *
 from australian import *
 from drunkard import *
+from poison import *
 from bomber import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
@@ -112,7 +113,17 @@ class Spawner(Collidable):
                 bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 all_sprites_group = self.all_sprites_group,
             )
-
+            
+            Poison(
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                state = state,
+                location=self.rect.center,
+                textures = self.enemy_textures["poison"],
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+                powerups=self.powerups)
 
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False

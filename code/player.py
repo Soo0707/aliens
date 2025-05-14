@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.image =  self.images["S"][0]
         self.rect = self.image.get_rect(center = location)
 
-        self.aoe = None # for later when we have aoe effects, we'd probably want another rect
+        self.aoe = pygame.Rect(location, (600,600)) # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
@@ -42,6 +42,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = 300
         self.health = 100
         self.health_permanent = 100
+        self.health_permanent_shield = 0
+        
 
         self.circle_texture = self.images["circle"][0]
         self.orb = 0
@@ -49,6 +51,7 @@ class Player(pygame.sprite.Sprite):
     
     def input(self, state):
         keys = pygame.key.get_pressed()
+        print(self.health)
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
@@ -60,10 +63,6 @@ class Player(pygame.sprite.Sprite):
         if self.direction:
             self.direction = self.direction.normalize()
             
-        if "blood_sacrifice" in self.powerups:
-            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
-            self.health = 80
-            self.health_permanent = 80
 
         mouse = pygame.mouse.get_pressed()
 
@@ -153,11 +152,11 @@ class Player(pygame.sprite.Sprite):
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         
-        #self.aoe.x += self.direction.x * self.speed * dt
+        self.aoe.x += self.direction.x * self.speed * dt
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
 
-        #self.aoe.y += self.direction.y * self.speed * dt
+        self.aoe.y += self.direction.y * self.speed * dt
         
     
     def animate(self, dt):
@@ -175,6 +174,24 @@ class Player(pygame.sprite.Sprite):
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
 
+        if "blood_sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+            self.health = 80
+            self.health_permanent = 80
+            
+        if "Shield" in self.powerups:
+            now = pygame.time.get_ticks()
+            if now % 240 == 0:
+                self.shield = 20 * (1 + self.powerups["Shield"])
+                self.health = self.health + self.shield
+                if self.health_permanent_shield < self.health_permanent + self.shield:
+                    self.health_permanent_shield = self.health_permanent + self.shield
+                    if "blood_sacrifice" in self.powerups:
+                        self.health_permanent_shield -= 20
+                if self.health > self.health_permanent_shield:
+                    self.health = self.health_permanent_shield
+                    
+            
         self.input(state)
         self.update_bearing()
         self.animate(dt)

@@ -74,7 +74,10 @@ class Enemy(pygame.sprite.Sprite):
                 self.heal = (2*(1 + self.powerups["blood_regeneration"]))
                 if self.player.health < self.player.health_permanent:
                     self.player.health = self.player.health + self.heal
-                    if self.player.health > self.player.health_permanent:
+                    if "Shield" in self.powerups:          
+                        if self.player.health > self.player.health_permanent_shield:
+                            self.player.health = self.player.health_permanent_shield
+                    elif self.player.health > self.player.health_permanent:
                         self.player.health = self.player.health_permanent
 
         if not self.can_attack_primary and now - self.last_attack_primary >= self.attack_cooldown_primary:
