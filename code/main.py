@@ -41,9 +41,13 @@ class game():
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
         self.num_xp = 0
+        self.level = 0
+        self.level_up = 10
+        
 
         self.textures = {
                 "bomber": [],
+                "bomber_explosion" : [],
                 "drunkard": [],
                 "hooker": [],
                 "poison": [],
@@ -79,6 +83,7 @@ class game():
         self.load_map()
 
     def load_map(self):
+
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
@@ -125,6 +130,36 @@ class game():
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
                     
+
+    def xp_bar(self):
+
+        self.width = 200 - (self.num_xp / self.level_up) * 200
+
+        self.bg_rect = (1000 , 10 , 250 , 30)
+        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+        
+        self.progress_rect = (1005 , 15 , 200 , 20)
+        pygame.draw.rect(self.screen , (0,0,255), self.progress_rect )
+
+        self.empty_rect = (1005 , 15 , self.width , 20)
+        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+
+    def heatlh_bar(self):
+
+        self.width = 200  - (self.player.health / self.player.health_permanent) * 200
+
+        self.bg_rect = (1000 , 45 , 250 , 30)
+        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+
+        self.progress_rect = (1005 , 50 , 200 , 20)
+        pygame.draw.rect(self.screen , (0,255,0), self.progress_rect )
+
+        self.empty_rect = (1005 , 50 , self.width , 20)
+        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        
+        
+
+
     def start(self):
         while self.running:
             for event in pygame.event.get():
@@ -157,6 +192,8 @@ class game():
 
             self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
 
+            
+
             pygame.display.flip() 
 
     def run(self):
@@ -178,7 +215,11 @@ class game():
                     self.state += 1
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state -= 1
+                
             
+            if self.player.health <= 0:
+                print("Imgagine dying, kinda gay ngl, just like soo")
+                self.running = False
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
@@ -200,13 +241,9 @@ class game():
                 
                 if self.turn == 1:
                     self.check_timers()
-                    for orb in self.xp_group:
-                        if self.player.rect.colliderect(orb.rect):
-                            self.num_xp = self.num_xp + 1
-                            orb.kill()
-                
+                    collect_xp(self)
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
-                    le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+                    le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
 
                     self.turn = 2
                 elif self.turn == 2:
@@ -228,14 +265,25 @@ class game():
                 elif self.turn == 3:
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
-                    
+
+                    if self.num_xp >= self.level_up:
+                        self.level_up += 10
+                        self.num_xp = 0
+                        self.powerup_menu.state = 'general'
+                        
+                        self.powerup_menu_activation = True
+
                     self.turn = 1
+
 
                 self.projectile_group.update(dt, self.state)
                 self.enemy_projectile_group.update(dt, self.state)
 
                 self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
                 
+                self.xp_bar()
+                self.heatlh_bar()
+
                 if self.powerup_menu_activation:
                     self.powerup_menu.update()  
                     self.powerup_menu.draw()                 

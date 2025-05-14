@@ -3,6 +3,7 @@ from os.path import join
 from enemy import *
 from australian import *
 from drunkard import *
+from bomber import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -98,18 +99,18 @@ class Spawner(Collidable):
                 powerups=self.powerups
             )
 
-            Drunkard(
+
+            Bomber(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
                 state = state,
+                textures = self.enemy_textures["bomber"],
                 location=self.rect.center,
-                textures = self.enemy_textures["drunkard"],
-                beer_textures = self.enemy_textures["beer"],
-                enemy_projectile_group = self.enemy_projectile_group,
+                powerups=self.powerups,
+                xp_texture=self.enemy_textures["xp"][0],
                 xp_group=self.xp_group,
+                bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                powerups=self.powerups
             )
 
 

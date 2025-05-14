@@ -1,4 +1,4 @@
-import pygame
+import  pygame
 from math import atan
 
 class Projectile(pygame.sprite.Sprite):
@@ -83,3 +83,4 @@ class Beer(pygame.sprite.Sprite):
         self.rect.x += self.direction.x * self.speed * dt
         self.rect.y += self.direction.y * self.speed * dt
         self.animate(dt)
+

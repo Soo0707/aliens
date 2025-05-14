@@ -10,6 +10,7 @@ class Australian(Enemy):
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
+
     
     def animate(self, dt):
         if self.direction:
