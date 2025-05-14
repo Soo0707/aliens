@@ -186,8 +186,11 @@ class Player(pygame.sprite.Sprite):
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
                     self.health_permanent_shield = self.health_permanent + self.shield
+                    if "poison" in self.powerups:
+                        self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
+                    
             
         self.input(state)
         self.update_bearing()
