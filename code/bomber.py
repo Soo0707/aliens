@@ -10,7 +10,7 @@ class Bomber(Enemy):
         self.images = textures
         self.image = self.images[0]
         self.image_index = 0
-        self.speed = 900
+        self.speed = 1100
         self.rect = self.image.get_rect(center = location)
 
         self.plode = False

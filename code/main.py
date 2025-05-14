@@ -131,18 +131,34 @@ class game():
                     del self.powerup_timers[powerup]
                     
 
-    def bar(self):
+    def xp_bar(self):
 
         self.width = 200 - (self.num_xp / self.level_up) * 200
 
-        self.bg_rect = (1000 , 10 , 250 , 40)
+        self.bg_rect = (1000 , 10 , 250 , 30)
         pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
         
-        self.empty_rect = (1005 , 15 , 200 , 30)
-        pygame.draw.rect(self.screen , (0,0,255), self.empty_rect )
+        self.progress_rect = (1005 , 15 , 200 , 20)
+        pygame.draw.rect(self.screen , (0,0,255), self.progress_rect )
 
-        self.progress_rect = (1005 , 15 , self.width , 30)
-        pygame.draw.rect(self.screen , (0,0,0), self.progress_rect )
+        self.empty_rect = (1005 , 15 , self.width , 20)
+        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+
+    def heatlh_bar(self):
+
+        self.width = 200  - (self.player.health / self.player.health_permanent) * 200
+
+        self.bg_rect = (1000 , 45 , 250 , 30)
+        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+
+        self.progress_rect = (1005 , 50 , 200 , 20)
+        pygame.draw.rect(self.screen , (0,255,0), self.progress_rect )
+
+        self.empty_rect = (1005 , 50 , self.width , 20)
+        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        
+        
+
 
     def start(self):
         while self.running:
@@ -263,7 +279,8 @@ class game():
 
                 self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
                 
-                self.bar()
+                self.xp_bar()
+                self.heatlh_bar()
 
                 if self.powerup_menu_activation:
                     self.powerup_menu.update()  
