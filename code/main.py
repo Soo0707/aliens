@@ -216,9 +216,10 @@ class game():
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state -= 1
                 
-            print(self.num_xp)
             
-            
+            if self.player.health <= 0:
+                print("Imgagine dying, kinda gay ngl, just like soo")
+                self.running = False
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
@@ -268,6 +269,7 @@ class game():
                     if self.num_xp >= self.level_up:
                         self.level_up += 10
                         self.num_xp = 0
+                        self.powerup_menu.state = 'general'
                         
                         self.powerup_menu_activation = True
 

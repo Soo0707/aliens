@@ -93,7 +93,6 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             if type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
-                print('GAY')
 
 def collect_xp(self):
     for orb in self.xp_group:
