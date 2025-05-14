@@ -1,5 +1,6 @@
 import pygame
 
+from bomber import *
 from australian import *
 from poison import *
 from projectiles import *
@@ -75,7 +76,7 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
             if projectile.rect.colliderect(wall.rect):
                 projectile.kill()
 
-def le_attack(player, enemy_group, powerups, powerup_timers, state):
+def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
     now = pygame.time.get_ticks()
     for enemy in enemy_group:
         if enemy.state != state:
@@ -99,6 +100,17 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state):
             #if type(enemy) == Poison and "milk" not in powerups:
                 #powerups["posion"] = 0
                 #powerup_timers["poison"] = now + 1000
+
+            if type(enemy) == Bomber:
+                enemy.plode = True
+                enemy.explode(dt)
+
+def collect_xp(self):
+    for orb in self.xp_group:
+                        if self.player.rect.colliderect(orb.rect):
+                            self.num_xp = self.num_xp + 1
+                            orb.kill()
+                
 
 def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
     now = pygame.time.get_ticks()
