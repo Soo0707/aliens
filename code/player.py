@@ -1,6 +1,7 @@
 import pygame
 from os.path import join
 from os import listdir
+from random import random
 
 from projectiles import *
 
@@ -62,70 +63,53 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
-            
 
         mouse = pygame.mouse.get_pressed()
 
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-        
-        if mouse_direction:
-            mouse_direction = mouse_direction.normalize()
-
         if mouse[0] and self.can_lmb:
-            directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
-
-            if "drunk" not in self.powerups:
-                Projectile(
-                        self.powerups["projectiles"][0],
-                        state,
-                        self.projectile_texture,
-                        self.rect.center,
-                        mouse_direction,
-                        (self.all_sprites_group, self.projectile_group)
-                        )
-            else:
-                for direction in directions:
-                    Lazers(
-                            self.lazer_texture_horizontal,
-                            state,
-                            self.powerups["lazers"][0],
-                            self.rect.center,
-                            pygame.math.Vector2(direction),
-                            (self.all_sprites_group, self.projectile_group)
-                            )
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
             
+            if "drunk" in self.powerups:
+                noise = random() * 100
+                mouse_direction.x += noise
+                mouse_direction.y += noise
+
+            if mouse_direction:
+                mouse_direction = mouse_direction.normalize()
+
+            Projectile(
+                    self.powerups["projectiles"][0],
+                    state,
+                    self.projectile_texture,
+                    self.rect.center,
+                    mouse_direction,
+                    (self.all_sprites_group, self.projectile_group)
+                    )
+
             self.can_lmb = False
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
-            mouse_pos = pygame.mouse.get_pos()
             directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
-            if "drunk" not in self.powerups:
-                for direction in directions:
-                    Lazers(
-                            self.lazer_texture_horizontal,
-                            state,
-                            self.powerups["lazers"][0],
-                            self.rect.center,
-                            pygame.math.Vector2(direction),
-                            (self.all_sprites_group, self.projectile_group)
-                            )
-            else:
-                Projectile(
-                        self.powerups["projectiles"][0],
+            for direction in directions:
+                if direction[1] != 0:
+                    lazer_texture = self.lazer_texture_vertical
+                else:
+                    lazer_texture = self.lazer_texture_horizontal
+
+                Lazers(
+                        lazer_texture,
                         state,
-                        self.projectile_texture,
+                        self.powerups["lazers"][0],
                         self.rect.center,
-                        mouse_direction,
+                        pygame.math.Vector2(direction),
                         (self.all_sprites_group, self.projectile_group)
                         )
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
-
-
 
         if self.orb == 0 and mouse[1]:
             self.orb += 1
