@@ -35,6 +35,8 @@ class Enemy(pygame.sprite.Sprite):
         self.xp_texture = xp_texture
         self.powerups = powerups
 
+        self.birth = pygame.time.get_ticks()
+
 
     def set_direction(self):
         player_pos = pygame.math.Vector2(self.player.rect.center)
@@ -80,7 +82,7 @@ class Enemy(pygame.sprite.Sprite):
 
         if not self.can_attack_secondary and now - self.last_attack_secondary >= self.attack_cooldown_secondary:
             self.can_attack_secondary = True
-        
+
         self.set_direction()
         self.animate(dt)
         self.secondary()

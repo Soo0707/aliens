@@ -63,7 +63,7 @@ class Spawner(Collidable):
         
         self.last_spawn = 0
         self.can_spawn = True
-        self.timeout_ticks = 200
+        self.timeout_ticks = 20
 
         self.player = player
         self.all_sprites_group = all_sprites_group
@@ -125,7 +125,7 @@ class Spawner(Collidable):
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
                 )
-            '''
+
             Drunkard(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
@@ -139,7 +139,6 @@ class Spawner(Collidable):
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
                 )
-            '''
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 

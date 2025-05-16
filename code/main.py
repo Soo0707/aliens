@@ -20,12 +20,13 @@ class game():
 
         self.running = True
         self.state = 0
+        self.tick_offsets = [0 for i in range(10)]
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison", "buckshot"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                "drunk" : 0
+                "buckshot": 3,
                 }
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
@@ -84,8 +85,8 @@ class game():
         self.load_map()
 
     def load_map(self):
-
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
+
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
             MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
@@ -133,7 +134,6 @@ class game():
                     
 
     def xp_bar(self):
-
         self.width = 200 - (self.num_xp / self.level_up) * 200
 
         self.bg_rect = (1000 , 10 , 250 , 30)
@@ -146,7 +146,6 @@ class game():
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
     def heatlh_bar(self):
-
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
 
         self.bg_rect = (1000 , 45 , 250 , 30)
@@ -157,9 +156,6 @@ class game():
 
         self.empty_rect = (1005 , 50 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
-        
-        
-
 
     def start(self):
         while self.running:
@@ -193,9 +189,7 @@ class game():
 
             self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
 
-            
-
-            pygame.display.flip() 
+            pygame.display.flip()
 
     def run(self):
         while self.running:
@@ -213,14 +207,17 @@ class game():
                     self.is_paused = False
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    self.state += 1
+                    if self.state > 0:
+                        self.tick_offsets[self.state] = pygame.time.get_ticks()
+                        self.state -= 1
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                    self.state -= 1
+                    if self.state + 1 < len(self.tick_offsets):
+                        self.tick_offsets[self.state] = pygame.time.get_ticks()
+                        self.state += 1
                 
             
             if self.player.health <= 0:
-                print("Imgagine dying, kinda gay ngl, just like soo")
-                self.running = False
+                self.player.health = 100
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
@@ -240,16 +237,31 @@ class game():
 
                 self.player.update(dt, self.state)
                 
+                now = pygame.time.get_ticks()
                 if self.turn == 1:
-                    self.check_timers()
+                    for xp in self.xp_group:
+                        if now - xp.birth >= 10000:
+                            xp.kill()
+
                     collect_xp(self)
+
+                    for projectile in self.projectile_group:
+                        if type(projectile) == Circle:
+                            continue
+
+                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000:
+                            projectile.kill()
+
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
                     AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+                    self.check_timers()
 
                     self.turn = 2
                 elif self.turn == 2:
-                    check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
+                    for enemy in self.enemy_group:            
+                        if now - enemy.birth - self.tick_offsets[self.state] >= 10000:
+                            enemy.kill()
 
                     for enemy in self.enemy_group:
                         enemy.move_x(dt, self.state)
@@ -265,6 +277,12 @@ class game():
 
                     self.turn = 3
                 elif self.turn == 3:
+                    for projectile in self.enemy_projectile_group:
+                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000:
+                            projectile.kill()
+
+                    check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
+
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
 
@@ -290,7 +308,7 @@ class game():
                     self.powerup_menu.update()  
                     self.powerup_menu.draw()                 
 
-            pygame.display.flip() # updates screen
+            pygame.display.flip() 
 
         pygame.quit()
 

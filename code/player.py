@@ -1,6 +1,6 @@
 import pygame
 
-from random import random
+from random import random, randint
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
@@ -42,7 +42,6 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.health_permanent = 100
         self.health_permanent_shield = 0
-        
 
         self.circle_texture = self.images["circle"][0]
         self.orb = 0
@@ -50,7 +49,6 @@ class Player(pygame.sprite.Sprite):
     
     def input(self, state):
         keys = pygame.key.get_pressed()
-        print(self.health)
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
@@ -73,17 +71,33 @@ class Player(pygame.sprite.Sprite):
                 mouse_direction.x += noise
                 mouse_direction.y += noise
 
-            if mouse_direction:
-                mouse_direction = mouse_direction.normalize()
+                if mouse_direction:
+                    mouse_direction = mouse_direction.normalize()
 
-            Projectile(
-                    self.powerups["projectiles"][0],
-                    state,
-                    self.projectile_texture,
-                    self.rect.center,
-                    mouse_direction,
-                    (self.all_sprites_group, self.projectile_group)
-                    )
+                Projectile(
+                        self.powerups["projectiles"][0],
+                        state,
+                        self.projectile_texture,
+                        self.rect.center,
+                        mouse_direction,
+                        (self.all_sprites_group, self.projectile_group)
+                        )
+            else:
+                for i in range(self.powerups["buckshot"]):
+                    mouse_direction.x += i / self.powerups["buckshot"]
+                    mouse_direction.y += i / self.powerups["buckshot"]
+
+                    if mouse_direction:
+                        mouse_direction = mouse_direction.normalize()
+
+                    Projectile(
+                            self.powerups["projectiles"][0],
+                            state,
+                            self.projectile_texture,
+                            self.rect.center,
+                            mouse_direction,
+                            (self.all_sprites_group, self.projectile_group)
+                            )
 
             self.can_lmb = False
             self.last_lmb = pygame.time.get_ticks()
@@ -133,11 +147,10 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        
         self.aoe.x += self.direction.x * self.speed * dt
+    
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-
         self.aoe.y += self.direction.y * self.speed * dt
         
     
