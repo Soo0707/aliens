@@ -2,6 +2,7 @@ import pygame
 
 from bomber import *
 from australian import *
+from trapper import *
 from projectiles import *
 
 def collision_x(target1, target2, iterable, state):
@@ -93,6 +94,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             if type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
+
 
 def collect_xp(self):
     for orb in self.xp_group:

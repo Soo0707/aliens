@@ -218,7 +218,7 @@ class game():
                 
             
             if self.player.health <= 0:
-                print("Imgagine dying, kinda gay ngl, just like soo")
+                print("Imagine dying, kinda gay ngl, just like soo")
                 self.running = False
             
             if self.is_paused:
