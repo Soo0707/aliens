@@ -26,7 +26,7 @@ class game():
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                "buckshot": 3,
+                "buckshot": 1,
                 }
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
@@ -203,17 +203,14 @@ class game():
                         self.is_paused = False
                     else:
                         self.is_paused = True
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.is_paused = False
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    if self.state > 0:
-                        self.tick_offsets[self.state] = pygame.time.get_ticks()
-                        self.state -= 1
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                    if self.state + 1 < len(self.tick_offsets):
-                        self.tick_offsets[self.state] = pygame.time.get_ticks()
-                        self.state += 1
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0:
+                    self.tick_offsets[self.state] = pygame.time.get_ticks()
+                    self.state -= 1
+                
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state + 1 < len(self.tick_offsets):
+                    self.tick_offsets[self.state] = pygame.time.get_ticks()
+                    self.state += 1
                 
             
             if self.player.health <= 0:
