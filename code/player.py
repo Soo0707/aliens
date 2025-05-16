@@ -1,8 +1,6 @@
 import pygame
-from os.path import join
-from os import listdir
-from random import random
 
+from random import random
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):

@@ -1,10 +1,10 @@
 import pygame
-pygame.font.init()
 import random
-from main import *
+
 
 class Powerup_Menu:
     def __init__(self, powerup_list, powerups, powerup_timers): #add powerup as attribute when done
+        pygame.font.init()
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215

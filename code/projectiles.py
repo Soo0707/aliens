@@ -1,4 +1,4 @@
-import  pygame
+import pygame
 from math import atan
 
 class Projectile(pygame.sprite.Sprite):
