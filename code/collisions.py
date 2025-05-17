@@ -2,8 +2,9 @@ import pygame
 
 from bomber import *
 from australian import *
-from trapper import *
+from poison import *
 from projectiles import *
+from trapper import *
 
 def collision_x(target1, target2, iterable, state):
     if iterable:
@@ -83,18 +84,34 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             continue
 
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
+            #if "poison" in powerups:
+            #    player.health -= enemy.attack # <---- need to try and think of a way to create the poison system
+            #    enemy.can_attack_primary = False
+            #    enemy.last_attack_primary = now
+            #else:
             player.health -= enemy.attack
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
-
+            
+                    
             if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             
+            #if type(enemy) == Poison and "milk" not in powerups:
+                #powerups["posion"] = 0
+                #powerup_timers["poison"] = now + 1000
+
             if type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
+            
+            if type(enemy) == Trapper:
+                powerups["trapper"] = 0
+                powerup_timers["trapper"] = now + 5000000
+                
 
+            
 
 def collect_xp(self):
     for orb in self.xp_group:
@@ -102,3 +119,12 @@ def collect_xp(self):
                             self.num_xp = self.num_xp + 1
                             orb.kill()
                 
+
+def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
+    now = pygame.time.get_ticks()
+    for enemy in enemy_group:
+        if enemy.state != state:
+            continue
+
+        if enemy.rect.colliderect(player.aoe):
+            player.health = 0 

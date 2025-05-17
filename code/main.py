@@ -21,12 +21,12 @@ class game():
         self.running = True
         self.state = 0
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                } 
-        self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
+                "Shield": 0,} # key = powerup name, value = any stuff you need to make it work
+        self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -40,8 +40,8 @@ class game():
         self.walls_group = pygame.sprite.LayeredUpdates()
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
+
         self.num_xp = 0
-        self.level = 0
         self.level_up = 10
         
 
@@ -157,8 +157,48 @@ class game():
         self.empty_rect = (1005 , 50 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
         
-        
+    def reset(self):
 
+        if "aussie" in self.powerups:
+            del self.powerups["aussie"]
+        
+        if "drunkard" in self.powerups:
+            del self.powerups["drunkard"]
+
+        if "poison" in self.powerups:
+            del self.powerups["poison"]
+
+        self.powerups = {
+                "projectiles" : [1000, 100], 
+                "lazers" : [5, 1000], 
+               }
+        
+        self.powerup_timers = {}
+
+
+        for enemies in self.enemy_projectile_group:
+            enemies.kill()
+
+        for enemy_projectiles in self.enemy_projectile_group:
+            enemy_projectiles.kill()
+
+        for projectile in self.projectile_group:
+            projectile.kill()
+
+        for xp in self.xp_group:
+            xp.kill()
+
+        self.state = 0
+
+        self.num_xp = 0 
+        self.level_up = 10
+
+        self.player.rect.center = (1024, 4032)
+
+        self.player.health = self.player.health_permanent
+        
+        
+        
 
     def start(self):
         while self.running:
@@ -215,11 +255,7 @@ class game():
                     self.state += 1
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state -= 1
-                
             
-            if self.player.health <= 0:
-                print("Imagine dying, kinda gay ngl, just like soo")
-                self.running = False
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
@@ -244,6 +280,7 @@ class game():
                     collect_xp(self)
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
+                    AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
 
                     self.turn = 2
                 elif self.turn == 2:
@@ -263,6 +300,11 @@ class game():
 
                     self.turn = 3
                 elif self.turn == 3:
+
+                    if self.player.health <= 0:
+                        self.reset()
+                        
+
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
 

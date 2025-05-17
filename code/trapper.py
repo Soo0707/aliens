@@ -5,14 +5,11 @@ from enemy import *
 class Trapper(Enemy):
     def __init__(self, player, state, location, powerups, textures, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
-        self.speed = 500
+        self.speed = 400
         self.images = textures
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
-
-        self.trap = False
-            
 
     def animate(self, dt):
         if self.direction:
@@ -21,5 +18,20 @@ class Trapper(Enemy):
         else:
             self.image_index = 0
             self.image = self.images[0] # the 0th image is always the idle frame
+
+    def update(self, dt):
+        now = pygame.time.get_ticks()
+        
+        if self.health <= 0:
+            Orb(self.xp_texture, self.rect.center, (self.all_sprites_group, self.xp_group))
+            self.kill()
+
+        if not self.can_attack_primary and now - self.last_attack_primary >= self.attack_cooldown_primary:
+            self.can_attack_primary = True
+
+        if not self.can_attack_secondary and now - self.last_attack_secondary >= self.attack_cooldown_secondary:
+            self.can_attack_secondary = True
+        
+        self.set_direction()
 
     

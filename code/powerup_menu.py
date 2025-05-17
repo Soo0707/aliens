@@ -27,6 +27,8 @@ class Powerup_Menu:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
             self.apply_powerups(powerup=powerup)
             self.state = 'done'
+            if self.state == 'done':
+                self.general_options = random.sample(self.powerup_list, 3)
             
         
     def general(self):
@@ -72,6 +74,10 @@ class Powerup_Menu:
                 if "aussie" in self.powerups:
                     del self.powerups["aussie"]
                 
+                if "poison" in self.powerups:
+                    del self.powerups["poison"]
+                    
+                
                 self.powerups[powerup] = 0
                 self.powerup_timers[powerup] = pygame.time.get_ticks() + 10000
 
@@ -84,5 +90,11 @@ class Powerup_Menu:
             elif powerup == "greenbull":
                 self.powerups["greenbull"] = 0
                 self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
+            else:
+                self.powerups[powerup] += 1
         else:
-            self.powerups.update({powerup: 0})
+            if powerup == "blood_sacrifice":
+                self.powerups["blood_sacrifice"] = 0
+                self.powerup_timers["blood_sacrifice"] = pygame.time.get_ticks() + 1000
+            else:    
+                self.powerups.update({powerup: 0})
