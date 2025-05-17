@@ -181,7 +181,7 @@ class Player(pygame.sprite.Sprite):
             
         if "Shield" in self.powerups:
             now = pygame.time.get_ticks()
-            if now % 240 == 0:
+            if now % 250 == 0:
                 self.shield = 20 * (1 + self.powerups["Shield"])
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
@@ -190,6 +190,11 @@ class Player(pygame.sprite.Sprite):
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
+                    
+        if "poison" in self.powerups:
+            now = pygame.time.get_ticks()
+            if now % 200 == 0:
+                self.health -= 5
                     
             
         self.input(state)

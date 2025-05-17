@@ -87,7 +87,7 @@ class Spawner(Collidable):
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
             )
-            '''
+            ''''''
             Australian(
                 player=self.player,
                 groups=(self.all_sprites_group, self.enemy_group),
@@ -112,7 +112,7 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 all_sprites_group = self.all_sprites_group,
-            )
+            )'''
             
             Poison(
                 player=self.player,
