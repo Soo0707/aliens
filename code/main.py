@@ -21,7 +21,7 @@ class game():
         self.running = True
         self.state = 0
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison", "AOE_EFFECT"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
@@ -129,6 +129,10 @@ class game():
                 if self.powerup_timers[powerup] - now <= 0:
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
+                    
+        if "poison" in self.powerups and now - self.powerups["poison"] > 1000:
+            self.player.health -= 5
+            self.powerups["poison"] = now
                     
 
     def xp_bar(self):

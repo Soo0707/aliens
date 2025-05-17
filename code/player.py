@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.image =  self.images["S"][0]
         self.rect = self.image.get_rect(center = location)
 
-        self.aoe # for later when we have aoe effects, we'd probably want another rect
+        self.aoe = pygame.Rect(0, 0, 400, 400) # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
@@ -151,12 +151,8 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        
-        self.aoe.x += self.direction.x * self.speed * dt
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-
-        self.aoe.y += self.direction.y * self.speed * dt
         
     
     def animate(self, dt):
@@ -190,11 +186,8 @@ class Player(pygame.sprite.Sprite):
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
-                    
-        if "poison" in self.powerups:
-            now = pygame.time.get_ticks()
-            if now % 200 == 0:
-                self.health -= 5
+                
+        self.aoe.center = self.rect.center
                     
             
         self.input(state)
