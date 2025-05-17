@@ -108,7 +108,6 @@ def collect_xp(self):
                 
 
 def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
-    now = pygame.time.get_ticks()
     for enemy in enemy_group:
         if enemy.state != state:
             continue
