@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.image =  self.images["S"][0]
         self.rect = self.image.get_rect(center = location)
 
-        self.aoe = pygame.Rect(location, (600,600)) # for later when we have aoe effects, we'd probably want another rect
+        self.aoe # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
