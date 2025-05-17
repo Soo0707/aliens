@@ -225,7 +225,6 @@ class game():
                     self.tick_offsets[self.state] = pygame.time.get_ticks()
                     self.state += 1
                 
-            print(self.map_loopover_x, self.map_loopover_y)
             if self.player.health <= 0:
                 self.player.health = 100
             
