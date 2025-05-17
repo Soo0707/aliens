@@ -82,6 +82,8 @@ class game():
         self.is_paused = False #<--- condition for pausing
         self.powerup_menu_activation = True
 
+        self.map_loopover_x = 0
+        self.map_loopover_y = 0
         self.load_map()
 
     def load_map(self):
@@ -90,12 +92,20 @@ class game():
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
             MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
+            self.map_loopover_x = x
+            self.map_loopover_y = y
 
+        self.map_loopover_x *= 32
+        self.map_loopover_y *= 32
+        
         for x, y, texture in background.get_layer_by_name("Walls").tiles():
             Walls((x * 32, y * 32), texture, (self.all_sprites_group, self.walls_group))
 
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites_group, self.collidable_group))
+
+        for x, y, texture in background.get_layer_by_name("Decorations").tiles():
+            MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
 
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
             Spawner(
@@ -110,6 +120,7 @@ class game():
                 enemy_group = self.enemy_group,
                 enemy_textures = self.textures,               
             )
+            
     
     def load_textures(self):
         for key in self.textures:
@@ -164,7 +175,7 @@ class game():
                     self.running = False
             
             
-            self.screen.fill("black")
+            self.screen.fill("#18215d00")
             dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
             self.player.move_x(dt)               
@@ -182,6 +193,8 @@ class game():
             elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
                 self.player.rect.x = 400
                 self.player.rect.y = 300
+                self.player.update_distance.x = 400
+                self.player.update_distance.y = 300
                 return
 
             self.projectile_group.update(dt, self.state)
@@ -212,14 +225,14 @@ class game():
                     self.tick_offsets[self.state] = pygame.time.get_ticks()
                     self.state += 1
                 
-            
+            print(self.map_loopover_x, self.map_loopover_y)
             if self.player.health <= 0:
                 self.player.health = 100
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
             else:
-                self.screen.fill("black")
+                self.screen.fill("#18215d00")
                 dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
                 self.player.move_x(dt)               
@@ -257,7 +270,7 @@ class game():
                     self.turn = 2
                 elif self.turn == 2:
                     for enemy in self.enemy_group:            
-                        if now - enemy.birth - self.tick_offsets[self.state] >= 10000:
+                        if now - enemy.birth - self.tick_offsets[self.state] >= 10000 or not enemy.rect.colliderect(self.player.update_distance):
                             enemy.kill()
 
                     for enemy in self.enemy_group:
@@ -289,6 +302,26 @@ class game():
                         self.powerup_menu.state = 'general'
                         
                         self.powerup_menu_activation = True
+
+                    if self.player.rect.x < 0:
+                        self.player.rect.x = self.map_loopover_x
+                        self.player.update_distance.x = self.map_loopover_x
+                        self.player.aoe.x = self.map_loopover_x
+
+                    elif self.player.rect.x > self.map_loopover_x:
+                        self.player.rect.x = 0
+                        self.player.update_distance.x = 0
+                        self.player.aoe.x = 0
+
+                    if self.player.rect.y < 0:
+                        self.player.rect.y = self.map_loopover_y
+                        self.player.update_distance.y = self.map_loopover_y
+                        self.player.aoe.y = self.map_loopover_y
+
+                    elif self.player.rect.y > self.map_loopover_y:
+                        self.player.rect.y = 0
+                        self.player.update_distance.y = 0
+                        self.player.aoe.y = 0
 
                     self.turn = 1
 

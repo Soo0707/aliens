@@ -14,6 +14,8 @@ class Player(pygame.sprite.Sprite):
         self.images = textures
         self.image =  self.images["S"][0]
         self.rect = self.image.get_rect(center = location)
+        
+        self.update_distance = pygame.Rect(location, (1920, 1080))
 
         self.aoe = pygame.Rect(location, (600,600)) # for later when we have aoe effects, we'd probably want another rect
 
@@ -147,10 +149,12 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
+        self.update_distance.x += self.direction.x * self.speed * dt
         self.aoe.x += self.direction.x * self.speed * dt
     
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
+        self.update_distance.y += self.direction.y * self.speed * dt
         self.aoe.y += self.direction.y * self.speed * dt
         
     

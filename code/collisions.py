@@ -88,11 +88,6 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             continue
 
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
-            #if "poison" in powerups:
-            #    player.health -= enemy.attack # <---- need to try and think of a way to create the poison system
-            #    enemy.can_attack_primary = False
-            #    enemy.last_attack_primary = now
-            #else:
             player.health -= enemy.attack
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
@@ -102,8 +97,8 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 powerup_timers["aussie"] = now + 500
             
             elif type(enemy) == Poison and "milk" not in powerups:
-                powerups["posion"] = 0
-                powerup_timers["poison"] = now + 1000
+                powerups["posion"] = None
+                powerup_timers["poison_kill"] = now + 1000
 
             elif type(enemy) == Bomber:
                 enemy.plode = True
