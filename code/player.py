@@ -62,18 +62,16 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = -self.direction.x
             self.direction.y = -self.direction.y
 
-        if "trapper" in self.powerups:
+        if "trap" in self.powerups:
             self.speed = 0
 
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.space =+1
+                self.space +=1
 
             if self.space >= 5:
-                self.space = 0
-                del self.powerups["trapper"]
+                self.sapce = 0
+                del self.powerups["trap"]
                 self.speed = 300
-
-            print(self.space)
 
         if self.direction:
             self.direction = self.direction.normalize()

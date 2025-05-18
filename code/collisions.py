@@ -107,8 +107,8 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 enemy.explode(dt)
             
             if type(enemy) == Trapper:
-                powerups["trapper"] = 0
-                powerup_timers["trapper"] = now + 5000000
+                powerups["trap"] = 0
+                
                 
 
             

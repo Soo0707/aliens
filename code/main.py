@@ -139,7 +139,7 @@ class game():
         pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
         
         self.progress_rect = (1005 , 15 , 200 , 20)
-        pygame.draw.rect(self.screen , (0,0,255), self.progress_rect )
+        pygame.draw.rect(self.screen , (0, 218, 254), self.progress_rect )
 
         self.empty_rect = (1005 , 15 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
@@ -157,16 +157,39 @@ class game():
         self.empty_rect = (1005 , 50 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
         
+
+
+    def powerup_bar(self):
+
+        if "drunk" in self.powerups:
+            self.drunk_rect = (1230 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (255 , 255 , 0) , self.drunk_rect)
+
+        if "poison" in self.powerups:
+            self.poison_rect = (1205 , 80 ,20, 20)
+            pygame.draw.rect(self.screen, (76, 0, 230) , self.poison_rect)
+
+        if "greenbull" in self.powerups:
+            self.greenbull_rect = (1180 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
+
+        if "milk" in self.powerups:
+            self.milk_rect = (1155 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
+        
     def reset(self):
 
         if "aussie" in self.powerups:
             del self.powerups["aussie"]
         
-        if "drunkard" in self.powerups:
-            del self.powerups["drunkard"]
+        if "drunk" in self.powerups:
+            del self.powerups["drunk"]
 
         if "poison" in self.powerups:
             del self.powerups["poison"]
+
+        if "trap" in self.powerups:
+            del self.powerups["trap"]
 
         self.powerups = {
                 "projectiles" : [1000, 100], 
@@ -325,6 +348,7 @@ class game():
                 
                 self.xp_bar()
                 self.heatlh_bar()
+                self.powerup_bar()
 
                 if self.powerup_menu_activation:
                     self.powerup_menu.update()  
