@@ -17,9 +17,6 @@ class Bomber(Enemy):
         self.plode_index = 0
         self.explode_images= bomber_explosion_texture
         self.explode_image = self.explode_images[0]
-
-        self.plode_timer = 0
-        self.plode_duration = 0.5
     
     def animate(self, dt):
 

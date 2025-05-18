@@ -48,6 +48,9 @@ def collision_y(target1, target2, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, state):
     for projectile in projectiles:
+        if type(projectile) == Circle:
+            continue
+
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
@@ -58,10 +61,12 @@ def collision_projectile(projectiles, enemies, walls, state):
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
                 enemy.health -= 100
-                projectile.kill()
+                if type(projectile) == Projectile:
+                    projectile.kill()
 
 def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls, state):
     now = pygame.time.get_ticks()
+
     for projectile in enemy_projectile_group:
         if projectile.state != state:
             continue
@@ -83,25 +88,19 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             continue
 
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
-            #if "poison" in powerups:
-            #    player.health -= enemy.attack # <---- need to try and think of a way to create the poison system
-            #    enemy.can_attack_primary = False
-            #    enemy.last_attack_primary = now
-            #else:
             player.health -= enemy.attack
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
-            
-                    
+             
             if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             
-            #if type(enemy) == Poison and "milk" not in powerups:
-                #powerups["posion"] = 0
-                #powerup_timers["poison"] = now + 1000
+            elif type(enemy) == Poison and "milk" not in powerups:
+                powerups["posion"] = None
+                powerup_timers["poison_kill"] = now + 1000
 
-            if type(enemy) == Bomber:
+            elif type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
 

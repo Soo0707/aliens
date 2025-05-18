@@ -1,5 +1,4 @@
 import pygame
-from os.path import join
 
 from allsprites import *
 from player import  *
@@ -12,11 +11,7 @@ class Enemy(pygame.sprite.Sprite):
         all_sprites_group.change_layer(self, 1)
 
         self.state = state
-
-        #self.image = pygame.image.load(join("..", "assets", "enemy", "trapper" , "1.png")).convert_alpha() #need to change this later to fit with animations
-
-        #self.rect = self.image.get_rect(center = location)
-        
+       
         self.direction = pygame.math.Vector2()
         self.location = location
         self.health = 100
@@ -39,6 +34,8 @@ class Enemy(pygame.sprite.Sprite):
         
         self.xp_texture = xp_texture
         self.powerups = powerups
+
+        self.birth = pygame.time.get_ticks()
 
 
     def set_direction(self):
@@ -85,7 +82,7 @@ class Enemy(pygame.sprite.Sprite):
 
         if not self.can_attack_secondary and now - self.last_attack_secondary >= self.attack_cooldown_secondary:
             self.can_attack_secondary = True
-        
+
         self.set_direction()
         self.animate(dt)
         self.secondary()
