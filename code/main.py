@@ -26,7 +26,7 @@ class game():
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                "buckshot": 1,
+                "buckshot": 1
                 }
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
         
@@ -46,7 +46,6 @@ class game():
         self.level = 0
         self.level_up = 10
         
-
         self.textures = {
                 "bomber": [],
                 "bomber_explosion" : [],
@@ -70,8 +69,8 @@ class game():
         
         self.load_textures()
         
-        self.player = Player((1024, 4032), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
-        self.turn = 1
+        self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
+        self.turn = -1
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
@@ -79,8 +78,8 @@ class game():
                                          powerup_timers = self.powerup_timers
                                         )
         self.pause_menu = Pause()
-        self.is_paused = False #<--- condition for pausing
-        self.powerup_menu_activation = True
+        self.is_paused = False 
+        self.powerup_menu_activation = False
 
         self.map_loopover_x = 0
         self.map_loopover_y = 0
@@ -168,42 +167,6 @@ class game():
         self.empty_rect = (1005 , 50 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
-    def start(self):
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-            
-            
-            self.screen.fill("#18215d00")
-            dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
-
-            self.player.move_x(dt)               
-            collision_x(self.player, self.collidable_group, False, self.state)
-            collision_x(self.player, self.walls_group, False, self.state)
-
-            self.player.move_y(dt)
-            collision_y(self.player, self.collidable_group, False, self.state)
-            collision_y(self.player, self.walls_group, False, self.state)
-
-            self.player.update(dt, self.state)
-            
-            if self.player.rect.x < 160 and self.player.rect.y > 3968:
-                self.running = False
-            elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
-                self.player.rect.x = 400
-                self.player.rect.y = 300
-                self.player.update_distance.x = 400
-                self.player.update_distance.y = 300
-                return
-
-            self.projectile_group.update(dt, self.state)
-            self.enemy_projectile_group.update(dt, self.state)
-
-            self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
-
-            pygame.display.flip()
-
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
@@ -258,7 +221,7 @@ class game():
                         if type(projectile) == Circle:
                             continue
 
-                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000:
+                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000 or not projectile.rect.colliderect(self.player.update_distance):
                             projectile.kill()
 
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
@@ -269,7 +232,7 @@ class game():
                     self.turn = 2
                 elif self.turn == 2:
                     for enemy in self.enemy_group:            
-                        if now - enemy.birth - self.tick_offsets[self.state] >= 10000 or not enemy.rect.colliderect(self.player.update_distance):
+                        if now - enemy.birth - self.tick_offsets[self.state] >= 1000000000 or not enemy.rect.colliderect(self.player.update_distance):
                             enemy.kill()
 
                     for enemy in self.enemy_group:
@@ -287,7 +250,7 @@ class game():
                     self.turn = 3
                 elif self.turn == 3:
                     for projectile in self.enemy_projectile_group:
-                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000:
+                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000 or not enemy.rect.colliderect(self.player.update_distance):
                             projectile.kill()
 
                     check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
@@ -323,6 +286,12 @@ class game():
                         self.player.aoe.y = 0
 
                     self.turn = 1
+                elif self.turn == -1:
+                    # game hasn't started
+                    if self.player.rect.x < 512 and self.player.rect.y > 3040:
+                        self.running = False
+                    elif self.player.rect.x > 2208 and self.player.rect.y > 3040:
+                        self.turn = 1
 
 
                 self.projectile_group.update(dt, self.state)
@@ -343,6 +312,5 @@ class game():
 
 if __name__ == "__main__":
     gaem = game()
-    gaem.start()
     gaem.run()
 
