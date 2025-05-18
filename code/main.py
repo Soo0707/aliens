@@ -27,6 +27,19 @@ class game():
                 "lazers" : [5, 1000], # index: width, cooldown
                 } # key = powerup name, value = any stuff you need to make it work
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
+        self.powerup_definitions = {
+                "greenbull" : "greenbull is...",
+                "aussie" : "aussie is...",
+                "milk" : "milk is...", 
+                "drunk" : "drunk is...",
+                "lazers" : "lazers is...",
+                "projectiles" : "projectiles is...",
+                "blood_sacrifice" : "blood sacrifice is....",
+                "blood_regeneration" : "blood regeneration is...",
+                "Shield" : "Shield is...",
+                "poison" : "poison is...",
+                "AOE_EFFECT" : "AOE_EFFECT is..."
+                }
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -74,7 +87,8 @@ class game():
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
                                          powerups = self.powerups,
-                                         powerup_timers = self.powerup_timers
+                                         powerup_timers = self.powerup_timers,
+                                         powerup_definitions = self.powerup_definitions
                                         )
         self.pause_menu = Pause()
         self.is_paused = False #<--- condition for pausing

@@ -177,7 +177,7 @@ class Player(pygame.sprite.Sprite):
             
         if "Shield" in self.powerups:
             now = pygame.time.get_ticks()
-            if now % 250 == 0:
+            if now % 300 == 0:
                 self.shield = 20 * (1 + self.powerups["Shield"])
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
