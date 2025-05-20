@@ -48,6 +48,9 @@ def collision_y(target1, target2, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, state):
     for projectile in projectiles:
+        if type(projectile) == Circle:
+            continue
+
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
@@ -58,10 +61,12 @@ def collision_projectile(projectiles, enemies, walls, state):
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
                 enemy.health -= 100
-                projectile.kill()
+                if type(projectile) == Projectile:
+                    projectile.kill()
 
 def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_group, walls, state):
     now = pygame.time.get_ticks()
+
     for projectile in enemy_projectile_group:
         if projectile.state != state:
             continue
@@ -86,8 +91,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             player.health -= enemy.attack
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
-            
-                    
+             
             if type(enemy) == Australian and "milk" not in powerups:
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
@@ -96,7 +100,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 powerups["poison"] = pygame.time.get_ticks()
                 powerup_timers["poison"] = now + 5000
 
-            if type(enemy) == Bomber:
+            elif type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
 

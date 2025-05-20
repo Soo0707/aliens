@@ -85,26 +85,27 @@ class Powerup_Menu:
                     del self.powerups["aussie"]
                 
                 if "poison" in self.powerups:
-                    del self.powerups["poison"]
-                    
+                    del self.powerups["poison"]                   
                 
                 self.powerups[powerup] = 0
                 self.powerup_timers[powerup] = pygame.time.get_ticks() + 10000
 
             elif powerup == "lazers":
                 self.powerups["lazers"][0] += 1 # width
-                self.powerups["lazers"][1] -= 100 # cooldown
+                if self.powerups["lazers"][1] - 100 > 0:
+                    self.powerups["lazers"][1] -= 100 # cooldown
             elif powerup == "projectiles":
                 self.powerups["projectiles"][0] += 100 # speed
-                self.powerups["projectiles"][1] -= 10 # cooldown
+                if self.powerups["projectiles"][1] - 10 > 0:
+                    self.powerups["projectiles"][1] -= 10 # cooldown
+            elif powerup == "buckshot":
+                self.powerups["buckshot"] += 1
             elif powerup == "greenbull":
-                self.powerups["greenbull"] = 0
                 self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
-            else:
-                self.powerups[powerup] += 1
         else:
             if powerup == "blood_sacrifice":
                 self.powerups["blood_sacrifice"] = 0
                 self.powerup_timers["blood_sacrifice"] = pygame.time.get_ticks() + 1000
-            else:    
-                self.powerups.update({powerup: 0})
+            elif powerup == "greenbull":
+                self.powerups["greenbull"] = 0
+                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
