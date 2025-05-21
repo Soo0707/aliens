@@ -53,6 +53,7 @@ class Player(pygame.sprite.Sprite):
     
     def input(self, state):
         keys = pygame.key.get_pressed()
+        now = pygame.time.get_ticks()
         print(self.health)
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
@@ -66,8 +67,9 @@ class Player(pygame.sprite.Sprite):
         if "trap" in self.powerups:
             self.direction.x = 0
             self.direction.y = 0
+            
 
-            if keys[pygame.K_SPACE]:
+            if pygame.event.Event.tpye == pygame.K_SPACE:
                     self.powerups["trap"] +=1
 
             if self.powerups["trap"] >= 5:

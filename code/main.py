@@ -191,6 +191,9 @@ class game():
         if "trap" in self.powerups:
             del self.powerups["trap"]
 
+        if "greenbull" in self.powerups:
+            del self.powerups["greenbull"]
+
         self.powerups = {
                 "projectiles" : [1000, 100], 
                 "lazers" : [5, 1000], 
