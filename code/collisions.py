@@ -4,6 +4,7 @@ from bomber import *
 from australian import *
 from poison import *
 from projectiles import *
+from trapper import *
 
 def collision_x(target1, target2, iterable, state):
     if iterable:
@@ -103,6 +104,13 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             elif type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
+            
+            if type(enemy) == Trapper:
+                powerups["trap"] = 0
+                
+                
+
+            
 
 def collect_xp(self):
     for orb in self.xp_group:

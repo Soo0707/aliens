@@ -55,8 +55,8 @@ class game():
         self.walls_group = pygame.sprite.LayeredUpdates()
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
+
         self.num_xp = 0
-        self.level = 0
         self.level_up = 10
         
         self.textures = {
@@ -168,7 +168,7 @@ class game():
         pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
         
         self.progress_rect = (1005 , 15 , 200 , 20)
-        pygame.draw.rect(self.screen , (0,0,255), self.progress_rect )
+        pygame.draw.rect(self.screen , (0, 218, 254), self.progress_rect )
 
         self.empty_rect = (1005 , 15 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
@@ -184,6 +184,111 @@ class game():
 
         self.empty_rect = (1005 , 50 , self.width , 20)
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        
+
+
+    def powerup_bar(self):
+
+        if "drunk" in self.powerups:
+            self.drunk_rect = (1230 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (255 , 255 , 0) , self.drunk_rect)
+
+        if "poison" in self.powerups:
+            self.poison_rect = (1205 , 80 ,20, 20)
+            pygame.draw.rect(self.screen, (76, 0, 230) , self.poison_rect)
+
+        if "greenbull" in self.powerups:
+            self.greenbull_rect = (1180 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
+
+        if "milk" in self.powerups:
+            self.milk_rect = (1155 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
+        
+    def reset(self):
+
+        if "aussie" in self.powerups:
+            del self.powerups["aussie"]
+        
+        if "drunk" in self.powerups:
+            del self.powerups["drunk"]
+
+        if "poison" in self.powerups:
+            del self.powerups["poison"]
+
+        if "trap" in self.powerups:
+            del self.powerups["trap"]
+
+        if "greenbull" in self.powerups:
+            del self.powerups["greenbull"]
+
+        self.powerups = {
+                "projectiles" : [1000, 100], 
+                "lazers" : [5, 1000], 
+               }
+        
+        self.powerup_timers = {}
+
+
+        for enemies in self.enemy_projectile_group:
+            enemies.kill()
+
+        for enemy_projectiles in self.enemy_projectile_group:
+            enemy_projectiles.kill()
+
+        for projectile in self.projectile_group:
+            projectile.kill()
+
+        for xp in self.xp_group:
+            xp.kill()
+
+        self.state = 0
+
+        self.num_xp = 0 
+        self.level_up = 10
+
+        self.player.rect.center = (1024, 4032)
+
+        self.player.health = self.player.health_permanent
+        
+        
+        
+
+    def start(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+            
+            
+            self.screen.fill("black")
+            dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+
+            self.player.move_x(dt)               
+            collision_x(self.player, self.collidable_group, False, self.state)
+            collision_x(self.player, self.walls_group, False, self.state)
+
+            self.player.move_y(dt)
+            collision_y(self.player, self.collidable_group, False, self.state)
+            collision_y(self.player, self.walls_group, False, self.state)
+
+            self.player.update(dt, self.state)
+            
+            if self.player.rect.x < 160 and self.player.rect.y > 3968:
+                self.running = False
+            elif self.player.rect.x > 1888 and self.player.rect.y > 3968:
+                self.player.rect.x = 400
+                self.player.rect.y = 300
+                return
+
+            self.projectile_group.update(dt, self.state)
+            self.enemy_projectile_group.update(dt, self.state)
+
+            self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
+
+            
+
+            pygame.display.flip() 
 
     def run(self):
         while self.running:
@@ -201,13 +306,10 @@ class game():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0:
                     self.tick_offsets[self.state] = pygame.time.get_ticks()
                     self.state -= 1
-                
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state + 1 < len(self.tick_offsets):
-                    self.tick_offsets[self.state] = pygame.time.get_ticks()
-                    self.state += 1
-                
-            if self.player.health <= 0:
-                self.player.health = 100
+            
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+                    if "trap" in self.powerups:
+                        self.powerups["trap"] +=1
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
@@ -267,11 +369,10 @@ class game():
 
                     self.turn = 3
                 elif self.turn == 3:
-                    for projectile in self.enemy_projectile_group:
-                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000 or not enemy.rect.colliderect(self.player.update_distance):
-                            projectile.kill()
 
-                    check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
+                    if self.player.health <= 0:
+                        self.reset()
+                        
 
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
@@ -319,6 +420,7 @@ class game():
                 
                 self.xp_bar()
                 self.heatlh_bar()
+                self.powerup_bar()
 
                 if self.powerup_menu_activation:
                     self.powerup_menu.update()  

@@ -48,9 +48,13 @@ class Player(pygame.sprite.Sprite):
         self.circle_texture = self.images["circle"][0]
         self.orb = 0
         self.orb_spawn = True
+
+        self.space =0
     
     def input(self, state):
         keys = pygame.key.get_pressed()
+        
+        print(self.health)
 
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
@@ -58,6 +62,15 @@ class Player(pygame.sprite.Sprite):
         if "drunk" in self.powerups:
             self.direction.x = -self.direction.x
             self.direction.y = -self.direction.y
+
+
+        if "trap" in self.powerups:
+            self.direction.x = 0
+            self.direction.y = 0
+
+            if self.powerups["trap"] >= 5:
+                del self.powerups["trap"]
+                
 
         if self.direction:
             self.direction = self.direction.normalize()

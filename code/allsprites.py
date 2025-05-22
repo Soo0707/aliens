@@ -5,6 +5,7 @@ from australian import *
 from drunkard import *
 from poison import *
 from bomber import *
+from trapper import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -87,8 +88,7 @@ class Spawner(Collidable):
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
-            )
-
+                )
 
             Bomber(
                 player=self.player,
@@ -101,7 +101,7 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 all_sprites_group = self.all_sprites_group,
-            )
+                )
             
             Poison(
                 player=self.player,
@@ -123,6 +123,18 @@ class Spawner(Collidable):
                 textures = self.enemy_textures["drunkard"],
                 beer_textures = self.enemy_textures["beer"],
                 enemy_projectile_group = self.enemy_projectile_group,
+                xp_group=self.xp_group,
+                all_sprites_group = self.all_sprites_group,
+                xp_texture = self.enemy_textures["xp"][0],
+                powerups=self.powerups
+                )
+            
+            Trapper(
+                player=self.player,
+                groups=(self.all_sprites_group, self.enemy_group),
+                state = state,
+                location=self.rect.center,
+                textures = self.enemy_textures["trapper"],
                 xp_group=self.xp_group,
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
