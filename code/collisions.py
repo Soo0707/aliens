@@ -97,7 +97,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             
-            if type(enemy) == Poison and "milk" not in powerups:
+            elif type(enemy) == Poison and "milk" not in powerups:
                 powerups["poison"] = pygame.time.get_ticks()
                 powerup_timers["poison"] = now + 5000
 
@@ -105,12 +105,8 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 enemy.plode = True
                 enemy.explode(dt)
             
-            if type(enemy) == Trapper:
+            elif type(enemy) == Trapper and "milk" not in powerups:
                 powerups["trap"] = 0
-                
-                
-
-            
 
 def collect_xp(self):
     for orb in self.xp_group:

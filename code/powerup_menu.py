@@ -1,7 +1,6 @@
 import pygame
 pygame.font.init()
 import random
-from main import *
 
 class Powerup_Menu:
     def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
@@ -17,7 +16,6 @@ class Powerup_Menu:
         self.powerup_definitions = powerup_definitions
         self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
-        self.state = 'general'
         
     def input(self):
         #The codes below are for knowing which "button" we are on
@@ -27,9 +25,6 @@ class Powerup_Menu:
         if keys[pygame.K_SPACE]:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
             self.apply_powerups(powerup=powerup)
-            self.state = 'done'
-            if self.state == 'done':
-                self.general_options = random.sample(self.powerup_list, 3)
             
         
     def general(self):
@@ -68,28 +63,14 @@ class Powerup_Menu:
                 self.display_surface.blit(desc_surf, desc_rect)
                 
     def update(self):
-        self.input()            
-                
-        
-    def draw(self):
-        match self.state:
-            case 'general': self.general()
-    
+        self.input()
+        if self.powerups["done"]: 
+            self.general_options = random.sample(self.powerup_list, 3)
+
     def apply_powerups(self, powerup):
         if powerup in self.powerups:
             if powerup == "milk":
-                if "drunk" in self.powerups:
-                    del self.powerups["drunk"]
-
-                if "aussie" in self.powerups:
-                    del self.powerups["aussie"]
-                
-                if "poison" in self.powerups:
-                    del self.powerups["poison"]                   
-                
-                self.powerups[powerup] = 0
-                self.powerup_timers[powerup] = pygame.time.get_ticks() + 10000
-
+                self.powerup_timers["milk"] = pygame.time.get_ticks() + 100000
             elif powerup == "lazers":
                 self.powerups["lazers"][0] += 1 # width
                 if self.powerups["lazers"][1] - 100 > 0:
@@ -109,3 +90,17 @@ class Powerup_Menu:
             elif powerup == "greenbull":
                 self.powerups["greenbull"] = 0
                 self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
+            elif powerup == "milk":
+                self.powerups["milk"] = 0
+                self.powerup_timers["milk"] = pygame.time.get_ticks() + 100000
+                
+                if "drunk" in self.powerups:
+                    del self.powerups["drunk"]
+
+                if "aussie" in self.powerups:
+                    del self.powerups["aussie"]
+                
+                if "poison" in self.powerups:
+                    del self.powerups["poison"]
+
+        self.powerups["done"] = 1
