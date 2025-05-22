@@ -199,14 +199,6 @@ class game():
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
-        if "greenbull" in self.powerups:
-            self.greenbull_rect = (1180 , 80 , 20 , 20)
-            pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
-
-        if "milk" in self.powerups:
-            self.milk_rect = (1155 , 80 , 20 , 20)
-            pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
-
         if "drunk" in self.powerups:
             self.drunk_rect = (1230 , 80 , 20 , 20)
             pygame.draw.rect(self.screen , (255 , 255 , 0) , self.drunk_rect)
@@ -214,6 +206,14 @@ class game():
         if "poison" in self.powerups:
             self.poison_rect = (1205 , 80 ,20, 20)
             pygame.draw.rect(self.screen, (76, 0, 230) , self.poison_rect)
+
+        if "greenbull" in self.powerups:
+            self.greenbull_rect = (1180 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
+
+        if "milk" in self.powerups:
+            self.milk_rect = (1155 , 80 , 20 , 20)
+            pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
 
     def reset(self):
         '''
@@ -414,7 +414,7 @@ class game():
                 self.health_bar()
                 self.powerup_bar()
 
-                if self.turn == -2: # -2 is the show powerup menu state
+                if self.turn == -2: # -2 is the powerup menu state
                     self.powerup_menu.update()
                     self.powerup_menu.general()
                     if self.powerups["done"]:
