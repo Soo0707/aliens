@@ -1,9 +1,10 @@
 import pygame
+pygame.font.init()
 import random
+from main import *
 
 class Powerup_Menu:
-    def __init__(self, powerup_list, powerups, powerup_timers): #add powerup as attribute when done
-        pygame.font.init()
+    def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -13,6 +14,7 @@ class Powerup_Menu:
         self.powerup_list = powerup_list
         self.powerups = powerups
         self.powerup_timers = powerup_timers
+        self.powerup_definitions = powerup_definitions
         self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
         self.state = 'general'
@@ -47,14 +49,23 @@ class Powerup_Menu:
                 x = rect.left + rect.width / 5
                 y = rect.top + (rect.height / 4) + (rect.height / 4) * row
                 i = row     #the equation for i/index will change depending on the amount of rows and columns
+                a = rect.left + 3.7 * rect.width / 5
                 if col == self.general_index['col'] and row == self.general_index['row']: 
                     color = pygame.Color(190, 190, 190, 255)
                 else: 
                     color = pygame.Color(0, 0, 0, 255),
                 
                 text_surf = self.font.render(self.general_options[i], True, color)
+                #desc powerups surface
+                powerup_name = self.general_options[i]
+                desc = self.powerup_definitions[powerup_name]
+                desc_surf = self.font.render(desc, True, (0, 0, 0, 255)) #<---- need to change font color
+                
                 text_rect = text_surf.get_frect(center = (x,y))
+                #desc powerups rect
+                desc_rect = desc_surf.get_frect(center = (a,y))
                 self.display_surface.blit(text_surf, text_rect)
+                self.display_surface.blit(desc_surf, desc_rect)
                 
     def update(self):
         self.input()            

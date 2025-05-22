@@ -22,13 +22,26 @@ class game():
         self.state = 0
         self.tick_offsets = [0 for i in range(10)]
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison", "buckshot"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison", "buckshot", "AOE_EFFECT"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
                 "buckshot": 1
                 }
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
+        self.powerup_definitions = {
+                "greenbull" : "greenbull is...",
+                "aussie" : "aussie is...",
+                "milk" : "milk is...", 
+                "drunk" : "drunk is...",
+                "lazers" : "lazers is...",
+                "projectiles" : "projectiles is...",
+                "blood_sacrifice" : "blood sacrifice is....",
+                "blood_regeneration" : "blood regeneration is...",
+                "Shield" : "Shield is...",
+                "poison" : "poison is...",
+                "AOE_EFFECT" : "AOE_EFFECT is..."
+                }
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -75,7 +88,8 @@ class game():
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
                                          powerups = self.powerups,
-                                         powerup_timers = self.powerup_timers
+                                         powerup_timers = self.powerup_timers,
+                                         powerup_definitions = self.powerup_definitions
                                         )
         self.pause_menu = Pause()
         self.is_paused = False 
@@ -141,6 +155,10 @@ class game():
                 if self.powerup_timers[powerup] - now <= 0:
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
+                    
+        if "poison" in self.powerups and now - self.powerups["poison"] > 1000:
+            self.player.health -= 5
+            self.powerups["poison"] = now
                     
 
     def xp_bar(self):

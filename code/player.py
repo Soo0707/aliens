@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         
         self.update_distance = pygame.Rect(location, (1920, 1080))
 
-        self.aoe = pygame.Rect(location, (600,600)) # for later when we have aoe effects, we'd probably want another rect
+        self.aoe = pygame.Rect(0, 0, 400, 400) # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
@@ -150,12 +150,10 @@ class Player(pygame.sprite.Sprite):
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         self.update_distance.x += self.direction.x * self.speed * dt
-        self.aoe.x += self.direction.x * self.speed * dt
     
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
         self.update_distance.y += self.direction.y * self.speed * dt
-        self.aoe.y += self.direction.y * self.speed * dt
         
     
     def animate(self, dt):
@@ -180,7 +178,7 @@ class Player(pygame.sprite.Sprite):
             
         if "Shield" in self.powerups:
             now = pygame.time.get_ticks()
-            if now % 240 == 0:
+            if now % 300 == 0:
                 self.shield = 20 * (1 + self.powerups["Shield"])
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
@@ -189,6 +187,8 @@ class Player(pygame.sprite.Sprite):
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
+                
+        self.aoe.center = self.rect.center
                     
             
         self.input(state)

@@ -96,9 +96,9 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
                 powerups["aussie"] = 0
                 powerup_timers["aussie"] = now + 500
             
-            elif type(enemy) == Poison and "milk" not in powerups:
-                powerups["posion"] = None
-                powerup_timers["poison_kill"] = now + 1000
+            if type(enemy) == Poison and "milk" not in powerups:
+                powerups["poison"] = pygame.time.get_ticks()
+                powerup_timers["poison"] = now + 5000
 
             elif type(enemy) == Bomber:
                 enemy.plode = True
@@ -112,10 +112,10 @@ def collect_xp(self):
                 
 
 def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
-    now = pygame.time.get_ticks()
     for enemy in enemy_group:
         if enemy.state != state:
             continue
 
         if enemy.rect.colliderect(player.aoe):
-            player.health = 0 
+            if "AOE_EFFECT" in powerups:
+                enemy.health -= 1000
