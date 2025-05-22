@@ -282,6 +282,9 @@ class game():
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state -= 1
             
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+                    if "trap" in self.powerups:
+                        self.powerups["trap"] +=1
             
             if self.is_paused:
                 self.pause_menu.do_pause()  
