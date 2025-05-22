@@ -96,8 +96,8 @@ class Player(pygame.sprite.Sprite):
                         )
             else:
                 for i in range(self.powerups["buckshot"]):
-                    mouse_direction.x += i / self.powerups["buckshot"]
-                    mouse_direction.y += i / self.powerups["buckshot"]
+                    mouse_direction.x += i / self.powerups["buckshot"] * 0.5
+                    mouse_direction.y += i / self.powerups["buckshot"] * .5
 
                     if mouse_direction:
                         mouse_direction = mouse_direction.normalize()
