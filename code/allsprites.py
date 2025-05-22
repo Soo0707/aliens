@@ -1,5 +1,5 @@
 import pygame
-from os.path import join
+
 from enemy import *
 from australian import *
 from drunkard import *
@@ -64,8 +64,9 @@ class Spawner(Collidable):
         
         self.last_spawn = 0
         self.can_spawn = True
-        self.timeout_ticks = 200
+        self.timeout_ticks = 20
 
+        self.rect = self.image.get_rect(center = location)
         self.player = player
         self.all_sprites_group = all_sprites_group
         self.enemy_group = enemy_group
@@ -139,9 +140,8 @@ class Spawner(Collidable):
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
                 )
+            self.last_spawn = pygame.time.get_ticks()
+            self.can_spawn = False       
 
-        self.last_spawn = pygame.time.get_ticks()
-        self.can_spawn = False
-
-        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and dt < 0.02:
-           self.can_spawn = True
+        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and dt < 0.02 and self.rect.colliderect(self.player.update_distance):
+            self.can_spawn = True

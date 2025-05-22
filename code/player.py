@@ -1,7 +1,6 @@
 import pygame
-from os.path import join
-from os import listdir
 
+from random import random, randint
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
@@ -15,8 +14,10 @@ class Player(pygame.sprite.Sprite):
         self.images = textures
         self.image =  self.images["S"][0]
         self.rect = self.image.get_rect(center = location)
+        
+        self.update_distance = pygame.Rect(location, (1920, 1080))
 
-        self.aoe = pygame.Rect(location, (600,600)) # for later when we have aoe effects, we'd probably want another rect
+        self.aoe = pygame.Rect(0, 0, 400, 400) # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
@@ -43,7 +44,6 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.health_permanent = 100
         self.health_permanent_shield = 0
-        
 
         self.circle_texture = self.images["circle"][0]
         self.orb = 0
@@ -74,20 +74,21 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction:
             self.direction = self.direction.normalize()
-            
 
         mouse = pygame.mouse.get_pressed()
 
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
-        
-        if mouse_direction:
-            mouse_direction = mouse_direction.normalize()
-
         if mouse[0] and self.can_lmb:
-            directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+            
+            if "drunk" in self.powerups:
+                noise = random() * 100
+                mouse_direction.x += noise
+                mouse_direction.y += noise
 
-            if "drunk" not in self.powerups:
+                if mouse_direction:
+                    mouse_direction = mouse_direction.normalize()
+
                 Projectile(
                         self.powerups["projectiles"][0],
                         state,
@@ -97,47 +98,45 @@ class Player(pygame.sprite.Sprite):
                         (self.all_sprites_group, self.projectile_group)
                         )
             else:
-                for direction in directions:
-                    Lazers(
-                            self.lazer_texture_horizontal,
+                for i in range(self.powerups["buckshot"]):
+                    mouse_direction.x += i / self.powerups["buckshot"]
+                    mouse_direction.y += i / self.powerups["buckshot"]
+
+                    if mouse_direction:
+                        mouse_direction = mouse_direction.normalize()
+
+                    Projectile(
+                            self.powerups["projectiles"][0],
                             state,
-                            self.powerups["lazers"][0],
+                            self.projectile_texture,
                             self.rect.center,
-                            pygame.math.Vector2(direction),
+                            mouse_direction,
                             (self.all_sprites_group, self.projectile_group)
                             )
-            
+
             self.can_lmb = False
             self.last_lmb = pygame.time.get_ticks()
 
         if mouse[2] and self.can_rmb:
-            mouse_pos = pygame.mouse.get_pos()
             directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
-            if "drunk" not in self.powerups:
-                for direction in directions:
-                    Lazers(
-                            self.lazer_texture_horizontal,
-                            state,
-                            self.powerups["lazers"][0],
-                            self.rect.center,
-                            pygame.math.Vector2(direction),
-                            (self.all_sprites_group, self.projectile_group)
-                            )
-            else:
-                Projectile(
-                        self.powerups["projectiles"][0],
+            for direction in directions:
+                if direction[1] != 0:
+                    lazer_texture = self.lazer_texture_vertical
+                else:
+                    lazer_texture = self.lazer_texture_horizontal
+
+                Lazers(
+                        lazer_texture,
                         state,
-                        self.projectile_texture,
+                        self.powerups["lazers"][0],
                         self.rect.center,
-                        mouse_direction,
+                        pygame.math.Vector2(direction),
                         (self.all_sprites_group, self.projectile_group)
                         )
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
-
-
 
         if self.orb == 0 and mouse[1]:
             self.orb += 1
@@ -163,12 +162,11 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        
-        self.aoe.x += self.direction.x * self.speed * dt
+        self.update_distance.x += self.direction.x * self.speed * dt
+    
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-
-        self.aoe.y += self.direction.y * self.speed * dt
+        self.update_distance.y += self.direction.y * self.speed * dt
         
     
     def animate(self, dt):
@@ -193,7 +191,7 @@ class Player(pygame.sprite.Sprite):
             
         if "Shield" in self.powerups:
             now = pygame.time.get_ticks()
-            if now % 240 == 0:
+            if now % 300 == 0:
                 self.shield = 20 * (1 + self.powerups["Shield"])
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
@@ -202,6 +200,8 @@ class Player(pygame.sprite.Sprite):
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
+                
+        self.aoe.center = self.rect.center
                     
             
         self.input(state)

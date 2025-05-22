@@ -20,13 +20,28 @@ class game():
 
         self.running = True
         self.state = 0
+        self.tick_offsets = [0 for i in range(10)]
 
-        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison"] # all possible powerup keys here
+        self.powerup_list = ["greenbull", "aussie", "milk", "drunk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "poison", "buckshot", "AOE_EFFECT"] # all possible powerup keys here
         self.powerups = {
                 "projectiles" : [1000, 100], # index: speed, cooldown
                 "lazers" : [5, 1000], # index: width, cooldown
-                "Shield": 0,} # key = powerup name, value = any stuff you need to make it work
+                "buckshot": 1
+                }
         self.powerup_timers = {} # key = powerup name, value = exp_groupiry (tick now + duration) in ticks
+        self.powerup_definitions = {
+                "greenbull" : "greenbull is...",
+                "aussie" : "aussie is...",
+                "milk" : "milk is...", 
+                "drunk" : "drunk is...",
+                "lazers" : "lazers is...",
+                "projectiles" : "projectiles is...",
+                "blood_sacrifice" : "blood sacrifice is....",
+                "blood_regeneration" : "blood regeneration is...",
+                "Shield" : "Shield is...",
+                "poison" : "poison is...",
+                "AOE_EFFECT" : "AOE_EFFECT is..."
+                }
         
         # sprite groups, useful for collision detection and camera later on
         self.all_sprites_group = AllSprites(self.powerups)
@@ -44,7 +59,6 @@ class game():
         self.num_xp = 0
         self.level_up = 10
         
-
         self.textures = {
                 "bomber": [],
                 "bomber_explosion" : [],
@@ -68,32 +82,43 @@ class game():
         
         self.load_textures()
         
-        self.player = Player((1024, 4032), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
-        self.turn = 1
+        self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
+        self.turn = -1
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
                                          powerups = self.powerups,
-                                         powerup_timers = self.powerup_timers
+                                         powerup_timers = self.powerup_timers,
+                                         powerup_definitions = self.powerup_definitions
                                         )
         self.pause_menu = Pause()
-        self.is_paused = False #<--- condition for pausing
-        self.powerup_menu_activation = True
+        self.is_paused = False 
+        self.powerup_menu_activation = False
 
+        self.map_loopover_x = 0
+        self.map_loopover_y = 0
         self.load_map()
 
     def load_map(self):
-
         background = load_pygame(join("..", "assets", "map", "map.tmx"))
+
         # 32 cause tile size is 32px
         for x, y, texture in background.get_layer_by_name("Ground").tiles():
             MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
+            self.map_loopover_x = x
+            self.map_loopover_y = y
 
+        self.map_loopover_x *= 32
+        self.map_loopover_y *= 32
+        
         for x, y, texture in background.get_layer_by_name("Walls").tiles():
             Walls((x * 32, y * 32), texture, (self.all_sprites_group, self.walls_group))
 
         for x, y, texture in background.get_layer_by_name("Props").tiles():
             Collidable((x * 32, y * 32), texture, (self.all_sprites_group, self.collidable_group))
+
+        for x, y, texture in background.get_layer_by_name("Decorations").tiles():
+            MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
 
         for x, y, texture, in background.get_layer_by_name("Spawners").tiles():
             Spawner(
@@ -108,6 +133,7 @@ class game():
                 enemy_group = self.enemy_group,
                 enemy_textures = self.textures,               
             )
+            
     
     def load_textures(self):
         for key in self.textures:
@@ -130,9 +156,12 @@ class game():
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
                     
+        if "poison" in self.powerups and now - self.powerups["poison"] > 1000:
+            self.player.health -= 5
+            self.powerups["poison"] = now
+                    
 
     def xp_bar(self):
-
         self.width = 200 - (self.num_xp / self.level_up) * 200
 
         self.bg_rect = (1000 , 10 , 250 , 30)
@@ -145,7 +174,6 @@ class game():
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
     def heatlh_bar(self):
-
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
 
         self.bg_rect = (1000 , 45 , 250 , 30)
@@ -274,12 +302,9 @@ class game():
                         self.is_paused = False
                     else:
                         self.is_paused = True
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.is_paused = False
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    self.state += 1
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0:
+                    self.tick_offsets[self.state] = pygame.time.get_ticks()
                     self.state -= 1
             
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_i:
@@ -289,7 +314,7 @@ class game():
             if self.is_paused:
                 self.pause_menu.do_pause()  
             else:
-                self.screen.fill("black")
+                self.screen.fill("#18215d00")
                 dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
                 self.player.move_x(dt)               
@@ -304,16 +329,31 @@ class game():
 
                 self.player.update(dt, self.state)
                 
+                now = pygame.time.get_ticks()
                 if self.turn == 1:
-                    self.check_timers()
+                    for xp in self.xp_group:
+                        if now - xp.birth >= 10000:
+                            xp.kill()
+
                     collect_xp(self)
+
+                    for projectile in self.projectile_group:
+                        if type(projectile) == Circle:
+                            continue
+
+                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000 or not projectile.rect.colliderect(self.player.update_distance):
+                            projectile.kill()
+
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
                     le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
                     AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+                    self.check_timers()
 
                     self.turn = 2
                 elif self.turn == 2:
-                    check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
+                    for enemy in self.enemy_group:            
+                        if now - enemy.birth - self.tick_offsets[self.state] >= 1000000000 or not enemy.rect.colliderect(self.player.update_distance):
+                            enemy.kill()
 
                     for enemy in self.enemy_group:
                         enemy.move_x(dt, self.state)
@@ -344,7 +384,33 @@ class game():
                         
                         self.powerup_menu_activation = True
 
+                    if self.player.rect.x < 0:
+                        self.player.rect.x = self.map_loopover_x
+                        self.player.update_distance.x = self.map_loopover_x
+                        self.player.aoe.x = self.map_loopover_x
+
+                    elif self.player.rect.x > self.map_loopover_x:
+                        self.player.rect.x = 0
+                        self.player.update_distance.x = 0
+                        self.player.aoe.x = 0
+
+                    if self.player.rect.y < 0:
+                        self.player.rect.y = self.map_loopover_y
+                        self.player.update_distance.y = self.map_loopover_y
+                        self.player.aoe.y = self.map_loopover_y
+
+                    elif self.player.rect.y > self.map_loopover_y:
+                        self.player.rect.y = 0
+                        self.player.update_distance.y = 0
+                        self.player.aoe.y = 0
+
                     self.turn = 1
+                elif self.turn == -1:
+                    # game hasn't started
+                    if self.player.rect.x < 512 and self.player.rect.y > 3040:
+                        self.running = False
+                    elif self.player.rect.x > 2208 and self.player.rect.y > 3040:
+                        self.turn = 1
 
 
                 self.projectile_group.update(dt, self.state)
@@ -360,12 +426,11 @@ class game():
                     self.powerup_menu.update()  
                     self.powerup_menu.draw()                 
 
-            pygame.display.flip() # updates screen
+            pygame.display.flip() 
 
         pygame.quit()
 
 if __name__ == "__main__":
     gaem = game()
-    gaem.start()
     gaem.run()
 

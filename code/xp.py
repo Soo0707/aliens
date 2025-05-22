@@ -6,6 +6,8 @@ class Orb(pygame.sprite.Sprite):
        self.image = texture
        self.rect = self.image.get_frect(center = location)
 
+       self.birth = pygame.time.get_ticks()
+
 
 
 
