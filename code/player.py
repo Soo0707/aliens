@@ -54,15 +54,12 @@ class Player(pygame.sprite.Sprite):
     def input(self, state):
         keys = pygame.key.get_pressed()
         
-        print(self.health)
-
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
         
         if "drunk" in self.powerups:
             self.direction.x = -self.direction.x
             self.direction.y = -self.direction.y
-
 
         if "trap" in self.powerups:
             self.direction.x = 0
@@ -162,12 +159,9 @@ class Player(pygame.sprite.Sprite):
         
     def move_x(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
-        self.update_distance.x += self.direction.x * self.speed * dt
     
     def move_y(self, dt):
         self.rect.y += self.direction.y * self.speed * dt
-        self.update_distance.y += self.direction.y * self.speed * dt
-        
     
     def animate(self, dt):
         if self.direction and "greenbull" not in self.powerups:
@@ -202,7 +196,7 @@ class Player(pygame.sprite.Sprite):
                     self.health = self.health_permanent_shield
                 
         self.aoe.center = self.rect.center
-                    
+        self.update_distance.center = self.rect.center
             
         self.input(state)
         self.update_bearing()
