@@ -17,7 +17,7 @@ class Trapper(Enemy):
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0
-            self.image = self.images[0] # the 0th image is always the idle frame
+            self.image = self.images[0]
 
     def update(self, dt):
         now = pygame.time.get_ticks()

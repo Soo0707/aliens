@@ -87,8 +87,7 @@ class Spawner(Collidable):
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
-            )
-
+                )
 
             Bomber(
                 player=self.player,
@@ -101,7 +100,7 @@ class Spawner(Collidable):
                 xp_group=self.xp_group,
                 bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                 all_sprites_group = self.all_sprites_group,
-            )
+                )
             
             Poison(
                 player=self.player,
@@ -139,10 +138,10 @@ class Spawner(Collidable):
                 all_sprites_group = self.all_sprites_group,
                 xp_texture = self.enemy_textures["xp"][0],
                 powerups=self.powerups
-            )
+                )
 
-            self.last_spawn = pygame.time.get_ticks()
-            self.can_spawn = False
+        self.last_spawn = pygame.time.get_ticks()
+        self.can_spawn = False
 
         if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and dt < 0.02:
            self.can_spawn = True
