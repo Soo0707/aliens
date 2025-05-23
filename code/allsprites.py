@@ -13,7 +13,7 @@ class AllSprites(pygame.sprite.LayeredUpdates):
         self.powerups = powerups
     
     def draw(self, surface, follows, state):
-        if "aussie" in self.powerups:
+        if "Aussie" in self.powerups:
             temp = pygame.surface.Surface((1280, 720))
 
             for sprite in self:

@@ -28,12 +28,12 @@ class Player(pygame.sprite.Sprite):
         self.collidable_group = collidable_group
         self.projectile_group = projectile_group
 
-        self.lmb_cooldown = self.powerups["projectiles"][1]
+        self.lmb_cooldown = self.powerups["Projectiles"][1]
         self.can_lmb = True
         self.last_lmb = 0
         self.projectile_texture = self.images["projectile"][0]
 
-        self.rmb_cooldown = self.powerups["lazers"][1]
+        self.rmb_cooldown = self.powerups["Lazers"][1]
         self.can_rmb = True
         self.last_rmb = 0
         self.lazer_texture_horizontal = self.images["lazer"][0]
@@ -57,16 +57,16 @@ class Player(pygame.sprite.Sprite):
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
         
-        if "drunk" in self.powerups:
+        if "Drunk" in self.powerups:
             self.direction.x = -self.direction.x
             self.direction.y = -self.direction.y
 
-        if "trap" in self.powerups:
+        if "Trap" in self.powerups:
             self.direction.x = 0
             self.direction.y = 0
 
-            if self.powerups["trap"] >= 5:
-                del self.powerups["trap"]
+            if self.powerups["Trap"] >= 5:
+                del self.powerups["Trap"]
                 
 
         if self.direction:
@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite):
             mouse_pos = pygame.mouse.get_pos()
             mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
             
-            if "drunk" in self.powerups:
+            if "Drunk" in self.powerups:
                 noise = random() * 100
                 mouse_direction.x += noise
                 mouse_direction.y += noise
@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
                     mouse_direction = mouse_direction.normalize()
 
                 Projectile(
-                        self.powerups["projectiles"][0],
+                        self.powerups["Projectiles"][0],
                         state,
                         self.projectile_texture,
                         self.rect.center,
@@ -95,15 +95,15 @@ class Player(pygame.sprite.Sprite):
                         (self.all_sprites_group, self.projectile_group)
                         )
             else:
-                for i in range(self.powerups["buckshot"]):
-                    mouse_direction.x += i / self.powerups["buckshot"] * 0.5
-                    mouse_direction.y += i / self.powerups["buckshot"] * .5
+                for i in range(self.powerups["Buckshot"]):
+                    mouse_direction.x += i / self.powerups["Buckshot"] * 0.5
+                    mouse_direction.y += i / self.powerups["Buckshot"] * .5
 
                     if mouse_direction:
                         mouse_direction = mouse_direction.normalize()
 
                     Projectile(
-                            self.powerups["projectiles"][0],
+                            self.powerups["Projectiles"][0],
                             state,
                             self.projectile_texture,
                             self.rect.center,
@@ -126,7 +126,7 @@ class Player(pygame.sprite.Sprite):
                 Lazers(
                         lazer_texture,
                         state,
-                        self.powerups["lazers"][0],
+                        self.powerups["Lazers"][0],
                         self.rect.center,
                         pygame.math.Vector2(direction),
                         (self.all_sprites_group, self.projectile_group)
@@ -164,7 +164,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.direction.y * self.speed * dt
     
     def animate(self, dt):
-        if self.direction and "greenbull" not in self.powerups:
+        if self.direction and "Greenbull" not in self.powerups:
             self.image_index += 10 * dt
             self.image = self.images[self.bearing][int(self.image_index) % len(self.images[self.bearing])]
         else:
@@ -178,8 +178,8 @@ class Player(pygame.sprite.Sprite):
         if not self.can_rmb and pygame.time.get_ticks() - self.last_rmb >= self.rmb_cooldown:
             self.can_rmb = True
 
-        if "blood_sacrifice" in self.powerups:
-            self.speed = 300 + (50* (1 + self.powerups["blood_sacrifice"]))
+        if "Blood Sacrifice" in self.powerups:
+            self.speed = 300 + (50* (1 + self.powerups["Blood Sacrifice"]))
             self.health = 80
             self.health_permanent = 80
             
@@ -190,7 +190,7 @@ class Player(pygame.sprite.Sprite):
                 self.health = self.health + self.shield
                 if self.health_permanent_shield < self.health_permanent + self.shield:
                     self.health_permanent_shield = self.health_permanent + self.shield
-                    if "blood_sacrifice" in self.powerups:
+                    if "Blood Sacrifice" in self.powerups:
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield

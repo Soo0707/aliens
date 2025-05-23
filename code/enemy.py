@@ -67,8 +67,10 @@ class Enemy(pygame.sprite.Sprite):
         if self.health <= 0:
             Orb(self.xp_texture, self.rect.center, (self.all_sprites_group, self.xp_group))
             self.kill()
-            if "blood_regeneration" in self.powerups:
-                self.heal = (2*(1 + self.powerups["blood_regeneration"]))
+            
+
+            if "Blood Regeneration" in self.powerups:
+                self.heal = (2*(1 + self.powerups["Blood Regeneration"]))
                 if self.player.health < self.player.health_permanent:
                     self.player.health = self.player.health + self.heal
                     if "Shield" in self.powerups:          

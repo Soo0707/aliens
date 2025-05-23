@@ -69,38 +69,43 @@ class Powerup_Menu:
 
     def apply_powerups(self, powerup):
         if powerup in self.powerups:
-            if powerup == "milk":
-                self.powerup_timers["milk"] = pygame.time.get_ticks() + 100000
-            elif powerup == "lazers":
-                self.powerups["lazers"][0] += 1 # width
-                if self.powerups["lazers"][1] - 100 > 0:
-                    self.powerups["lazers"][1] -= 100 # cooldown
-            elif powerup == "projectiles":
-                self.powerups["projectiles"][0] += 100 # speed
-                if self.powerups["projectiles"][1] - 10 > 0:
-                    self.powerups["projectiles"][1] -= 10 # cooldown
-            elif powerup == "buckshot":
-                self.powerups["buckshot"] += 1
-            elif powerup == "greenbull":
-                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
+            if powerup == "Milk":
+                self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Lazers":
+                self.powerups["Lazers"][0] += 1 # width
+                if self.powerups["Lazers"][1] - 100 > 0:
+                    self.powerups["Lazers"][1] -= 100 # cooldown
+            elif powerup == "Projectiles":
+                self.powerups["Projectiles"][0] += 100 # speed
+                if self.powerups["Projectiles"][1] - 10 > 0:
+                    self.powerups["Projectiles"][1] -= 10 # cooldown
+            elif powerup == "Buckshot":
+                self.powerups["Buckshot"] += 1
+            elif powerup == "Greenbull":
+                self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Magnetism":
+                self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
         else:
-            if powerup == "blood_sacrifice":
-                self.powerups["blood_sacrifice"] = 0
-                self.powerup_timers["blood_sacrifice"] = pygame.time.get_ticks() + 1000
-            elif powerup == "greenbull":
-                self.powerups["greenbull"] = 0
-                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
-            elif powerup == "milk":
-                self.powerups["milk"] = 0
-                self.powerup_timers["milk"] = pygame.time.get_ticks() + 100000
+            if powerup == "Blood Sacrifice":
+                self.powerups["Blood Sacrifice"] = 0
+                self.powerup_timers["Blood Sacrifice"] = pygame.time.get_ticks() + 1000
+            elif powerup == "Greenbull":
+                self.powerups["Greenbull"] = 0
+                self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Milk":
+                self.powerups["Milk"] = 0
+                self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
                 
-                if "drunk" in self.powerups:
-                    del self.powerups["drunk"]
+                if "Drunk" in self.powerups:
+                    del self.powerups["Drunk"]
 
-                if "aussie" in self.powerups:
-                    del self.powerups["aussie"]
+                if "Aussie" in self.powerups:
+                    del self.powerups["Aussie"]
                 
-                if "poison" in self.powerups:
-                    del self.powerups["poison"]
+                if "Poison" in self.powerups:
+                    del self.powerups["Poison"]
+            elif powerup == "Magnetism":
+                self.powerups["Magnetism"] = 0
+                self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
 
         self.powerups["done"] = 1
