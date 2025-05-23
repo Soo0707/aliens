@@ -21,6 +21,8 @@ class game():
         self.running = True
         self.state = 0
         self.tick_offsets = [0 for i in range(10)]
+        self.turn = -1
+        
 
         self.powerup_list = ["greenbull", "milk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "buckshot", "AOE_EFFECT"] # all possible powerup keys here
         self.powerups = {
@@ -57,13 +59,16 @@ class game():
         self.walls_group = pygame.sprite.LayeredUpdates()
         self.spawners_group = pygame.sprite.LayeredUpdates()
 
-        self.start_text_group = pygame.sprite.Group()
+        self.menu_text_group = pygame.sprite.Group()
+        self.title_text_group = pygame.sprite.Group()
+        self.died_text_group = pygame.sprite.Group()
         self.start_trigger_group = pygame.sprite.Group()
         self.quit_trigger_group = pygame.sprite.Group()
+        self.visible_menu_pixels_group = pygame.sprite.Group()
 
         self.num_xp = 0
         self.level_up = 10
-        
+
         self.textures = {
                 "bomber": [],
                 "bomber_explosion" : [],
@@ -88,7 +93,6 @@ class game():
         self.load_textures()
 
         self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
-        self.turn = -1
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
@@ -98,8 +102,6 @@ class game():
                                         )
         self.pause_menu = Pause()
         self.is_paused = False
-        self.powerup_menu_activation = False
-        self.old_powerups_len = 0
 
         self.map_loopover_x = 0
         self.map_loopover_y = 0
@@ -117,12 +119,18 @@ class game():
         self.map_loopover_x *= 32
         self.map_loopover_y *= 32
 
-        for x, y, texture in map_file.get_layer_by_name("StartText").tiles():
-            MapTiles((x * 32, y * 32), texture, (self.all_sprites_group, self.start_text_group))
+        for x, y, texture in map_file.get_layer_by_name("MenuText").tiles():
+            MapTiles((x * 32, y * 32), texture, self.menu_text_group)
+
+        for x, y, texture in map_file.get_layer_by_name("DiedText").tiles():
+            MapTiles((x * 32, y * 32), texture, self.died_text_group)
+        
+        for x, y, texture in map_file.get_layer_by_name("TitleText").tiles():
+            MapTiles((x * 32, y * 32), texture, self.title_text_group)
 
         for x, y, texture in map_file.get_layer_by_name("StartTrigger").tiles():
             MapTiles((x * 32, y * 32), texture, self.start_trigger_group)
-
+        
         for x, y, texture in map_file.get_layer_by_name("QuitTrigger").tiles():
             MapTiles((x * 32, y * 32), texture, self.quit_trigger_group)
 
@@ -148,6 +156,14 @@ class game():
                 enemy_group = self.enemy_group,
                 enemy_textures = self.textures
             )
+
+        for pixel in self.menu_text_group:
+            self.all_sprites_group.add(pixel)
+            self.visible_menu_pixels_group.add(pixel)
+
+        for pixel in self.title_text_group:
+            self.all_sprites_group.add(pixel)
+            self.visible_menu_pixels_group.add(pixel)
 
     def load_textures(self):
         for key in self.textures:
@@ -216,7 +232,15 @@ class game():
             pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
 
     def reset(self):
-        '''
+        for pixel in self.died_text_group:
+            self.all_sprites_group.add(pixel)
+            self.visible_menu_pixels_group.add(pixel)
+
+        for pixel in self.menu_text_group:
+            self.all_sprites_group.add(pixel)
+            self.visible_menu_pixels_group.add(pixel)
+        self.turn = -1 # back to start menu state
+        
         if "aussie" in self.powerups:
             del self.powerups["aussie"]
 
@@ -235,11 +259,11 @@ class game():
         self.powerups = {
                 "projectiles" : [1000, 100],
                 "lazers" : [5, 1000],
-                "buckshot" : 1
+                "buckshot" : 1,
+                "done": 0
                }
 
         self.powerup_timers = {}
-
 
         for enemies in self.enemy_group:
             enemies.kill()
@@ -258,12 +282,10 @@ class game():
         self.num_xp = 0
         self.level_up = 10
 
-        self.player.rect.center = (1024, 4032)
+        self.player.rect.center = (1344, 3104)
 
         self.player.health = 100
         self.player.health_permanent = 100
-        '''
-        pass
 
     def run(self):
         while self.running:
@@ -365,6 +387,7 @@ class game():
 
                     if self.player.health <= 0:
                         self.reset()
+                        continue
 
                     self.enemy_group.update(dt, self.state)
                     self.spawners_group.update(dt, self.state)
@@ -406,8 +429,10 @@ class game():
                         if self.player.rect.colliderect(sprite.rect):
                             self.turn = 1
 
-                            for sprite in self.start_text_group:
-                                sprite.kill()
+                            for pixel in self.visible_menu_pixels_group:
+                                self.all_sprites_group.remove(pixel)
+
+                            self.visible_menu_pixels_group.empty()
 
                 self.all_sprites_group.draw(self.screen, self.player.rect, self.state)
                 self.xp_bar()
