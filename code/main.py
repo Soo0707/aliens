@@ -24,27 +24,28 @@ class game():
         self.turn = -1
         
 
-        self.powerup_list = ["greenbull", "milk", "lazers", "projectiles", "blood_sacrifice", "blood_regeneration", "Shield", "buckshot", "AOE_EFFECT"] # all possible powerup keys here
+        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "AOE_EFFECT", "Magnetism"] # all possible powerup keys here
         self.powerups = {
-                "projectiles" : [1000, 100], # index: speed, cooldown
-                "lazers" : [5, 1000], # index: width, cooldown
-                "buckshot": 1,
+                "Projectiles" : [1000, 100], # index: speed, cooldown
+                "Lazers" : [5, 1000], # index: width, cooldown
+                "Buckshot": 5,
                 "done": 0
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         self.powerup_definitions = {
-                "greenbull" : "greenbull is...",
-                "aussie" : "aussie is...",
-                "milk" : "milk is...", 
-                "drunk" : "drunk is...",
-                "lazers" : "lazers is...",
-                "projectiles" : "projectiles is...",
-                "blood_sacrifice" : "blood sacrifice is....",
-                "blood_regeneration" : "blood regeneration is...",
+                "Greenbull" : "Time limited invincibility",
+                "Aussie" : "aussie is...",
+                "Milk" : "Removes and prevents debuffs", 
+                "Drunk" : "drunk is...",
+                "Lazers" : "Increase size, reduce timeout",
+                "Projectiles" : "Increase speed, reduce timeout",
+                "Blood Sacrifice" : "blood sacrifice is....",
+                "Blood Regeneration" : "blood regeneration is...",
                 "Shield" : "Shield is...",
-                "poison" : "poison is...",
+                "Poison" : "poison is...",
                 "AOE_EFFECT" : "AOE_EFFECT is...",
-                "buckshot": "backshots" 
+                "Buckshot": "+1 projectile for LMB",
+                "Magnetism": "Directly collect XP"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -186,9 +187,9 @@ class game():
                     del self.powerups[powerup]
                     del self.powerup_timers[powerup]
 
-        if "poison" in self.powerups and now - self.powerups["poison"] > 1000:
+        if "Poison" in self.powerups and now - self.powerups["Poison"] > 1000:
             self.player.health -= 5
-            self.powerups["poison"] = now
+            self.powerups["Poison"] = now
 
     def xp_bar(self):
         self.width = 200 - (self.num_xp / self.level_up) * 200
@@ -215,19 +216,19 @@ class game():
         pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
-        if "drunk" in self.powerups:
+        if "Drunk" in self.powerups:
             self.drunk_rect = (1230 , 80 , 20 , 20)
             pygame.draw.rect(self.screen , (255 , 255 , 0) , self.drunk_rect)
 
-        if "poison" in self.powerups:
+        if "Poison" in self.powerups:
             self.poison_rect = (1205 , 80 ,20, 20)
             pygame.draw.rect(self.screen, (76, 0, 230) , self.poison_rect)
 
-        if "greenbull" in self.powerups:
+        if "Greenbull" in self.powerups:
             self.greenbull_rect = (1180 , 80 , 20 , 20)
             pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
 
-        if "milk" in self.powerups:
+        if "Milk" in self.powerups:
             self.milk_rect = (1155 , 80 , 20 , 20)
             pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
 
@@ -241,30 +242,23 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
         self.turn = -1 # back to start menu state
         
-        if "aussie" in self.powerups:
-            del self.powerups["aussie"]
+        if "Aussie" in self.powerups:
+            del self.powerups["Aussie"]
 
-        if "drunk" in self.powerups:
-            del self.powerups["drunk"]
+        if "Drunk" in self.powerups:
+            del self.powerups["Drunk"]
 
-        if "poison" in self.powerups:
-            del self.powerups["poison"]
+        if "Poison" in self.powerups:
+            del self.powerups["Poison"]
 
-        if "trap" in self.powerups:
-            del self.powerups["trap"]
+        if "Trap" in self.powerups:
+            del self.powerups["Trap"]
 
-        if "greenbull" in self.powerups:
-            del self.powerups["greenbull"]
-
-        self.powerups = {
-                "projectiles" : [1000, 100],
-                "lazers" : [5, 1000],
-                "buckshot" : 1,
-                "done": 0
-               }
-
-        self.powerup_timers = {}
-
+        if "Greenbull" in self.powerups:
+            del self.powerups["Greenbull"]
+        '''
+        reset powerups dict and timers dict here
+        '''
         for enemies in self.enemy_group:
             enemies.kill()
 
@@ -309,24 +303,23 @@ class game():
                     self.state += 1
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    if "trap" in self.powerups:
-                        self.powerups["trap"] +=1
+                    if "Trap" in self.powerups:
+                        self.powerups["Trap"] +=1
 
             if self.is_paused:
                 self.pause_menu.do_pause()
             else:
                 self.screen.fill("#18215d00")
                 dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
-                
                 if self.turn >= -1:
                     self.player.move_x(dt)
-                    if "greenbull" not in self.powerups:
+                    if "Greenbull" not in self.powerups:
                         collision_x(self.player, self.collidable_group, False, self.state)
 
                     collision_x(self.player, self.walls_group, False, self.state)
 
                     self.player.move_y(dt)
-                    if "greenbull" not in self.powerups:
+                    if "Greenbull" not in self.powerups:
                         collision_y(self.player, self.collidable_group, False, self.state)
                     collision_y(self.player, self.walls_group, False, self.state)
 
@@ -339,8 +332,13 @@ class game():
                     for xp in self.xp_group:
                         if now - xp.birth >= 10000:
                             xp.kill()
-
-                    collect_xp(self)
+                    
+                    if "Magnetism" not in self.powerups:
+                        collect_xp(self)
+                    else:
+                        for xp in self.xp_group:
+                            self.num_xp += 1
+                            xp.kill()
 
                     for projectile in self.projectile_group:
                         if type(projectile) == Circle:
@@ -351,7 +349,7 @@ class game():
 
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
 
-                    if "greenbull" not in self.powerups:
+                    if "Greenbull" not in self.powerups:
                         le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
 
                     if "AOE_EFFECT" in self.powerups:
