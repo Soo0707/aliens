@@ -17,7 +17,6 @@ class Player(pygame.sprite.Sprite):
         
         self.update_distance = pygame.Rect(location, (1920, 1080))
 
-        self.aoe = pygame.Rect(0, 0, 400, 400) # for later when we have aoe effects, we'd probably want another rect
 
         self.direction = pygame.math.Vector2()
 
@@ -180,7 +179,6 @@ class Player(pygame.sprite.Sprite):
 
         if "Blood Sacrifice" in self.powerups:
             self.speed = 300 + (50* (1 + self.powerups["Blood Sacrifice"]))
-            self.health = 80
             self.health_permanent = 80
             
         if "Shield" in self.powerups:
@@ -194,7 +192,11 @@ class Player(pygame.sprite.Sprite):
                         self.health_permanent_shield -= 20
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
-                
+                    
+        
+        x = self.powerups["Aura"][0]
+        y = self.powerups["Aura"][1]
+        self.aoe = pygame.Rect(0, 0, x, y)        
         self.aoe.center = self.rect.center
         self.update_distance.center = self.rect.center
             

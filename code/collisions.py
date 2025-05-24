@@ -121,5 +121,5 @@ def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
             continue
 
         if enemy.rect.colliderect(player.aoe):
-            if "AOE_EFFECT" in powerups:
-                enemy.health -= 1000
+            enemy.health -= 2
+                

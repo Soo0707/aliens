@@ -20,8 +20,8 @@ class Powerup_Menu:
     def input(self):
         #The codes below are for knowing which "button" we are on
         keys = pygame.key.get_just_pressed()
-        self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
-        self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
+        self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % 3
+        self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % 1
         if keys[pygame.K_SPACE]:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
             self.apply_powerups(powerup=powerup)
@@ -85,6 +85,11 @@ class Powerup_Menu:
                 self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
             elif powerup == "Magnetism":
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Aura":
+                self.powerups["Aura"][0] += 200
+                self.powerups["Aura"][1] += 200
+            else:
+                self.powerups[powerup] += 1
         else:
             if powerup == "Blood Sacrifice":
                 self.powerups["Blood Sacrifice"] = 0
@@ -107,5 +112,10 @@ class Powerup_Menu:
             elif powerup == "Magnetism":
                 self.powerups["Magnetism"] = 0
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            else:
+                self.powerups.update({powerup: 0})
 
         self.powerups["done"] = 1
+
+
+
