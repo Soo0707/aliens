@@ -24,26 +24,24 @@ class game():
         self.turn = -1
         
 
-        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "AOE_EFFECT", "Magnetism"] # all possible powerup keys here
+        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism"] # all possible powerup keys here
         self.powerups = {
                 "Projectiles" : [1000, 100], # index: speed, cooldown
                 "Lazers" : [5, 1000], # index: width, cooldown
                 "Buckshot": 5,
-                "done": 0
+                "done": 0,
+                "Aura": [0,0,0]
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         self.powerup_definitions = {
                 "Greenbull" : "Time limited invincibility",
-                "Aussie" : "aussie is...",
                 "Milk" : "Removes and prevents debuffs", 
-                "Drunk" : "drunk is...",
                 "Lazers" : "Increase size, reduce timeout",
                 "Projectiles" : "Increase speed, reduce timeout",
-                "Blood Sacrifice" : "blood sacrifice is....",
-                "Blood Regeneration" : "blood regeneration is...",
-                "Shield" : "Shield is...",
-                "poison" : "poison is...",
-                "AOE_EFFECT" : "AOE_EFFECT is...",
+                "Blood Sacrifice" : "Sacrificing Health for Speed",
+                "Blood Regeneration" : "Regains Health after killing",
+                "Shield" : "Regains health after some time",
+                "Aura" : "Damages surrounding enemies",
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP"
                 }
@@ -190,6 +188,11 @@ class game():
         if "Poison" in self.powerups and now - self.powerups["Poison"] > 1000:
             self.player.health -= 5
             self.powerups["Poison"] = now
+        
+        if "Aura" in self.powerups and now - self.powerups["Aura"][2] > 1000:
+            AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+            self.powerups["Aura"][2] = pygame.time.get_ticks()
+            self.powerup_timers["Aura"] = now + 5000
 
     def xp_bar(self):
         self.width = 200 - (self.num_xp / self.level_up) * 200
@@ -352,7 +355,7 @@ class game():
                     if "Greenbull" not in self.powerups:
                         le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
 
-                    if "AOE_EFFECT" in self.powerups:
+                    if "Aura" in self.powerups:
                         AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
 
                     self.check_timers()

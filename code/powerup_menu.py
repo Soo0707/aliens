@@ -85,6 +85,9 @@ class Powerup_Menu:
                 self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
             elif powerup == "Magnetism":
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Aura":
+                self.powerups["Aura"][0] += 200
+                self.powerups["Aura"][1] += 200
             else:
                 self.powerups[powerup] += 1
         else:
