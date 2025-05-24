@@ -11,10 +11,9 @@ class Australian(Enemy):
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
 
-    
     def animate(self, dt):
         if self.direction:
-            self.image_index += 10 * dt
+            self.image_index += 50 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0

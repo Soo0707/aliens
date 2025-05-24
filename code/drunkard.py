@@ -6,8 +6,7 @@ from projectiles import Beer
 class Drunkard(Enemy):
     def __init__(self, player, state, location, powerups, textures, beer_textures, enemy_projectile_group, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
-        
-        self.speed = 600
+        self.speed = 900
         self.images = textures
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
@@ -16,10 +15,11 @@ class Drunkard(Enemy):
         self.image_index = 0
         
         self.enemy_projectile_group = enemy_projectile_group
+        self.can_attack_secondary = 10000
 
     def animate(self, dt):
         if self.direction:
-            self.image_index += 10 * dt
+            self.image_index += 100 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0

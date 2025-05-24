@@ -47,7 +47,7 @@ def collision_y(target1, target2, iterable, state):
                     target1.rect.top = item.rect.bottom
 
 
-def collision_projectile(projectiles, enemies, walls, state):
+def collision_projectile(projectiles, enemies, walls, powerups, state):
     for projectile in projectiles:
         if type(projectile) == Circle:
             continue
@@ -58,6 +58,9 @@ def collision_projectile(projectiles, enemies, walls, state):
         for wall in walls:
             if projectile.rect.colliderect(wall):
                 projectile.kill()
+
+                if "Block Breaker" in powerups:
+                    wall.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
@@ -121,5 +124,5 @@ def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
             continue
 
         if enemy.rect.colliderect(player.aoe):
-            enemy.health -= 2
+            enemy.health -= 5
                 

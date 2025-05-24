@@ -1,9 +1,9 @@
 import pygame
-pygame.font.init()
 import random
 
 class Powerup_Menu:
     def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
+        pygame.font.init()
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -78,7 +78,7 @@ class Powerup_Menu:
             elif powerup == "Projectiles":
                 self.powerups["Projectiles"][0] += 100 # speed
                 if self.powerups["Projectiles"][1] - 10 > 0:
-                    self.powerups["Projectiles"][1] -= 10 # cooldown
+                    self.powerups["Projectiles"][1] -= 100 # cooldown
             elif powerup == "Buckshot":
                 self.powerups["Buckshot"] += 1
             elif powerup == "Greenbull":
@@ -88,6 +88,8 @@ class Powerup_Menu:
             elif powerup == "Aura":
                 self.powerups["Aura"][0] += 200
                 self.powerups["Aura"][1] += 200
+            elif powerup == "Block Breaker":
+                self.powerup_timers["Block Breaker"] = pygame.time.get_ticks() + 5000
             else:
                 self.powerups[powerup] += 1
         else:
@@ -112,8 +114,11 @@ class Powerup_Menu:
             elif powerup == "Magnetism":
                 self.powerups["Magnetism"] = 0
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Block Breaker":
+                self.powerups["Block Breaker"] = 0
+                self.powerup_timers["Block Breaker"]= pygame.time.get_ticks() + 5000
             else:
-                self.powerups.update({powerup: 0})
+                self.powerups[powerup] = 0
 
         self.powerups["done"] = 1
 

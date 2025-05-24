@@ -9,8 +9,6 @@ class Projectile(pygame.sprite.Sprite):
 
         self.state = state
 
-        self.birth = pygame.time.get_ticks()
-
         if not self.direction.x:
             self.image = pygame.transform.rotate(texture, -atan(self.direction.y) * 180 / 3.142)
         else:
@@ -35,8 +33,6 @@ class Lazers(pygame.sprite.Sprite):
         self.image = pygame.transform.scale_by(texture, multiplier)
         self.rect = self.image.get_frect(center = location)
         
-        self.birth = pygame.time.get_ticks()
-
     def update(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         self.rect.y += self.direction.y * self.speed * dt
@@ -77,7 +73,6 @@ class Beer(pygame.sprite.Sprite):
         self.speed = 500
 
         self.rect = self.image.get_rect(center = location)
-        self.birth = pygame.time.get_ticks()
 
     def animate(self, dt):
         self.image_index += 50 * dt

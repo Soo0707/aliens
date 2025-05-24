@@ -47,9 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.circle_texture = self.images["circle"][0]
         self.orb = 0
         self.orb_spawn = True
-
-        self.space =0
-    
+   
     def input(self, state):
         keys = pygame.key.get_pressed()
         

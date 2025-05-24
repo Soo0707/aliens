@@ -1,5 +1,7 @@
 import pygame
 
+from random import randint
+
 from enemy import *
 from australian import *
 from drunkard import *
@@ -64,7 +66,7 @@ class Spawner(Collidable):
         
         self.last_spawn = 0
         self.can_spawn = True
-        self.timeout_ticks = 20
+        self.timeout_ticks = 4000
 
         self.rect = self.image.get_rect(center = location)
         self.player = player
@@ -76,72 +78,80 @@ class Spawner(Collidable):
         self.enemy_textures = enemy_textures
         self.powerups = powerups
 
+        self.random_index = 0
+        self.rands = [randint(0, 100) for x in range(20)]
+
     def update(self, dt, state):
         if self.can_spawn:
-            Australian(
-                player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
-                state = state,
-                location=self.rect.center,
-                textures = self.enemy_textures["australian"],
-                xp_group=self.xp_group,
-                all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                powerups=self.powerups
-                )
-
-            Bomber(
-                player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
-                state = state,
-                textures = self.enemy_textures["bomber"],
-                location=self.rect.center,
-                powerups=self.powerups,
-                xp_texture=self.enemy_textures["xp"][0],
-                xp_group=self.xp_group,
-                bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
-                all_sprites_group = self.all_sprites_group,
-                )
+            n = self.rands[self.random_index]
+            if n < 100:
+                pass
             
-            Poison(
-                player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
-                state = state,
-                location=self.rect.center,
-                textures = self.enemy_textures["poison"],
-                xp_group=self.xp_group,
-                all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                powerups=self.powerups
-                )
+            if n >= 10 and n < 20:
+                Australian(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["australian"],
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
+            if n >= 20 and n < 25:
+                Bomber(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    textures = self.enemy_textures["bomber"],
+                    location=self.rect.center,
+                    powerups=self.powerups,
+                    xp_texture=self.enemy_textures["xp"][0],
+                    xp_group=self.xp_group,
+                    bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
+                    all_sprites_group = self.all_sprites_group,
+                    )
+            if n >= 30 and n < 40:
+                Poison(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["poison"],
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
+            if n >= 40 and n < 50:
+                Drunkard(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["drunkard"],
+                    beer_textures = self.enemy_textures["beer"],
+                    enemy_projectile_group = self.enemy_projectile_group,
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
+            if n >= 50 and n < 60:
+                Trapper(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["trapper"],
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
 
-            Drunkard(
-                player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
-                state = state,
-                location=self.rect.center,
-                textures = self.enemy_textures["drunkard"],
-                beer_textures = self.enemy_textures["beer"],
-                enemy_projectile_group = self.enemy_projectile_group,
-                xp_group=self.xp_group,
-                all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                powerups=self.powerups
-                )
-            
-            Trapper(
-                player=self.player,
-                groups=(self.all_sprites_group, self.enemy_group),
-                state = state,
-                location=self.rect.center,
-                textures = self.enemy_textures["trapper"],
-                xp_group=self.xp_group,
-                all_sprites_group = self.all_sprites_group,
-                xp_texture = self.enemy_textures["xp"][0],
-                powerups=self.powerups
-                )
+            self.random_index = (self.random_index + 1) % 20
             self.last_spawn = pygame.time.get_ticks()
-            self.can_spawn = False       
+            self.can_spawn = False
 
-        if not self.can_spawn and pygame.time.get_ticks() - self.last_spawn >= self.timeout_ticks and dt < 0.02 and self.rect.colliderect(self.player.update_distance):
-            self.can_spawn = True

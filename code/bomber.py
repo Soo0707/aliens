@@ -17,11 +17,12 @@ class Bomber(Enemy):
         self.plode_index = 0
         self.explode_images= bomber_explosion_texture
         self.explode_image = self.explode_images[0]
+
+        self.attack = 15
     
     def animate(self, dt):
-
         if self.direction:
-            self.image_index += 10 * dt
+            self.image_index += 300 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0
@@ -44,13 +45,9 @@ class Bomber(Enemy):
 
         if not self.can_attack_primary and now - self.last_attack_primary >= self.attack_cooldown_primary:
             self.can_attack_primary = True
-
-        if not self.can_attack_secondary and now - self.last_attack_secondary >= self.attack_cooldown_secondary:
-            self.can_attack_secondary = True
-        
+       
         self.set_direction()
         if not self.plode:
             self.animate(dt)
         else:
             self.explode(dt)
-        self.secondary()

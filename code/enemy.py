@@ -17,7 +17,7 @@ class Enemy(pygame.sprite.Sprite):
         self.health = 100
 
         self.speed = 300 # Enemy
-        self.attack = 10 #Enemy attack 
+        self.attack = 5 #Enemy attack 
         self.attack_cooldown_primary = 5000 #attack cooldown
         self.attack_cooldown_secondary = 5000 #attack cooldown
         
@@ -34,9 +34,6 @@ class Enemy(pygame.sprite.Sprite):
         
         self.xp_texture = xp_texture
         self.powerups = powerups
-
-        self.birth = pygame.time.get_ticks()
-
 
     def set_direction(self):
         player_pos = pygame.math.Vector2(self.player.rect.center)
