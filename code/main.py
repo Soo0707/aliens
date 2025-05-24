@@ -40,7 +40,8 @@ class game():
                 "blood_regeneration" : "blood regeneration is...",
                 "Shield" : "Shield is...",
                 "poison" : "poison is...",
-                "AOE_EFFECT" : "AOE_EFFECT is..."
+                "AOE_EFFECT" : "AOE_EFFECT is...",
+                "buckshot" : "Oil up"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -162,16 +163,17 @@ class game():
                     
 
     def xp_bar(self):
-        self.width = 200 - (self.num_xp / self.level_up) * 200
+        self.width = (self.num_xp / self.level_up) * 1260
 
-        self.bg_rect = (1000 , 10 , 250 , 30)
-        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
-        
-        self.progress_rect = (1005 , 15 , 200 , 20)
+        #self.bg_rect = (1000 , 690 , 250 , 30)
+        #pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+
+        self.empty_rect = (10 , 690 , 1260 , 10)
+        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        self.progress_rect = (10 , 690 , self.width , 10)
+
         pygame.draw.rect(self.screen , (0, 218, 254), self.progress_rect )
 
-        self.empty_rect = (1005 , 15 , self.width , 20)
-        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
 
     def heatlh_bar(self):
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
@@ -222,10 +224,12 @@ class game():
         if "greenbull" in self.powerups:
             del self.powerups["greenbull"]
 
-        self.powerups = {
-                "projectiles" : [1000, 100], 
-                "lazers" : [5, 1000], 
-               }
+        self.powerups["projectiles"] = [1000, 100]
+        self.powerups["lazers"] = [5, 1000]
+        self.powerups["buckshot"] = 1
+
+        for keys in self.powerup_timers.copy():
+            del self.powerup_timers[keys]
         
         self.powerup_timers = {}
 
@@ -247,7 +251,7 @@ class game():
         self.num_xp = 0 
         self.level_up = 10
 
-        self.player.rect.center = (1024, 4032)
+        self.player.rect.center = (1344, 3104)
 
         self.player.health = self.player.health_permanent
         
