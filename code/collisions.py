@@ -4,6 +4,7 @@ from bomber import *
 from australian import *
 from poison import *
 from projectiles import *
+from trapper import *
 
 def collision_x(target1, target2, iterable, state):
     if iterable:
@@ -72,9 +73,9 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
             continue
 
         if projectile.rect.colliderect(player.rect):
-            if type(projectile) == Beer and "milk" not in powerups:
-                powerups["drunk"] = 0
-                powerup_timers["drunk"] = now + 1000
+            if type(projectile) == Beer and "Milk" not in powerups:
+                powerups["Drunk"] = 0
+                powerup_timers["Drunk"] = now + 1000
             projectile.kill()
 
         for wall in walls:
@@ -92,17 +93,20 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
              
-            if type(enemy) == Australian and "milk" not in powerups:
-                powerups["aussie"] = 0
-                powerup_timers["aussie"] = now + 500
+            if type(enemy) == Australian and "Milk" not in powerups:
+                powerups["Aussie"] = 0
+                powerup_timers["Aussie"] = now + 500
             
-            if type(enemy) == Poison and "milk" not in powerups:
-                powerups["poison"] = pygame.time.get_ticks()
-                powerup_timers["poison"] = now + 5000
+            elif type(enemy) == Poison and "Milk" not in powerups:
+                powerups["Poison"] = pygame.time.get_ticks()
+                powerup_timers["Poison"] = now + 5000
 
             elif type(enemy) == Bomber:
                 enemy.plode = True
                 enemy.explode(dt)
+            
+            elif type(enemy) == Trapper and "Milk" not in powerups:
+                powerups["Trap"] = 0
 
 def collect_xp(self):
     for orb in self.xp_group:

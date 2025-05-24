@@ -1,7 +1,6 @@
 import pygame
 pygame.font.init()
 import random
-from main import *
 
 class Powerup_Menu:
     def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
@@ -17,19 +16,15 @@ class Powerup_Menu:
         self.powerup_definitions = powerup_definitions
         self.general_options = random.sample(self.powerup_list, 3)
         self.general_index = {'col': 0, 'row': 0}
-        self.state = 'general'
         
     def input(self):
         #The codes below are for knowing which "button" we are on
         keys = pygame.key.get_just_pressed()
-        self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])) % 3
-        self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])) % 1
+        self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % 3
+        self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % 1
         if keys[pygame.K_SPACE]:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
             self.apply_powerups(powerup=powerup)
-            self.state = 'done'
-            if self.state == 'done':
-                self.general_options = random.sample(self.powerup_list, 3)
             
         
     def general(self):
@@ -68,48 +63,56 @@ class Powerup_Menu:
                 self.display_surface.blit(desc_surf, desc_rect)
                 
     def update(self):
-        self.input()            
-                
-        
-    def draw(self):
-        match self.state:
-            case 'general': self.general()
-    
+        self.input()
+        if self.powerups["done"]: 
+            self.general_options = random.sample(self.powerup_list, 3)
+
     def apply_powerups(self, powerup):
         if powerup in self.powerups:
-            if powerup == "milk":
-                if "drunk" in self.powerups:
-                    del self.powerups["drunk"]
-
-                if "aussie" in self.powerups:
-                    del self.powerups["aussie"]
-                
-                if "poison" in self.powerups:
-                    del self.powerups["poison"]                   
-                
-                self.powerups[powerup] = 0
-                self.powerup_timers[powerup] = pygame.time.get_ticks() + 10000
-
-            elif powerup == "lazers":
-                self.powerups["lazers"][0] += 1 # width
-                if self.powerups["lazers"][1] - 100 > 0:
-                    self.powerups["lazers"][1] -= 100 # cooldown
-            elif powerup == "projectiles":
-                self.powerups["projectiles"][0] += 100 # speed
-                if self.powerups["projectiles"][1] - 10 > 0:
-                    self.powerups["projectiles"][1] -= 10 # cooldown
-            elif powerup == "buckshot":
-                self.powerups["buckshot"] += 1
-            elif powerup == "greenbull":
-                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
+            if powerup == "Milk":
+                self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Lazers":
+                self.powerups["Lazers"][0] += 1 # width
+                if self.powerups["Lazers"][1] - 100 > 0:
+                    self.powerups["Lazers"][1] -= 100 # cooldown
+            elif powerup == "Projectiles":
+                self.powerups["Projectiles"][0] += 100 # speed
+                if self.powerups["Projectiles"][1] - 10 > 0:
+                    self.powerups["Projectiles"][1] -= 10 # cooldown
+            elif powerup == "Buckshot":
+                self.powerups["Buckshot"] += 1
+            elif powerup == "Greenbull":
+                self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Magnetism":
+                self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
             else:
                 self.powerups[powerup] += 1
         else:
-            if powerup == "blood_sacrifice":
-                self.powerups["blood_sacrifice"] = 0
-                self.powerup_timers["blood_sacrifice"] = pygame.time.get_ticks() + 1000
-            elif powerup == "greenbull":
-                self.powerups["greenbull"] = 0
-                self.powerup_timers["greenbull"] = pygame.time.get_ticks() + 100000
-            else:    
+            if powerup == "Blood Sacrifice":
+                self.powerups["Blood Sacrifice"] = 0
+                self.powerup_timers["Blood Sacrifice"] = pygame.time.get_ticks() + 1000
+            elif powerup == "Greenbull":
+                self.powerups["Greenbull"] = 0
+                self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Milk":
+                self.powerups["Milk"] = 0
+                self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
+                
+                if "Drunk" in self.powerups:
+                    del self.powerups["Drunk"]
+
+                if "Aussie" in self.powerups:
+                    del self.powerups["Aussie"]
+                
+                if "Poison" in self.powerups:
+                    del self.powerups["Poison"]
+            elif powerup == "Magnetism":
+                self.powerups["Magnetism"] = 0
+                self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            else:
                 self.powerups.update({powerup: 0})
+
+        self.powerups["done"] = 1
+
+
+
