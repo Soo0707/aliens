@@ -25,8 +25,8 @@ class game():
         self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism", "Block Breaker"]# all possible powerup keys here
         self.powerups = {
                 "Projectiles" : [1000, 150], # index: speed, cooldown
-                "Lazers" : [2, 750], # index: width, cooldown
-                "Buckshot": 15,
+                "Lazers" : [1, 750], # index: width, cooldown
+                "Buckshot": 1,
                 "Aura": [0,0,0],
                 "done": 0
                 }

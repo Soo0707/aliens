@@ -79,7 +79,7 @@ class Spawner(Collidable):
         self.powerups = powerups
 
         self.random_index = 0
-        self.rands = [randint(0, 100) for x in range(10)]
+        self.rands = [randint(0, 100) for x in range(20)]
 
     def update(self, dt, state):
         if self.can_spawn:
@@ -151,7 +151,7 @@ class Spawner(Collidable):
                     powerups=self.powerups
                     )
 
-            self.random_index = (self.random_index + 1) % 10
+            self.random_index = (self.random_index + 1) % 20
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
 
