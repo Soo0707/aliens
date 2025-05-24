@@ -20,17 +20,15 @@ class game():
 
         self.running = True
         self.state = 0
-        self.tick_offsets = [0 for i in range(10)]
         self.turn = -1
         
-
-        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism"] # all possible powerup keys here
+        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism", "Block Breaker"]# all possible powerup keys here
         self.powerups = {
-                "Projectiles" : [1000, 100], # index: speed, cooldown
-                "Lazers" : [5, 1000], # index: width, cooldown
-                "Buckshot": 5,
-                "done": 0,
-                "Aura": [0,0,0]
+                "Projectiles" : [1000, 150], # index: speed, cooldown
+                "Lazers" : [2, 750], # index: width, cooldown
+                "Buckshot": 15,
+                "Aura": [0,0,0],
+                "done": 0
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
         self.powerup_definitions = {
@@ -43,7 +41,8 @@ class game():
                 "Shield" : "Regains health after some time",
                 "Aura" : "Damages surrounding enemies",
                 "Buckshot": "+1 projectile for LMB",
-                "Magnetism": "Directly collect XP"
+                "Magnetism": "Directly collect XP",
+                "Block Breaker": "Why Not? Just be fast",
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -66,7 +65,7 @@ class game():
         self.visible_menu_pixels_group = pygame.sprite.Group()
 
         self.num_xp = 0
-        self.level_up = 10
+        self.level_up = 2
 
         self.textures = {
                 "bomber": [],
@@ -189,10 +188,13 @@ class game():
             self.player.health -= 5
             self.powerups["Poison"] = now
         
-        if "Aura" in self.powerups and now - self.powerups["Aura"][2] > 1000:
+        if now - self.powerups["Aura"][2] > 1000:
             AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
-            self.powerups["Aura"][2] = pygame.time.get_ticks()
-            self.powerup_timers["Aura"] = now + 5000
+            self.powerups["Aura"][2] = now
+        
+        for spawner in self.spawners_group:
+            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and self.dt < 0.02 and spawner.rect.colliderect(self.player.update_distance):
+                spawner.can_spawn = True
 
     def xp_bar(self):
         self.width = 200 - (self.num_xp / self.level_up) * 200
@@ -277,7 +279,7 @@ class game():
         self.state = 0
 
         self.num_xp = 0
-        self.level_up = 10
+        self.level_up = 2
 
         self.player.rect.center = (1344, 3104)
 
@@ -298,11 +300,9 @@ class game():
                         self.is_paused = True
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0:
-                    self.tick_offsets[self.state] = pygame.time.get_ticks()
                     self.state -= 1
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state < len(self.tick_offsets):
-                    self.tick_offsets[self.state] = pygame.time.get_ticks()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     self.state += 1
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -313,27 +313,28 @@ class game():
                 self.pause_menu.do_pause()
             else:
                 self.screen.fill("#18215d00")
-                dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+                self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+                
                 if self.turn >= -1:
-                    self.player.move_x(dt)
+                    self.player.move_x(self.dt)
                     if "Greenbull" not in self.powerups:
                         collision_x(self.player, self.collidable_group, False, self.state)
 
                     collision_x(self.player, self.walls_group, False, self.state)
 
-                    self.player.move_y(dt)
+                    self.player.move_y(self.dt)
                     if "Greenbull" not in self.powerups:
                         collision_y(self.player, self.collidable_group, False, self.state)
                     collision_y(self.player, self.walls_group, False, self.state)
 
-                    self.player.update(dt, self.state)
-                    self.projectile_group.update(dt, self.state)
-                    self.enemy_projectile_group.update(dt, self.state)
+                    self.player.update(self.dt, self.state)
+                    self.projectile_group.update(self.dt, self.state)
+                    self.enemy_projectile_group.update(self.dt, self.state)
 
                 now = pygame.time.get_ticks()
                 if self.turn == 1:
                     for xp in self.xp_group:
-                        if now - xp.birth >= 10000:
+                        if not xp.rect.colliderect(self.player.update_distance):
                             xp.kill()
                     
                     if "Magnetism" not in self.powerups:
@@ -347,33 +348,30 @@ class game():
                         if type(projectile) == Circle:
                             continue
 
-                        if now - projectile.birth - self.tick_offsets[self.state] >= 1000 or not projectile.rect.colliderect(self.player.update_distance):
+                        if not projectile.rect.colliderect(self.player.update_distance):
                             projectile.kill()
 
-                    collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.state)
+                    collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.powerups, self.state)
 
                     if "Greenbull" not in self.powerups:
-                        le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, dt)
-
-                    if "Aura" in self.powerups:
-                        AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
+                        le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, self.dt)
 
                     self.check_timers()
 
                     self.turn = 2
                 elif self.turn == 2:
                     for enemy in self.enemy_group:
-                        if now - enemy.birth - self.tick_offsets[self.state] >= 1000000 or not enemy.rect.colliderect(self.player.update_distance):
+                        if not enemy.rect.colliderect(self.player.update_distance):
                             enemy.kill()
 
                     for enemy in self.enemy_group:
-                        enemy.move_x(dt, self.state)
+                        enemy.move_x(self.dt, self.state)
 
                     collision_x(self.enemy_group, self.collidable_group, True, self.state)
                     collision_x(self.enemy_group, self.walls_group, True, self.state)
 
                     for enemy in self.enemy_group:
-                        enemy.move_y(dt, self.state)
+                        enemy.move_y(self.dt, self.state)
 
                     collision_y(self.enemy_group, self.collidable_group, True, self.state)
                     collision_y(self.enemy_group, self.walls_group, True, self.state)
@@ -381,7 +379,7 @@ class game():
                     self.turn = 3
                 elif self.turn == 3:
                     for projectile in self.enemy_projectile_group:
-                        if now - projectile.birth - self.tick_offsets[self.state] >= 2000 or not projectile.rect.colliderect(self.player.update_distance):
+                        if not projectile.rect.colliderect(self.player.update_distance):
                             projectile.kill()
 
                     check_enemy_projectiles(self.player, self.powerups, self.powerup_timers, self.enemy_projectile_group, self.walls_group, self.state)
@@ -390,12 +388,20 @@ class game():
                         self.reset()
                         continue
 
-                    self.enemy_group.update(dt, self.state)
-                    self.spawners_group.update(dt, self.state)
+                    self.enemy_group.update(self.dt, self.state)
+                    self.spawners_group.update(self.dt, self.state)
 
                     if self.num_xp >= self.level_up:
-                        self.level_up += 10
+                        self.level_up += 2
                         self.num_xp = 0
+
+                        for spawner in self.spawners_group:
+                            if spawner.timeout_ticks > 50:
+                                spawner.timeout_ticks -= self.level_up * 10
+
+                            if spawner.timeout_ticks < 50:
+                                spawner.timeout_ticks = 50
+
                         self.turn = -2
                         continue
 
