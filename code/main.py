@@ -40,7 +40,8 @@ class game():
                 "blood_regeneration" : "blood regeneration is...",
                 "Shield" : "Shield is...",
                 "poison" : "poison is...",
-                "AOE_EFFECT" : "AOE_EFFECT is..."
+                "AOE_EFFECT" : "AOE_EFFECT is...",
+                "buckshot" : "buckshot is...."
                 }
         
         # sprite groups, useful for collision detection and camera later on
