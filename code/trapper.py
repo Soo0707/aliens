@@ -5,7 +5,7 @@ from enemy import *
 class Trapper(Enemy):
     def __init__(self, player, state, location, powerups, textures, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
-        self.speed = 600
+        self.speed = 430
         self.images = textures
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)

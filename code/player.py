@@ -85,6 +85,7 @@ class Player(pygame.sprite.Sprite):
 
                 Projectile(
                         self.powerups["Projectiles"][0],
+                        self.powerups["Projectiles"][2],
                         state,
                         self.projectile_texture,
                         self.rect.center,
@@ -101,6 +102,7 @@ class Player(pygame.sprite.Sprite):
 
                     Projectile(
                             self.powerups["Projectiles"][0],
+                            self.powerups["Projectiles"][2],
                             state,
                             self.projectile_texture,
                             self.rect.center,

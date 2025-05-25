@@ -10,7 +10,7 @@ class Bomber(Enemy):
         self.images = textures
         self.image = self.images[0]
         self.image_index = 0
-        self.speed = 1100
+        self.speed = 700
         self.rect = self.image.get_rect(center = location)
 
         self.plode = False
@@ -18,11 +18,11 @@ class Bomber(Enemy):
         self.explode_images= bomber_explosion_texture
         self.explode_image = self.explode_images[0]
 
-        self.attack = 15
+        self.attack = 20
     
     def animate(self, dt):
         if self.direction:
-            self.image_index += 300 * dt
+            self.image_index += 100 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0
