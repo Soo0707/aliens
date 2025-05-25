@@ -2,10 +2,11 @@ import pygame
 from math import atan
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, speed, state, texture, location, direction, groups):
+    def __init__(self, speed, damage, state, texture, location, direction, groups):
         super().__init__(groups)       
         self.speed = speed
         self.direction = direction
+        self.damage = damage
 
         self.state = state
 
@@ -27,6 +28,7 @@ class Lazers(pygame.sprite.Sprite):
         self.speed = 3000
         self.direction = direction
         self.state = state
+        self.damage = 25 * multiplier
 
         self.texture = texture
         

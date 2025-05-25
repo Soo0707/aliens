@@ -24,8 +24,8 @@ class game():
         
         self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism", "Block Breaker"]# all possible powerup keys here
         self.powerups = {
-                "Projectiles" : [1000, 150], # index: speed, cooldown
-                "Lazers" : [1, 750], # index: width, cooldown
+                "Projectiles" : [1000, 150, 25], # index: speed, cooldown, damage
+                "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
                 "Buckshot": 1,
                 "Aura": [0,0,0],
                 "done": 0
@@ -34,8 +34,8 @@ class game():
         self.powerup_definitions = {
                 "Greenbull" : "Time limited invincibility",
                 "Milk" : "Removes and prevents debuffs", 
-                "Lazers" : "Increase size, reduce timeout",
-                "Projectiles" : "Increase speed, reduce timeout",
+                "Lazers" : "+DMG, -Timeout",
+                "Projectiles" : "+SPD, +DMG, -Timeout",
                 "Blood Sacrifice" : "Sacrificing Health for Speed",
                 "Blood Regeneration" : "Regains Health after killing",
                 "Shield" : "Regains health after some time",
@@ -65,7 +65,7 @@ class game():
         self.visible_menu_pixels_group = pygame.sprite.Group()
 
         self.num_xp = 0
-        self.level_up = 2
+        self.level_up = 4
 
         self.textures = {
                 "bomber": [],
@@ -279,7 +279,7 @@ class game():
         self.state = 0
 
         self.num_xp = 0
-        self.level_up = 2
+        self.level_up = 4
 
         self.player.rect.center = (1344, 3104)
 
@@ -392,12 +392,12 @@ class game():
                     self.spawners_group.update(self.dt, self.state)
 
                     if self.num_xp >= self.level_up:
-                        self.level_up += 2
+                        self.level_up += 4
                         self.num_xp = 0
 
                         for spawner in self.spawners_group:
                             if spawner.timeout_ticks > 50:
-                                spawner.timeout_ticks -= self.level_up * 10
+                                spawner.timeout_ticks -= self.level_up * 5
 
                             if spawner.timeout_ticks < 50:
                                 spawner.timeout_ticks = 50

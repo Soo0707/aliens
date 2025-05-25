@@ -64,7 +64,7 @@ def collision_projectile(projectiles, enemies, walls, powerups, state):
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
-                enemy.health -= 100
+                enemy.health -= projectile.damage
                 if type(projectile) == Projectile:
                     projectile.kill()
 

@@ -72,13 +72,14 @@ class Powerup_Menu:
             if powerup == "Milk":
                 self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
             elif powerup == "Lazers":
-                self.powerups["Lazers"][0] += 1 # width
+                self.powerups["Lazers"][0] += 1 # width and damage multiplier
                 if self.powerups["Lazers"][1] - 100 > 0:
                     self.powerups["Lazers"][1] -= 100 # cooldown
             elif powerup == "Projectiles":
                 self.powerups["Projectiles"][0] += 100 # speed
                 if self.powerups["Projectiles"][1] - 10 > 0:
                     self.powerups["Projectiles"][1] -= 100 # cooldown
+                self.powerups["Projectiles"][2] += 10 # damage
             elif powerup == "Buckshot":
                 self.powerups["Buckshot"] += 1
             elif powerup == "Greenbull":
