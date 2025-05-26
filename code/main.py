@@ -22,7 +22,7 @@ class game():
         self.state = 0
         self.turn = -1
         
-        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism", "Block Breaker"]# all possible powerup keys here
+        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "AOE_EFFECT", "Magnetism" , "Orb", "Block Breaker"] # all possible powerup keys here
         self.powerups = {
                 "Projectiles" : [1000, 150, 25], # index: speed, cooldown, damage
                 "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
@@ -43,6 +43,7 @@ class game():
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
+                "Orb" : "Circular Orb"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -87,6 +88,7 @@ class game():
                     "circle": []
                     }
                 }
+        
 
         self.load_textures()
 
@@ -104,6 +106,7 @@ class game():
         self.map_loopover_x = 0
         self.map_loopover_y = 0
         self.load_map()
+
 
     def load_map(self):
         map_file = load_pygame(join("..", "assets", "map", "map.tmx"))
@@ -197,45 +200,63 @@ class game():
                 spawner.can_spawn = True
 
     def xp_bar(self):
-        self.width = 200 - (self.num_xp / self.level_up) * 200
+        self.width = (self.num_xp / self.level_up) * 1260
 
-        self.bg_rect = (1000 , 10 , 250 , 30)
-        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+        self.empty_rect = (10 , 690 , 1260 , 10)
+        pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
+        self.progress_rect = (10 , 690 , self.width , 10)
 
-        self.progress_rect = (1005 , 15 , 200 , 20)
-        pygame.draw.rect(self.screen , (0, 218, 254), self.progress_rect )
+        pygame.Surface.fill(self.screen , (0, 218, 254), self.progress_rect )
 
-        self.empty_rect = (1005 , 15 , self.width , 20)
-        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        space_y = self.player.rect.centery + 20
+        space_x = self.player.rect.centerx + 20 
+        space_rect = (space_x , space_y , 20 , 20)
+        pygame.draw.rect(self.screen, (255,255,255), space_rect)
+
 
     def health_bar(self):
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
 
         self.bg_rect = (1000 , 45 , 250 , 30)
-        pygame.draw.rect(self.screen , (128,128,128), self.bg_rect)
+        pygame.Surface.fill(self.screen , (128,128,128), self.bg_rect)
 
         self.progress_rect = (1005 , 50 , 200 , 20)
-        pygame.draw.rect(self.screen , (0,255,0), self.progress_rect )
+        pygame.Surface.fill(self.screen , (0,255,0), self.progress_rect )
 
         self.empty_rect = (1005 , 50 , self.width , 20)
-        pygame.draw.rect(self.screen , (0,0,0), self.empty_rect )
+        pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
         if "Drunk" in self.powerups:
             self.drunk_rect = (1230 , 80 , 20 , 20)
-            pygame.draw.rect(self.screen , (255 , 255 , 0) , self.drunk_rect)
+            pygame.Surface.fill(self.screen , (255 , 255 , 0) , self.drunk_rect)
 
         if "Poison" in self.powerups:
             self.poison_rect = (1205 , 80 ,20, 20)
-            pygame.draw.rect(self.screen, (76, 0, 230) , self.poison_rect)
+            pygame.Surface.fill(self.screen, (76, 0, 230) , self.poison_rect)
 
         if "Greenbull" in self.powerups:
             self.greenbull_rect = (1180 , 80 , 20 , 20)
-            pygame.draw.rect(self.screen , (0,255,0) , self.greenbull_rect)
+            pygame.Surface.fill(self.screen , (0,255,0) , self.greenbull_rect)
 
         if "Milk" in self.powerups:
             self.milk_rect = (1155 , 80 , 20 , 20)
-            pygame.draw.rect(self.screen , (255,255,255) , self.milk_rect)
+            pygame.Surface.fillt(self.screen , (255,255,255) , self.milk_rect)
+
+        if "Magnetism" in self.powerups:
+            self.magnet_half = (1130, 80 , 10 ,20)
+            self.magnet_other_half = (1120,80,10,20)
+
+            pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
+            pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
+
+    def trap_spacebar(self):
+        if "trap" in self.powerups:
+            space_y = self.player.rect.center.y + 20
+            space_x = self.player.rect.center.x + 20
+            space_rect = (space_x , space_y , 50 , 20)
+            pygame.draw.rect(self.screen, (255,255,255), space_rect , 1)
+
 
     def reset(self):
         for pixel in self.died_text_group:
@@ -247,24 +268,24 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
         self.turn = -1 # back to start menu state
         
-        if "Aussie" in self.powerups:
-            del self.powerups["Aussie"]
+        for skibidi in self.powerups:
+            if skibidi == "projectiles":
+                self.powerups["projectiles"] = [1000, 100]
+            elif skibidi == "lazers":
+                self.powerups["lazers"] = [5, 1000]
+            elif skibidi == "buckshot":
+                self.powerups["buckshot"] = 1
+            else:
+                del self.powerups[skibidi]
 
-        if "Drunk" in self.powerups:
-            del self.powerups["Drunk"]
 
-        if "Poison" in self.powerups:
-            del self.powerups["Poison"]
+        for keys in self.powerup_timers.copy():
+            del self.powerup_timers[keys]
+        
+        self.powerup_timers = {}
 
-        if "Trap" in self.powerups:
-            del self.powerups["Trap"]
 
-        if "Greenbull" in self.powerups:
-            del self.powerups["Greenbull"]
-        '''
-        reset powerups dict and timers dict here
-        '''
-        for enemies in self.enemy_group:
+        for enemies in self.enemy_projectile_group:
             enemies.kill()
 
         for enemy_projectiles in self.enemy_projectile_group:

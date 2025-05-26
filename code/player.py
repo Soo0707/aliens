@@ -134,15 +134,6 @@ class Player(pygame.sprite.Sprite):
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
 
-        if self.orb == 0 and mouse[1]:
-            self.orb += 1
-            Circle(
-                self.circle_texture,
-                state,
-                1, #size multiplier
-                self,
-                (self.projectile_group, self.all_sprites_group),
-            )
 
 
     def update_bearing(self):
