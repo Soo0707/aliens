@@ -9,4 +9,6 @@ class Hooker(Enemy):
         self.images = textures
         self.image = self.images[0]
         self.image_index = 0
+        self.health = 1000
+        self.speed = 100
         xp_texture =self.xp_texture
