@@ -71,7 +71,7 @@ class game():
                 "bomber": [],
                 "bomber_explosion" : [],
                 "drunkard": [],
-                "hooker": [],
+                "big_man": [],
                 "poison": [],
                 "trapper": [],
                 "australian":[],
