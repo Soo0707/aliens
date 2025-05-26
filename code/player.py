@@ -184,7 +184,15 @@ class Player(pygame.sprite.Sprite):
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
                     
-        
+        if "Orb" in self.powerups:
+            Circle(
+                texture = self.texture,
+                state = self.state,
+                multiplier = self.multiplier,
+                player = self.player,
+                groups = self.groups,
+            )
+
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]
         self.aoe = pygame.Rect(0, 0, x, y)        

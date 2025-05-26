@@ -41,6 +41,7 @@ class game():
                 "Shield" : "Regains health after some time",
                 "Aura" : "Damages surrounding enemies",
                 "Buckshot": "+1 projectile for LMB",
+                "AOE_EFFECT" : "erm what the sigma",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
                 "Orb" : "Circular Orb"
@@ -217,35 +218,35 @@ class game():
     def health_bar(self):
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
 
-        self.bg_rect = (1000 , 45 , 250 , 30)
+        self.bg_rect = (1000 , 15 , 250 , 30)
         pygame.Surface.fill(self.screen , (128,128,128), self.bg_rect)
 
-        self.progress_rect = (1005 , 50 , 200 , 20)
+        self.progress_rect = (1005 , 20 , 200 , 20)
         pygame.Surface.fill(self.screen , (0,255,0), self.progress_rect )
 
-        self.empty_rect = (1005 , 50 , self.width , 20)
+        self.empty_rect = (1005 , 20 , self.width , 20)
         pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
         if "Drunk" in self.powerups:
-            self.drunk_rect = (1230 , 80 , 20 , 20)
+            self.drunk_rect = (1230 , 50 , 20 , 20)
             pygame.Surface.fill(self.screen , (255 , 255 , 0) , self.drunk_rect)
 
         if "Poison" in self.powerups:
-            self.poison_rect = (1205 , 80 ,20, 20)
+            self.poison_rect = (1205 , 50 ,20, 20)
             pygame.Surface.fill(self.screen, (76, 0, 230) , self.poison_rect)
 
         if "Greenbull" in self.powerups:
-            self.greenbull_rect = (1180 , 80 , 20 , 20)
+            self.greenbull_rect = (1180 , 50 , 20 , 20)
             pygame.Surface.fill(self.screen , (0,255,0) , self.greenbull_rect)
 
         if "Milk" in self.powerups:
-            self.milk_rect = (1155 , 80 , 20 , 20)
-            pygame.Surface.fillt(self.screen , (255,255,255) , self.milk_rect)
+            self.milk_rect = (1155 , 50 , 20 , 20)
+            pygame.Surface.fill(self.screen , (255,255,255) , self.milk_rect)
 
         if "Magnetism" in self.powerups:
-            self.magnet_half = (1130, 80 , 10 ,20)
-            self.magnet_other_half = (1120,80,10,20)
+            self.magnet_half = (1130, 50 , 10 ,20)
+            self.magnet_other_half = (1120,50,10,20)
 
             pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
             pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
@@ -268,13 +269,17 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
         self.turn = -1 # back to start menu state
         
-        for skibidi in self.powerups:
+        for skibidi in self.powerups.copy():
             if skibidi == "projectiles":
                 self.powerups["projectiles"] = [1000, 100]
             elif skibidi == "lazers":
                 self.powerups["lazers"] = [5, 1000]
             elif skibidi == "buckshot":
                 self.powerups["buckshot"] = 1
+            elif skibidi == "Aura":
+                self.powerups["Aura"] = [0,0,0]
+            elif skibidi == "done":
+                self.powerups["done"] = 0
             else:
                 del self.powerups[skibidi]
 
@@ -466,6 +471,7 @@ class game():
                 self.xp_bar()
                 self.health_bar()
                 self.powerup_bar()
+                self.trap_spacebar()
 
                 if self.turn == -2: # -2 is the powerup menu state
                     self.powerup_menu.update()
