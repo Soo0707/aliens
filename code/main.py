@@ -14,6 +14,7 @@ from os import listdir
 
 class game():
     def __init__(self):
+        pygame.font.init()
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
         self.dt = 0
@@ -66,6 +67,7 @@ class game():
         self.quit_trigger_group = pygame.sprite.Group()
         self.visible_menu_pixels_group = pygame.sprite.Group()
 
+        self.font = pygame.font.Font(None, 35)
         self.num_xp = 0
         self.level_up = 4
 
@@ -251,12 +253,7 @@ class game():
             pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
             pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
 
-    def trap_spacebar(self):
-        if "trap" in self.powerups:
-            space_y = self.player.rect.center.y + 20
-            space_x = self.player.rect.center.x + 20
-            space_rect = (space_x , space_y , 50 , 20)
-            pygame.draw.rect(self.screen, (255,255,255), space_rect , 1)
+ 
 
 
     def reset(self):
@@ -271,9 +268,9 @@ class game():
         
         for skibidi in self.powerups.copy():
             if skibidi == "projectiles":
-                self.powerups["projectiles"] = [1000, 100]
+                self.powerups["projectiles"] = [1000, 150, 25]
             elif skibidi == "lazers":
-                self.powerups["lazers"] = [5, 1000]
+                self.powerups["lazers"] = [1, 750]
             elif skibidi == "buckshot":
                 self.powerups["buckshot"] = 1
             elif skibidi == "Aura":
@@ -471,7 +468,19 @@ class game():
                 self.xp_bar()
                 self.health_bar()
                 self.powerup_bar()
-                self.trap_spacebar()
+              
+
+                if "Trap" in self.powerups:
+                   
+                    space_rect = (487.5 , 640 , 305 , 30)
+                    pygame.draw.rect(self.screen, (235,235,235), space_rect , border_radius=10)
+
+                    text = self.font.render("Spam SPACE to Escape", True, (0, 0, 0)) 
+                    rect = pygame.Rect((487.5 , 640 , 305 , 30))
+                    text_rect = text.get_rect(center = rect.center)
+                    self.screen.blit(text, text_rect)
+
+
 
                 if self.turn == -2: # -2 is the powerup menu state
                     self.powerup_menu.update()
