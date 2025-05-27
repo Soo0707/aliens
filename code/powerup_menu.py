@@ -96,7 +96,6 @@ class Powerup_Menu:
         else:
             if powerup == "Blood Sacrifice":
                 self.powerups["Blood Sacrifice"] = 0
-                self.powerup_timers["Blood Sacrifice"] = pygame.time.get_ticks() + 1000
             elif powerup == "Greenbull":
                 self.powerups["Greenbull"] = 0
                 self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000

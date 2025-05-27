@@ -71,7 +71,7 @@ class StatedGroup(pygame.sprite.LayeredUpdates):
 
     def update(self, dt, state):
         for sprite in self:
-            if sprite.state != state:
+            if hasattr(sprite, "state") and sprite.state != state:
                 continue
             sprite.update(dt)
 

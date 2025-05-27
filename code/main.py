@@ -283,9 +283,6 @@ class game():
 
         for keys in self.powerup_timers.copy():
             del self.powerup_timers[keys]
-        
-        self.powerup_timers = {}
-
 
         for enemies in self.enemy_projectile_group:
             enemies.kill()
@@ -336,9 +333,10 @@ class game():
                 self.pause_menu.do_pause()
             else:
                 self.screen.fill("#18215d00")
-                self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
                 
                 if self.turn >= -1:
+                    self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+
                     self.player.move_x(self.dt)
                     if "Greenbull" not in self.powerups:
                         collision_x(self.player, self.collidable_group, self.player.update_distance, False, self.state)
