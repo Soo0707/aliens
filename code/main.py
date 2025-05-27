@@ -302,7 +302,7 @@ class game():
         self.state = 0
 
         self.num_xp = 0
-        self.level_up = 4
+        self.level_up = 2
 
         self.player.rect.center = (1344, 3104)
 
@@ -415,7 +415,7 @@ class game():
                     self.spawners_group.update(self.dt, self.state)
 
                     if self.num_xp >= self.level_up:
-                        self.level_up += 4
+                        self.level_up += 2
                         self.num_xp = 0
 
                         for spawner in self.spawners_group:
