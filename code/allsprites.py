@@ -81,7 +81,7 @@ class Spawner(Collidable):
         
         self.last_spawn = 0
         self.can_spawn = True
-        self.timeout_ticks = 50
+        self.timeout_ticks = 4000
 
         self.rect = self.image.get_rect(center = location)
         self.player = player
