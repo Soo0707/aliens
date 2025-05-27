@@ -22,9 +22,9 @@ class game():
         self.state = 0
         self.turn = -1
         
-        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "AOE_EFFECT", "Magnetism" , "Orb", "Block Breaker"] # all possible powerup keys here
+        self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism" , "Orb", "Block Breaker"] # all possible powerup keys here
         self.powerups = {
-                "Projectiles" : [1000, 150, 25], # index: speed, cooldown, damage
+                "Projectiles" : [1000, 250, 25], # index: speed, cooldown, damage
                 "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
                 "Buckshot": 1,
                 "Aura": [0,0,0],
@@ -91,7 +91,7 @@ class game():
         
 
         self.load_textures()
-
+     
         self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
 
         self.powerup_menu = Powerup_Menu(
@@ -177,6 +177,7 @@ class game():
         for key in self.textures["player"]:
             for item in sorted(listdir(join("..", "assets", "player", key))):
                 self.textures["player"][key].append(pygame.image.load(join("..", "assets", "player", key, item)).convert_alpha())
+    
 
     def check_timers(self):
         now = pygame.time.get_ticks()
@@ -194,10 +195,11 @@ class game():
         if now - self.powerups["Aura"][2] > 1000:
             AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
             self.powerups["Aura"][2] = now
-        
+    
         for spawner in self.spawners_group:
             if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and self.dt < 0.02 and spawner.rect.colliderect(self.player.update_distance):
                 spawner.can_spawn = True
+        
 
     def xp_bar(self):
         self.width = (self.num_xp / self.level_up) * 1260
@@ -241,7 +243,7 @@ class game():
 
         if "Milk" in self.powerups:
             self.milk_rect = (1155 , 80 , 20 , 20)
-            pygame.Surface.fillt(self.screen , (255,255,255) , self.milk_rect)
+            pygame.Surface.fill(self.screen , (255,255,255) , self.milk_rect)
 
         if "Magnetism" in self.powerups:
             self.magnet_half = (1130, 80 , 10 ,20)
@@ -339,14 +341,14 @@ class game():
                 if self.turn >= -1:
                     self.player.move_x(self.dt)
                     if "Greenbull" not in self.powerups:
-                        collision_x(self.player, self.collidable_group, False, self.state)
+                        collision_x(self.player, self.collidable_group, self.player.update_distance, False, self.state)
 
-                    collision_x(self.player, self.walls_group, False, self.state)
+                    collision_x(self.player, self.walls_group, self.player.update_distance, False, self.state)
 
                     self.player.move_y(self.dt)
                     if "Greenbull" not in self.powerups:
-                        collision_y(self.player, self.collidable_group, False, self.state)
-                    collision_y(self.player, self.walls_group, False, self.state)
+                        collision_y(self.player, self.collidable_group, self.player.update_distance, False, self.state)
+                    collision_y(self.player, self.walls_group, self.player.update_distance, False, self.state)
 
                     self.player.update(self.dt, self.state)
                     self.projectile_group.update(self.dt, self.state)
@@ -355,7 +357,7 @@ class game():
                 now = pygame.time.get_ticks()
                 if self.turn == 1:
                     for xp in self.xp_group:
-                        if not xp.rect.colliderect(self.player.update_distance):
+                        if now - xp.birth > 5000:
                             xp.kill()
                     
                     if "Magnetism" not in self.powerups:
@@ -388,14 +390,14 @@ class game():
                     for enemy in self.enemy_group:
                         enemy.move_x(self.dt, self.state)
 
-                    collision_x(self.enemy_group, self.collidable_group, True, self.state)
-                    collision_x(self.enemy_group, self.walls_group, True, self.state)
+                    collision_x(self.enemy_group, self.collidable_group, self.player.update_distance, True, self.state)
+                    collision_x(self.enemy_group, self.walls_group, self.player.update_distance, True, self.state)
 
                     for enemy in self.enemy_group:
                         enemy.move_y(self.dt, self.state)
 
-                    collision_y(self.enemy_group, self.collidable_group, True, self.state)
-                    collision_y(self.enemy_group, self.walls_group, True, self.state)
+                    collision_y(self.enemy_group, self.collidable_group, self.player.update_distance, True, self.state)
+                    collision_y(self.enemy_group, self.walls_group, self.player.update_distance, True, self.state)
 
                     self.turn = 3
                 elif self.turn == 3:
@@ -422,7 +424,7 @@ class game():
 
                             if spawner.timeout_ticks < 50:
                                 spawner.timeout_ticks = 50
-
+                        
                         self.turn = -2
                         continue
 
@@ -473,7 +475,6 @@ class game():
                     if self.powerups["done"]:
                         self.turn = 1
                         self.powerups["done"] = 0
-
 
             pygame.display.flip()
 

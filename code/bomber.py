@@ -18,7 +18,7 @@ class Bomber(Enemy):
         self.explode_images= bomber_explosion_texture
         self.explode_image = self.explode_images[0]
 
-        self.attack = 20
+        self.attack = 15
     
     def animate(self, dt):
         if self.direction:
