@@ -125,9 +125,11 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
             elif type(enemy) == Trapper and "Milk" not in powerups:
                 powerups["Trap"] = 0
 
-def collect_xp(self):
+def collect_xp(self, sounds):
+    self.sounds = sounds
     for orb in self.xp_group:
         if self.player.rect.colliderect(orb.rect):
+            self.sounds["xp"].play()
             self.num_xp = self.num_xp + 1
             orb.kill()
                 

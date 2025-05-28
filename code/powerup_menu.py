@@ -89,6 +89,8 @@ class Powerup_Menu:
             elif powerup == "Aura":
                 self.powerups["Aura"][0] += 200
                 self.powerups["Aura"][1] += 200
+                if self.powerups["Aura"][0] > 800 and self.powerups["Aura"][1] > 800:
+                    self.powerup_list.remove("Aura")
             elif powerup == "Block Breaker":
                 self.powerup_timers["Block Breaker"] = pygame.time.get_ticks() + 5000
             elif powerup == "Orb":

@@ -94,8 +94,20 @@ class game():
         
 
         self.load_textures()
-     
-        self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group)
+        
+        #initialise mixer
+        pygame.mixer.init()
+        self.sounds = {
+                "level_up" : None,
+                "lmb": None,
+                "rmb": None,
+                "xp": None
+                }
+        
+        self.load_sounds()
+        
+
+        self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group, self.sounds)
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
@@ -110,6 +122,9 @@ class game():
         self.map_loopover_y = 0
         self.load_map()
 
+    def load_sounds(self):
+        for key in self.sounds:
+            self.sounds[key] = pygame.mixer.Sound(join("..","assets", "sounds", f"{key}.wav"))
 
     def load_map(self):
         map_file = load_pygame(join("..", "assets", "map", "map.tmx"))
@@ -336,8 +351,8 @@ class game():
             else:
                 self.screen.fill("#18215d00")
                 
+                self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
                 if self.turn >= -1:
-                    self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
 
                     self.player.move_x(self.dt)
                     if "Greenbull" not in self.powerups:
@@ -361,7 +376,7 @@ class game():
                             xp.kill()
                     
                     if "Magnetism" not in self.powerups:
-                        collect_xp(self)
+                        collect_xp(self, self.sounds)
                     else:
                         for xp in self.xp_group:
                             self.num_xp += 1
@@ -415,6 +430,7 @@ class game():
                     self.spawners_group.update(self.dt, self.state)
 
                     if self.num_xp >= self.level_up:
+                        self.sounds["level_up"].play()
                         self.level_up += 2
                         self.num_xp = 0
 
