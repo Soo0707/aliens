@@ -65,15 +65,11 @@ def collision_y(target1, target2, update_distance, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, powerups, state):
     for projectile in projectiles:
-        if type(projectile) == Circle:
-            continue
-
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
         if not type(projectile) == Circle:
             for wall in walls:
-                
                 if projectile.rect.colliderect(wall):
                     projectile.kill()
 

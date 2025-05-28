@@ -62,7 +62,6 @@ class Circle(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = self.player.rect.center)
 
     def update(self, dt):
-
         self.angle += self.speed * dt
         offset = pygame.math.Vector2(0, -self.radius).rotate_rad(self.angle)
         self.rect.center = self.player.rect.center + offset

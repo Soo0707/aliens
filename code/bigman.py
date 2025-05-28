@@ -15,7 +15,7 @@ class BigMan(Enemy):
 
     def animate(self, dt):
         if self.direction:
-            self.image_index += 30 * dt
+            self.image_index += 10 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0

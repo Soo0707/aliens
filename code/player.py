@@ -51,7 +51,6 @@ class Player(pygame.sprite.Sprite):
                 self,
                 (self.all_sprites_group, self.projectile_group)
             )
-        self.orb_spawn = True
    
     def input(self, state):
         keys = pygame.key.get_pressed()

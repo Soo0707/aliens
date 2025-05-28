@@ -70,7 +70,7 @@ class game():
 
         self.font = pygame.font.Font(None, 35)
         self.num_xp = 0
-        self.level_up = 4
+        self.level_up = 2
 
         self.textures = {
                 "bomber": [],
@@ -256,9 +256,6 @@ class game():
             pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
             pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
 
- 
-
-
     def reset(self):
         for pixel in self.died_text_group:
             self.all_sprites_group.add(pixel)
@@ -271,7 +268,7 @@ class game():
         
         for skibidi in self.powerups.copy():
             if skibidi == "Projectiles":
-                self.powerups["Projectiles"] = [1000, 150, 25]
+                self.powerups["Projectiles"] = [1000, 250, 25]
             elif skibidi == "Lazers":
                 self.powerups["Lazers"] = [1, 750]
             elif skibidi == "Buckshot":
@@ -288,9 +285,6 @@ class game():
 
         for keys in self.powerup_timers.copy():
             del self.powerup_timers[keys]
-        
-        self.powerup_timers = {}
-
 
         for enemies in self.enemy_projectile_group:
             enemies.kill()
@@ -313,6 +307,7 @@ class game():
 
         self.player.health = 100
         self.player.health_permanent = 100
+        self.health_permanent_shield = 0
 
     def run(self):
         while self.running:
@@ -453,10 +448,6 @@ class game():
                         self.player.update_distance.y = 0
                         self.player.aoe.y = 0
 
-                    self.player.orb.multiplier = self.powerups["Orb"][0]
-                    self.player.orb.speed = self.powerups["Orb"][1]
-                    self.player.orb.damage = self.powerups["Orb"][2]
-
                     if self.powerups["Orb"][3] == True:
                         self.player.orb.upgrade(self.powerups)
 
@@ -483,7 +474,6 @@ class game():
               
 
                 if "Trap" in self.powerups:
-                   
                     space_rect = (487.5 , 640 , 305 , 30)
                     pygame.draw.rect(self.screen, (235,235,235), space_rect , border_radius=10)
 
@@ -491,8 +481,6 @@ class game():
                     rect = pygame.Rect((487.5 , 640 , 305 , 30))
                     text_rect = text.get_rect(center = rect.center)
                     self.screen.blit(text, text_rect)
-
-
 
                 if self.turn == -2: # -2 is the powerup menu state
                     self.powerup_menu.update()
