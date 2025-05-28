@@ -215,7 +215,7 @@ class game():
             self.powerups["Aura"][2] = now
     
         for spawner in self.spawners_group:
-            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and self.dt < 0.02 and spawner.rect.colliderect(self.player.update_distance):
+            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and spawner.rect.colliderect(self.player.update_distance):
                 spawner.can_spawn = True
         
 
