@@ -14,6 +14,7 @@ from os import listdir
 
 class game():
     def __init__(self):
+        pygame.font.init()
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
         self.dt = 0
@@ -28,6 +29,7 @@ class game():
                 "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
                 "Buckshot": 1,
                 "Aura": [0,0,0],
+                "Orb" : [0.5,1,5,False], #Size, Speed , Damage , do_update
                 "done": 0
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
@@ -41,6 +43,7 @@ class game():
                 "Shield" : "Regains health after some time",
                 "Aura" : "Damages surrounding enemies",
                 "Buckshot": "+1 projectile for LMB",
+                "AOE_EFFECT" : "erm what the sigma",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
                 "Orb" : "Circular Orb"
@@ -65,6 +68,7 @@ class game():
         self.quit_trigger_group = pygame.sprite.Group()
         self.visible_menu_pixels_group = pygame.sprite.Group()
 
+        self.font = pygame.font.Font(None, 35)
         self.num_xp = 0
         self.level_up = 4
 
@@ -219,45 +223,40 @@ class game():
     def health_bar(self):
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
 
-        self.bg_rect = (1000 , 45 , 250 , 30)
+        self.bg_rect = (1000 , 15 , 250 , 30)
         pygame.Surface.fill(self.screen , (128,128,128), self.bg_rect)
 
-        self.progress_rect = (1005 , 50 , 200 , 20)
+        self.progress_rect = (1005 , 20 , 200 , 20)
         pygame.Surface.fill(self.screen , (0,255,0), self.progress_rect )
 
-        self.empty_rect = (1005 , 50 , self.width , 20)
+        self.empty_rect = (1005 , 20 , self.width , 20)
         pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
         if "Drunk" in self.powerups:
-            self.drunk_rect = (1230 , 80 , 20 , 20)
+            self.drunk_rect = (1230 , 50 , 20 , 20)
             pygame.Surface.fill(self.screen , (255 , 255 , 0) , self.drunk_rect)
 
         if "Poison" in self.powerups:
-            self.poison_rect = (1205 , 80 ,20, 20)
+            self.poison_rect = (1205 , 50 ,20, 20)
             pygame.Surface.fill(self.screen, (76, 0, 230) , self.poison_rect)
 
         if "Greenbull" in self.powerups:
-            self.greenbull_rect = (1180 , 80 , 20 , 20)
+            self.greenbull_rect = (1180 , 50 , 20 , 20)
             pygame.Surface.fill(self.screen , (0,255,0) , self.greenbull_rect)
 
         if "Milk" in self.powerups:
-            self.milk_rect = (1155 , 80 , 20 , 20)
+            self.milk_rect = (1155 , 50 , 20 , 20)
             pygame.Surface.fill(self.screen , (255,255,255) , self.milk_rect)
 
         if "Magnetism" in self.powerups:
-            self.magnet_half = (1130, 80 , 10 ,20)
-            self.magnet_other_half = (1120,80,10,20)
+            self.magnet_half = (1130, 50 , 10 ,20)
+            self.magnet_other_half = (1120,50,10,20)
 
             pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
             pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
 
-    def trap_spacebar(self):
-        if "trap" in self.powerups:
-            space_y = self.player.rect.center.y + 20
-            space_x = self.player.rect.center.x + 20
-            space_rect = (space_x , space_y , 50 , 20)
-            pygame.draw.rect(self.screen, (255,255,255), space_rect , 1)
+ 
 
 
     def reset(self):
@@ -270,13 +269,19 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
         self.turn = -1 # back to start menu state
         
-        for skibidi in self.powerups:
-            if skibidi == "projectiles":
-                self.powerups["projectiles"] = [1000, 100]
-            elif skibidi == "lazers":
-                self.powerups["lazers"] = [5, 1000]
-            elif skibidi == "buckshot":
-                self.powerups["buckshot"] = 1
+        for skibidi in self.powerups.copy():
+            if skibidi == "Projectiles":
+                self.powerups["Projectiles"] = [1000, 150, 25]
+            elif skibidi == "Lazers":
+                self.powerups["Lazers"] = [1, 750]
+            elif skibidi == "Buckshot":
+                self.powerups["Buckshot"] = 1
+            elif skibidi == "Aura":
+                self.powerups["Aura"] = [0,0,0]
+            elif skibidi == "Orb":
+                self.powerups["Orb"] = [0.5,1,5,False]
+            elif skibidi == "done":
+                self.powerups["done"] = 0
             else:
                 del self.powerups[skibidi]
 
@@ -448,6 +453,13 @@ class game():
                         self.player.update_distance.y = 0
                         self.player.aoe.y = 0
 
+                    self.player.orb.multiplier = self.powerups["Orb"][0]
+                    self.player.orb.speed = self.powerups["Orb"][1]
+                    self.player.orb.damage = self.powerups["Orb"][2]
+
+                    if self.powerups["Orb"][3] == True:
+                        self.player.orb.upgrade(self.powerups)
+
                     self.turn = 1
                 elif self.turn == -1:
                     # start menu state
@@ -468,6 +480,19 @@ class game():
                 self.xp_bar()
                 self.health_bar()
                 self.powerup_bar()
+              
+
+                if "Trap" in self.powerups:
+                   
+                    space_rect = (487.5 , 640 , 305 , 30)
+                    pygame.draw.rect(self.screen, (235,235,235), space_rect , border_radius=10)
+
+                    text = self.font.render("Spam SPACE to Escape", True, (0, 0, 0)) 
+                    rect = pygame.Rect((487.5 , 640 , 305 , 30))
+                    text_rect = text.get_rect(center = rect.center)
+                    self.screen.blit(text, text_rect)
+
+
 
                 if self.turn == -2: # -2 is the powerup menu state
                     self.powerup_menu.update()

@@ -8,6 +8,7 @@ from drunkard import *
 from poison import *
 from bomber import *
 from trapper import *
+from bigman import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -71,7 +72,7 @@ class StatedGroup(pygame.sprite.LayeredUpdates):
 
     def update(self, dt, state):
         for sprite in self:
-            if sprite.state != state:
+            if hasattr(sprite, "state") and sprite.state != state:
                 continue
             sprite.update(dt)
 
@@ -165,6 +166,19 @@ class Spawner(Collidable):
                     textures = self.enemy_textures["drunkard"],
                     beer_textures = self.enemy_textures["beer"],
                     enemy_projectile_group = self.enemy_projectile_group,
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
+                
+            if n >= 10 and n < 20:
+                BigMan(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["big_man"],
                     xp_group=self.xp_group,
                     all_sprites_group = self.all_sprites_group,
                     xp_texture = self.enemy_textures["xp"][0],

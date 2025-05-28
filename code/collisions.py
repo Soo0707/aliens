@@ -71,12 +71,14 @@ def collision_projectile(projectiles, enemies, walls, powerups, state):
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
-        for wall in walls:
-            if projectile.rect.colliderect(wall):
-                projectile.kill()
+        if not type(projectile) == Circle:
+            for wall in walls:
+                
+                if projectile.rect.colliderect(wall):
+                    projectile.kill()
 
-                if "Block Breaker" in powerups:
-                    wall.kill()
+                    if "Block Breaker" in powerups:
+                        wall.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
@@ -129,9 +131,9 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
 
 def collect_xp(self):
     for orb in self.xp_group:
-                        if self.player.rect.colliderect(orb.rect):
-                            self.num_xp = self.num_xp + 1
-                            orb.kill()
+        if self.player.rect.colliderect(orb.rect):
+            self.num_xp = self.num_xp + 1
+            orb.kill()
                 
 
 def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
