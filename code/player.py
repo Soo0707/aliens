@@ -45,6 +45,13 @@ class Player(pygame.sprite.Sprite):
         self.health_permanent_shield = 0
 
         self.circle_texture = self.images["circle"][0]
+
+        self.orb =  Circle(
+                self.circle_texture,
+                self.powerups["Orb"][0],
+                self,
+                (self.all_sprites_group, self.projectile_group)
+            )
    
     def input(self, state):
         keys = pygame.key.get_pressed()
@@ -180,7 +187,7 @@ class Player(pygame.sprite.Sprite):
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
                     
-        
+
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]
         self.aoe = pygame.Rect(0, 0, x, y)        
