@@ -199,7 +199,7 @@ class Player(pygame.sprite.Sprite):
         
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]
-        self.aoe = pygame.Rect(0, 0, x, y)        
+        self.aoe = pygame.FRect(0, 0, x, y)        
         self.aoe.center = self.rect.center
         self.update_distance.center = self.rect.center
             

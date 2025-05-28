@@ -88,7 +88,7 @@ class Powerup_Menu:
             elif powerup == "Aura":
                 self.powerups["Aura"][0] += 200
                 self.powerups["Aura"][1] += 200
-                if self.powerups["Aura"][0] == 1000:
+                if self.powerups["Aura"][0] > 800 and self.powerups["Aura"][1] > 800:
                     self.powerup_list.remove("Aura")
             else:
                 self.powerups[powerup] += 1
