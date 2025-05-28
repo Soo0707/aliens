@@ -29,7 +29,7 @@ class game():
                 "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
                 "Buckshot": 1,
                 "Aura": [0,0,0],
-                "Orb" : [0.5,1,5,False], #Size, Speed , Damage , do_update
+                "Orb" : [0.2,1,5,False], #Size, Speed , Damage , do_update
                 "done": 0
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
@@ -45,7 +45,7 @@ class game():
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
-                "Orb" : "Circular Orb"
+                "Orb" : "+DMG , +SIZE"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -275,7 +275,8 @@ class game():
             elif skibidi == "Aura":
                 self.powerups["Aura"] = [0,0,0]
             elif skibidi == "Orb":
-                self.powerups["Orb"] = [0.5,1,5,False]
+                self.powerups["Orb"] = [0.2,1,5,True]
+                self.player.orb.upgrade(self.powerups)
             elif skibidi == "done":
                 self.powerups["done"] = 0
             else:
@@ -292,6 +293,8 @@ class game():
             enemy_projectiles.kill()
 
         for projectile in self.projectile_group:
+            if type(projectile) == Circle:
+                continue
             projectile.kill()
 
         for xp in self.xp_group:
@@ -336,8 +339,9 @@ class game():
             else:
                 self.screen.fill("#18215d00")
                 
+                self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
                 if self.turn >= -1:
-                    self.dt = self.clock.tick(60) / 1000 # limits fps, dt can be used for fps independent physics
+                    
 
                     self.player.move_x(self.dt)
                     if "Greenbull" not in self.powerups:

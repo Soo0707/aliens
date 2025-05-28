@@ -71,6 +71,9 @@ class Circle(pygame.sprite.Sprite):
         self.speed = powerups["Orb"][1]
         self.damage =powerups["Orb"][2]
 
+        if self.multiplier >= 2:
+            self.multiplier = 2
+
         self.image = pygame.transform.scale_by(self.texture, self.multiplier)
         self.rect = self.image.get_frect(center = self.player.rect.center)
 
