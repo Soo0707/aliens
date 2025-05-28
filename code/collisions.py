@@ -6,10 +6,14 @@ from poison import *
 from projectiles import *
 from trapper import *
 
-def collision_x(target1, target2, iterable, state):
+def collision_x(target1, target2, update_distance, iterable, state):
     if iterable:
-        for item1 in target1: 
+        for item1 in target1:
+            # item1 is getting moved, item 1 = enemy
             if item1.state != state: # used for enemies, the player transcends states, so the else case doesn't have it
+                continue
+
+            if not item1.rect.colliderect(update_distance):
                 continue
 
             for item2 in target2:
@@ -19,17 +23,25 @@ def collision_x(target1, target2, iterable, state):
                     elif item1.direction.x < 0:
                         item1.rect.left = item2.rect.right
     else:
+        # if not interable, target1 is getting moved, target1 = player
         for item in target2:
+            if not item.rect.colliderect(update_distance):
+                continue
+
             if target1.rect.colliderect(item.rect):
                 if target1.direction.x > 0:
                     target1.rect.right = item.rect.left
                 elif target1.direction.x < 0:
                     target1.rect.left = item.rect.right
 
-def collision_y(target1, target2, iterable, state):
+def collision_y(target1, target2, update_distance, iterable, state):
     if iterable:
         for item1 in target1:
-            if item1.state != state:
+            # only item1 is getting moved
+            if item1.state != state: # used for enemies, the player transcends states, so the else case doesn't have it
+                continue
+            
+            if not item1.rect.colliderect(update_distance):
                 continue
             
             for item2 in target2:
@@ -39,7 +51,11 @@ def collision_y(target1, target2, iterable, state):
                     elif item1.direction.y < 0:
                         item1.rect.top = item2.rect.bottom
     else:
+        # if not interable, target1 is getting moved, target1 = player
         for item in target2:
+            if not item.rect.colliderect(update_distance):
+                continue
+            
             if target1.rect.colliderect(item.rect):
                 if target1.direction.y > 0:
                     target1.rect.bottom = item.rect.top
@@ -55,12 +71,14 @@ def collision_projectile(projectiles, enemies, walls, powerups, state):
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
-        for wall in walls:
-            if projectile.rect.colliderect(wall):
-                projectile.kill()
+        if not type(projectile) == Circle:
+            for wall in walls:
+                
+                if projectile.rect.colliderect(wall):
+                    projectile.kill()
 
-                if "Block Breaker" in powerups:
-                    wall.kill()
+                    if "Block Breaker" in powerups:
+                        wall.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):

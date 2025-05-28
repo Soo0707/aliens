@@ -45,7 +45,12 @@ class Player(pygame.sprite.Sprite):
         self.health_permanent_shield = 0
 
         self.circle_texture = self.images["circle"][0]
-        self.orb = 0
+        self.orb =  Circle(
+                self.circle_texture,
+                self.powerups["Orb"][0],
+                self,
+                (self.all_sprites_group, self.projectile_group)
+            )
         self.orb_spawn = True
    
     def input(self, state):
@@ -184,14 +189,6 @@ class Player(pygame.sprite.Sprite):
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
                     
-        if "Orb" in self.powerups:
-            Circle(
-                texture = self.texture,
-                state = self.state,
-                multiplier = self.multiplier,
-                player = self.player,
-                groups = self.groups,
-            )
 
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]

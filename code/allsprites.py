@@ -8,6 +8,7 @@ from drunkard import *
 from poison import *
 from bomber import *
 from trapper import *
+from bigman import *
 
 class AllSprites(pygame.sprite.LayeredUpdates):
     def __init__(self, powerups):
@@ -17,10 +18,18 @@ class AllSprites(pygame.sprite.LayeredUpdates):
     def draw(self, surface, follows, state):
         if "Aussie" in self.powerups:
             temp = pygame.surface.Surface((1280, 720))
+            temp.fill("#18215d00")
 
             for sprite in self:
                 if hasattr(sprite, "state") and sprite.state != state:
                     continue
+                
+                if sprite.rect.x < follows.x - 672 or sprite.rect.x > follows.x + 640:
+                    continue
+
+                if sprite.rect.y < follows.y - 392 or sprite.rect.y > follows.y + 360:
+                    continue
+
                 temp.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360)) # 1/2 of window width and height
 
             temp_flipped = pygame.transform.flip(temp, 1, 1)
@@ -29,6 +38,13 @@ class AllSprites(pygame.sprite.LayeredUpdates):
             for sprite in self:
                 if hasattr(sprite, "state") and sprite.state != state:
                     continue
+
+                if sprite.rect.x < follows.x - 672 or sprite.rect.x > follows.x + 640:
+                    continue
+
+                if sprite.rect.y < follows.y - 392 or sprite.rect.y > follows.y + 360:
+                    continue
+
                 surface.blit(sprite.image, sprite.rect.topleft + pygame.math.Vector2(-follows.x, -follows.y) + pygame.math.Vector2(640, 360))        
 
 
@@ -56,7 +72,7 @@ class StatedGroup(pygame.sprite.LayeredUpdates):
 
     def update(self, dt, state):
         for sprite in self:
-            if sprite.state != state:
+            if hasattr(sprite, "state") and sprite.state != state:
                 continue
             sprite.update(dt)
 
@@ -84,9 +100,10 @@ class Spawner(Collidable):
     def update(self, dt, state):
         if self.can_spawn:
             n = self.rands[self.random_index]
-            if n < 100:
-                pass
             
+            if n < 10:
+                pass
+
             if n >= 10 and n < 20:
                 Australian(
                     player=self.player,
@@ -99,6 +116,7 @@ class Spawner(Collidable):
                     xp_texture = self.enemy_textures["xp"][0],
                     powerups=self.powerups
                     )
+            
             if n >= 20 and n < 25:
                 Bomber(
                     player=self.player,
@@ -112,6 +130,20 @@ class Spawner(Collidable):
                     bomber_explosion_texture = self.enemy_textures["bomber_explosion"],
                     all_sprites_group = self.all_sprites_group,
                     )
+            
+            if n >= 25 and n < 30:
+                Trapper(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["trapper"],
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
+
             if n >= 30 and n < 40:
                 Poison(
                     player=self.player,
@@ -124,6 +156,7 @@ class Spawner(Collidable):
                     xp_texture = self.enemy_textures["xp"][0],
                     powerups=self.powerups
                     )
+            
             if n >= 40 and n < 50:
                 Drunkard(
                     player=self.player,
@@ -138,13 +171,14 @@ class Spawner(Collidable):
                     xp_texture = self.enemy_textures["xp"][0],
                     powerups=self.powerups
                     )
-            if n >= 50 and n < 60:
-                Trapper(
+                
+            if n >= 10 and n < 20:
+                BigMan(
                     player=self.player,
                     groups=(self.all_sprites_group, self.enemy_group),
                     state = state,
                     location=self.rect.center,
-                    textures = self.enemy_textures["trapper"],
+                    textures = self.enemy_textures["big_man"],
                     xp_group=self.xp_group,
                     all_sprites_group = self.all_sprites_group,
                     xp_texture = self.enemy_textures["xp"][0],
