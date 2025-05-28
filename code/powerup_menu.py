@@ -1,9 +1,9 @@
 import pygame
-pygame.font.init()
 import random
 
 class Powerup_Menu:
     def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
+        pygame.font.init()
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
@@ -72,13 +72,14 @@ class Powerup_Menu:
             if powerup == "Milk":
                 self.powerup_timers["Milk"] = pygame.time.get_ticks() + 100000
             elif powerup == "Lazers":
-                self.powerups["Lazers"][0] += 1 # width
+                self.powerups["Lazers"][0] += 1 # width and damage multiplier
                 if self.powerups["Lazers"][1] - 100 > 0:
                     self.powerups["Lazers"][1] -= 100 # cooldown
             elif powerup == "Projectiles":
                 self.powerups["Projectiles"][0] += 100 # speed
                 if self.powerups["Projectiles"][1] - 10 > 0:
-                    self.powerups["Projectiles"][1] -= 10 # cooldown
+                    self.powerups["Projectiles"][1] -= 100 # cooldown
+                self.powerups["Projectiles"][2] += 10 # damage
             elif powerup == "Buckshot":
                 self.powerups["Buckshot"] += 1
             elif powerup == "Greenbull":
@@ -90,12 +91,18 @@ class Powerup_Menu:
                 self.powerups["Aura"][1] += 200
                 if self.powerups["Aura"][0] > 800 and self.powerups["Aura"][1] > 800:
                     self.powerup_list.remove("Aura")
+            elif powerup == "Block Breaker":
+                self.powerup_timers["Block Breaker"] = pygame.time.get_ticks() + 5000
+            elif powerup == "Orb":
+                self.powerups["Orb"][0] += 1
+                self.powerups["Orb"][1] += 1
+                self.powerups["Orb"][2] += 1
+                self.powerups["Orb"][3] = True
             else:
                 self.powerups[powerup] += 1
         else:
             if powerup == "Blood Sacrifice":
                 self.powerups["Blood Sacrifice"] = 0
-                self.powerup_timers["Blood Sacrifice"] = pygame.time.get_ticks() + 1000
             elif powerup == "Greenbull":
                 self.powerups["Greenbull"] = 0
                 self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
@@ -114,8 +121,11 @@ class Powerup_Menu:
             elif powerup == "Magnetism":
                 self.powerups["Magnetism"] = 0
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000
+            elif powerup == "Block Breaker":
+                self.powerups["Block Breaker"] = 0
+                self.powerup_timers["Block Breaker"]= pygame.time.get_ticks() + 5000
             else:
-                self.powerups.update({powerup: 0})
+                self.powerups[powerup] = 0
 
         self.powerups["done"] = 1
 

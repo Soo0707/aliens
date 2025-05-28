@@ -46,11 +46,14 @@ class Player(pygame.sprite.Sprite):
         self.health_permanent_shield = 0
 
         self.circle_texture = self.images["circle"][0]
-        self.orb = 0
-        self.orb_spawn = True
 
-        self.space =0
-    
+        self.orb =  Circle(
+                self.circle_texture,
+                self.powerups["Orb"][0],
+                self,
+                (self.all_sprites_group, self.projectile_group)
+            )
+   
     def input(self, state):
         keys = pygame.key.get_pressed()
         
@@ -68,7 +71,6 @@ class Player(pygame.sprite.Sprite):
             if self.powerups["Trap"] >= 5:
                 del self.powerups["Trap"]
                 
-
         if self.direction:
             self.direction = self.direction.normalize()
 
@@ -89,6 +91,7 @@ class Player(pygame.sprite.Sprite):
 
                 Projectile(
                         self.powerups["Projectiles"][0],
+                        self.powerups["Projectiles"][2],
                         state,
                         self.projectile_texture,
                         self.rect.center,
@@ -97,7 +100,7 @@ class Player(pygame.sprite.Sprite):
                         )
             else:
                 for i in range(self.powerups["Buckshot"]):
-                    mouse_direction.x += i / self.powerups["Buckshot"] * 0.5
+                    mouse_direction.x += i / self.powerups["Buckshot"] * .5
                     mouse_direction.y += i / self.powerups["Buckshot"] * .5
 
                     if mouse_direction:
@@ -105,6 +108,7 @@ class Player(pygame.sprite.Sprite):
 
                     Projectile(
                             self.powerups["Projectiles"][0],
+                            self.powerups["Projectiles"][2],
                             state,
                             self.projectile_texture,
                             self.rect.center,
@@ -136,16 +140,6 @@ class Player(pygame.sprite.Sprite):
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
-
-        if self.orb == 0 and mouse[1]:
-            self.orb += 1
-            Circle(
-                self.circle_texture,
-                state,
-                1, #size multiplier
-                self,
-                (self.projectile_group, self.all_sprites_group),
-            )
 
 
     def update_bearing(self):
@@ -196,13 +190,13 @@ class Player(pygame.sprite.Sprite):
                 if self.health > self.health_permanent_shield:
                     self.health = self.health_permanent_shield
                     
-        
+
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]
         self.aoe = pygame.FRect(0, 0, x, y)        
         self.aoe.center = self.rect.center
         self.update_distance.center = self.rect.center
-            
+
         self.input(state)
         self.update_bearing()
         self.animate(dt)

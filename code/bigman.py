@@ -2,19 +2,20 @@ import pygame
 from player import  *
 from enemy import *
 
-class Australian(Enemy):
+class BigMan(Enemy):
     def __init__(self, player, state, location, powerups, textures, xp_texture, xp_group, all_sprites_group, groups):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
-        self.speed = 350
-        self.health = 75
+        self.speed = 100
+        self.health = 500
         self.images = textures
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
+        self.attack = 50
 
     def animate(self, dt):
         if self.direction:
-            self.image_index += 30 * dt
+            self.image_index += 10 * dt
             self.image = self.images[int(self.image_index) % len(self.images)]
         else:
             self.image_index = 0

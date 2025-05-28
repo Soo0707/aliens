@@ -2,14 +2,13 @@ import pygame
 from math import atan
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, speed, state, texture, location, direction, groups):
+    def __init__(self, speed, damage, state, texture, location, direction, groups):
         super().__init__(groups)       
         self.speed = speed
         self.direction = direction
+        self.damage = damage
 
         self.state = state
-
-        self.birth = pygame.time.get_ticks()
 
         if not self.direction.x:
             self.image = pygame.transform.rotate(texture, -atan(self.direction.y) * 180 / 3.142)
@@ -29,40 +28,53 @@ class Lazers(pygame.sprite.Sprite):
         self.speed = 3000
         self.direction = direction
         self.state = state
+        self.damage = 25 * multiplier
 
         self.texture = texture
         
         self.image = pygame.transform.scale_by(texture, multiplier)
         self.rect = self.image.get_frect(center = location)
         
-        self.birth = pygame.time.get_ticks()
-
     def update(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         self.rect.y += self.direction.y * self.speed * dt
 
 class Circle(pygame.sprite.Sprite):
-    def __init__(self, texture, state, multiplier, player, groups):
+    def __init__(self, texture, multiplier, player, groups):
         super().__init__(groups)
-        self.speed = 6
+
+        for group in groups:
+            group.change_layer(self,2)
+
+        self.speed = 1
+        self.multiplier = multiplier
+        self.texture = texture
 
         self.angle = 5
         self.radius = 50
-        self.state = state
 
         self.player = player
         
         self.texture = texture
+        self.damage = 5
         
-        self.image = pygame.transform.scale_by(texture, multiplier)
+        self.image = pygame.transform.scale_by(self.texture, self.multiplier)
         self.rect = self.image.get_frect(center = self.player.rect.center)
-        
 
     def update(self, dt):
         self.angle += self.speed * dt
-
         offset = pygame.math.Vector2(0, -self.radius).rotate_rad(self.angle)
         self.rect.center = self.player.rect.center + offset
+
+    def upgrade(self,powerups):
+        self.multiplier = powerups["Orb"][0] 
+        self.speed = powerups["Orb"][1]
+        self.damage =powerups["Orb"][2]
+
+        self.image = pygame.transform.scale_by(self.texture, self.multiplier)
+        self.rect = self.image.get_frect(center = self.player.rect.center)
+
+        powerups["Orb"][3] = False
 
 class Beer(pygame.sprite.Sprite):
     def __init__(self, textures, state, location, direction, groups):
@@ -77,7 +89,6 @@ class Beer(pygame.sprite.Sprite):
         self.speed = 500
 
         self.rect = self.image.get_rect(center = location)
-        self.birth = pygame.time.get_ticks()
 
     def animate(self, dt):
         self.image_index += 50 * dt
