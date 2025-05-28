@@ -43,7 +43,6 @@ class game():
                 "Shield" : "Regains health after some time",
                 "Aura" : "Damages surrounding enemies",
                 "Buckshot": "+1 projectile for LMB",
-                "AOE_EFFECT" : "erm what the sigma",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
                 "Orb" : "Circular Orb"
