@@ -45,7 +45,7 @@ class game():
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
-                "Orb" : "+DMG , +SIZE"
+                "Orb" : "+DMG , +SIZE, +SPD"
                 }
         
         # sprite groups, useful for collision detection and camera later on

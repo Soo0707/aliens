@@ -69,12 +69,13 @@ def collision_projectile(projectiles, enemies, walls, powerups, state):
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
-        for wall in walls:
-            if projectile.rect.colliderect(wall):
-                projectile.kill()
+        if not type(projectile) == Circle:
+            for wall in walls:
+                if projectile.rect.colliderect(wall):
+                    projectile.kill()
 
-                if "Block Breaker" in powerups:
-                    wall.kill()
+                    if "Block Breaker" in powerups:
+                        wall.kill()
 
         for enemy in enemies:
             if projectile.rect.colliderect(enemy):
