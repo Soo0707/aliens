@@ -41,10 +41,10 @@ class Powerup_Menu:
         cols, rows = 1, 3
         for col in range(cols):
             for row in range(rows):
-                x = rect.left + rect.width / 5
+                x = rect.left + rect.width / 2
                 y = rect.top + (rect.height / 4) + (rect.height / 4) * row
                 i = row     #the equation for i/index will change depending on the amount of rows and columns
-                a = rect.left + 3.7 * rect.width / 5
+                a = rect.top + (rect.height / 3) + (rect.height / 4) * row
                 if col == self.general_index['col'] and row == self.general_index['row']: 
                     color = pygame.Color(190, 190, 190, 255)
                 else: 
@@ -58,7 +58,7 @@ class Powerup_Menu:
                 
                 text_rect = text_surf.get_frect(center = (x,y))
                 #desc powerups rect
-                desc_rect = desc_surf.get_frect(center = (a,y))
+                desc_rect = desc_surf.get_frect(center = (x,a))
                 self.display_surface.blit(text_surf, text_rect)
                 self.display_surface.blit(desc_surf, desc_rect)
                 
