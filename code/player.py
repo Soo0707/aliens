@@ -4,12 +4,13 @@ from random import random, randint
 from projectiles import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, location, textures, collidable_group, all_sprites_group, powerups, projectile_group, groups):
+    def __init__(self, location, textures, collidable_group, all_sprites_group, powerups, projectile_group, groups, sounds):
         super().__init__(groups)
         
         all_sprites_group.change_layer(self, 2)
 
         self.powerups = powerups
+        self.sounds = sounds
 
         self.images = textures
         self.image =  self.images["S"][0]
@@ -79,6 +80,7 @@ class Player(pygame.sprite.Sprite):
         if mouse[0] and self.can_lmb:
             mouse_pos = pygame.mouse.get_pos()
             mouse_direction = pygame.math.Vector2(mouse_pos[0] - 640, mouse_pos[1] - 360) # 1/2 of WINDOW_WIDTH and WINDOW_HEIGHT
+            self.sounds["lmb"].play()
             
             if "Drunk" in self.powerups:
                 noise = random() * 100
@@ -120,6 +122,7 @@ class Player(pygame.sprite.Sprite):
 
         if mouse[2] and self.can_rmb:
             directions = ((-1, 0), (1, 0), (0, -1), (0, 1))
+            self.sounds["rmb"].play()
 
             for direction in directions:
                 if direction[1] != 0:
@@ -192,7 +195,7 @@ class Player(pygame.sprite.Sprite):
 
         x = self.powerups["Aura"][0]
         y = self.powerups["Aura"][1]
-        self.aoe = pygame.Rect(0, 0, x, y)        
+        self.aoe = pygame.FRect(0, 0, x, y)        
         self.aoe.center = self.rect.center
         self.update_distance.center = self.rect.center
             

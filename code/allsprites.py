@@ -95,14 +95,24 @@ class Spawner(Collidable):
         self.powerups = powerups
 
         self.random_index = 0
-        self.rands = [randint(0, 100) for x in range(20)]
+        self.rands = [randint(0, 50) for x in range(20)]
 
     def update(self, dt, state):
         if self.can_spawn:
             n = self.rands[self.random_index]
             
-            if n < 10:
-                pass
+            if n < 10 and self.timeout_ticks <= 2000:
+                BigMan(
+                    player=self.player,
+                    groups=(self.all_sprites_group, self.enemy_group),
+                    state = state,
+                    location=self.rect.center,
+                    textures = self.enemy_textures["big_man"],
+                    xp_group=self.xp_group,
+                    all_sprites_group = self.all_sprites_group,
+                    xp_texture = self.enemy_textures["xp"][0],
+                    powerups=self.powerups
+                    )
 
             if n >= 10 and n < 20:
                 Australian(
@@ -172,19 +182,6 @@ class Spawner(Collidable):
                     powerups=self.powerups
                     )
                 
-            if n >= 10 and n < 20:
-                BigMan(
-                    player=self.player,
-                    groups=(self.all_sprites_group, self.enemy_group),
-                    state = state,
-                    location=self.rect.center,
-                    textures = self.enemy_textures["big_man"],
-                    xp_group=self.xp_group,
-                    all_sprites_group = self.all_sprites_group,
-                    xp_texture = self.enemy_textures["xp"][0],
-                    powerups=self.powerups
-                    )
-
             self.random_index = (self.random_index + 1) % 20
             self.last_spawn = pygame.time.get_ticks()
             self.can_spawn = False
