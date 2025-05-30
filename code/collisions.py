@@ -65,6 +65,7 @@ def collision_y(target1, target2, update_distance, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, powerups, state):
     for projectile in projectiles:
+        
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 

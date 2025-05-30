@@ -29,7 +29,7 @@ class game():
                 "Lazers" : [1, 750], # index: multiplier for width and damage, cooldown
                 "Buckshot": 1,
                 "Aura": [0,0,0],
-                "Orb" : [0.5,1,5,False], #Size, Speed , Damage , do_update
+                "Orb" : [0.2,1,5,False], #Size, Speed , Damage , do_update
                 "done": 0
                 }
         self.powerup_timers = {} # key = powerup name, value = expiry (tick now + duration) in ticks
@@ -45,7 +45,7 @@ class game():
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
-                "Orb" : "Circular Orb"
+                "Orb" : "+DMG , +SIZE, +SPD"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -247,28 +247,67 @@ class game():
         pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
 
     def powerup_bar(self):
+        now = pygame.time.get_ticks()
+        flicker = 5000
+        draw_drunk = True
+        draw_bull = True
+        draw_mag = True
+        draw_milk = True
+        draw_poison = True
+
         if "Drunk" in self.powerups:
-            self.drunk_rect = (1230 , 50 , 20 , 20)
-            pygame.Surface.fill(self.screen , (255 , 255 , 0) , self.drunk_rect)
+            duration = self.powerup_timers["Drunk"]
+
+            if duration - now < flicker:
+                draw_drunk = (now//250) % 2 == 0
+
+            if draw_drunk:
+                self.drunk_rect = (1230 , 50 , 20 , 20)
+                pygame.Surface.fill(self.screen , (255 , 255 , 0) , self.drunk_rect)
 
         if "Poison" in self.powerups:
-            self.poison_rect = (1205 , 50 ,20, 20)
-            pygame.Surface.fill(self.screen, (76, 0, 230) , self.poison_rect)
+            duration = self.powerup_timers["Poison"]
+
+            if duration - now < flicker:
+                draw_poison = (now//250) % 2 == 0
+            
+            if draw_poison:
+                self.poison_rect = (1205 , 50 ,20, 20)
+                pygame.Surface.fill(self.screen, (76, 0, 230) , self.poison_rect)
 
         if "Greenbull" in self.powerups:
-            self.greenbull_rect = (1180 , 50 , 20 , 20)
-            pygame.Surface.fill(self.screen , (0,255,0) , self.greenbull_rect)
+            duration = self.powerup_timers["Greenbull"]
+
+            if duration - now < flicker:
+                draw_bull = (now//250) % 2 == 0
+
+            if draw_bull:    
+                self.greenbull_rect = (1180 , 50 , 20 , 20)
+                pygame.Surface.fill(self.screen , (0,255,0) , self.greenbull_rect)
 
         if "Milk" in self.powerups:
-            self.milk_rect = (1155 , 50 , 20 , 20)
-            pygame.Surface.fill(self.screen , (255,255,255) , self.milk_rect)
+            duration = self.powerup_timers["Milk"]
 
+            if duration - now < flicker:
+                draw_milk = (now//250) % 2 == 0
+            
+            if draw_milk:
+                self.milk_rect = (1155 , 50 , 20 , 20)
+                pygame.Surface.fill(self.screen , (255,255,255) , self.milk_rect)
+
+        
         if "Magnetism" in self.powerups:
+            duration = self.powerup_timers["Magnetism"]
+
+            if duration - now < flicker:
+                draw_mag = (now//250) % 2 == 0
+
             self.magnet_half = (1130, 50 , 10 ,20)
             self.magnet_other_half = (1120,50,10,20)
 
-            pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
-            pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
+            if draw_mag:
+                pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
+                pygame.Surface.fill(self.screen , (255,0,0), self.magnet_half)
 
     def reset(self):
         for pixel in self.died_text_group:
@@ -290,7 +329,8 @@ class game():
             elif skibidi == "Aura":
                 self.powerups["Aura"] = [0,0,0]
             elif skibidi == "Orb":
-                self.powerups["Orb"] = [0.5,1,5,False]
+                self.powerups["Orb"] = [0.2,1,5,True]
+                self.player.orb.upgrade(self.powerups)
             elif skibidi == "done":
                 self.powerups["done"] = 0
             else:
@@ -307,6 +347,8 @@ class game():
             enemy_projectiles.kill()
 
         for projectile in self.projectile_group:
+            if type(projectile) == Circle:
+                continue
             projectile.kill()
 
         for xp in self.xp_group:

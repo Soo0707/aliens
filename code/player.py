@@ -46,13 +46,13 @@ class Player(pygame.sprite.Sprite):
         self.health_permanent_shield = 0
 
         self.circle_texture = self.images["circle"][0]
-
         self.orb =  Circle(
                 self.circle_texture,
                 self.powerups["Orb"][0],
                 self,
                 (self.all_sprites_group, self.projectile_group)
             )
+        self.orb_spawn = True
    
     def input(self, state):
         keys = pygame.key.get_pressed()
@@ -71,6 +71,7 @@ class Player(pygame.sprite.Sprite):
             if self.powerups["Trap"] >= 5:
                 del self.powerups["Trap"]
                 
+
         if self.direction:
             self.direction = self.direction.normalize()
 
@@ -100,7 +101,7 @@ class Player(pygame.sprite.Sprite):
                         )
             else:
                 for i in range(self.powerups["Buckshot"]):
-                    mouse_direction.x += i / self.powerups["Buckshot"] * .5
+                    mouse_direction.x += i / self.powerups["Buckshot"] * 0.5
                     mouse_direction.y += i / self.powerups["Buckshot"] * .5
 
                     if mouse_direction:
@@ -140,6 +141,7 @@ class Player(pygame.sprite.Sprite):
 
             self.can_rmb = False
             self.last_rmb = pygame.time.get_ticks()
+
 
 
     def update_bearing(self):
@@ -196,7 +198,7 @@ class Player(pygame.sprite.Sprite):
         self.aoe = pygame.FRect(0, 0, x, y)        
         self.aoe.center = self.rect.center
         self.update_distance.center = self.rect.center
-
+            
         self.input(state)
         self.update_bearing()
         self.animate(dt)
