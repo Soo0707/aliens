@@ -22,6 +22,7 @@ class game():
         self.running = True
         self.state = 0
         self.turn = -1
+        self.state_timeout = 0
         
         self.powerup_list = ["Greenbull", "Milk", "Lazers", "Projectiles", "Blood Sacrifice", "Blood Regeneration", "Shield", "Buckshot", "Aura", "Magnetism" , "Orb", "Block Breaker"] # all possible powerup keys here
         self.powerups = {
@@ -78,7 +79,7 @@ class game():
                 "big_man": [],
                 "poison": [],
                 "trapper": [],
-                "australian":[],
+                "australian": [],
                 "beer": [],
                 "xp": [],
                 "player" : {
@@ -160,7 +161,7 @@ class game():
             Collidable((x * 32, y * 32), texture, (self.all_sprites_group, self.collidable_group))
 
         for x, y, texture in map_file.get_layer_by_name("Decorations").tiles():
-            MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
+            DecorTiles((x * 32, y * 32), texture, self.all_sprites_group)
 
         for x, y, texture, in map_file.get_layer_by_name("Spawners").tiles():
             Spawner(
@@ -185,17 +186,24 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
 
     def load_textures(self):
+        enemies = {"australian", "big_man", "bomber", "drunkard", "poison", "trapper"}
         for key in self.textures:
             if key == "player":
                 continue
 
-            for item in sorted(listdir(join("..", "assets", "enemy", key))):
-                self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
+            if key in enemies:
+                for item in sorted(listdir(join("..", "assets", "enemy", key, "normal"))):
+                    self.textures[key]["normal"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())
+
+                for item in sorted(listdir(join("..", "assets", "enemy", key, "flash"))):
+                    self.textures[key]["flash"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())
+            else:
+                for item in sorted(listdir(join("..", "assets", "enemy", key))):
+                    self.textures[key].append(pygame.image.load(join("..", "assets", "enemy", key, item)).convert_alpha())
 
         for key in self.textures["player"]:
             for item in sorted(listdir(join("..", "assets", "player", key))):
                 self.textures["player"][key].append(pygame.image.load(join("..", "assets", "player", key, item)).convert_alpha())
-    
 
     def check_timers(self):
         now = pygame.time.get_ticks()
@@ -214,10 +222,12 @@ class game():
             AOE_collision(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state)
             self.powerups["Aura"][2] = now
     
-        for spawner in self.spawners_group:
-            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and spawner.rect.colliderect(self.player.update_distance):
-                spawner.can_spawn = True
+        if now - self.state_timeout <= 0:
+            self.state_timeout = 0
         
+        for spawner in self.spawners_group:
+            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and spawner.rect.colliderect(self.player.update_distance) and self.state_timeout == 0:
+                spawner.can_spawn = True
 
     def xp_bar(self):
         self.width = (self.num_xp / self.level_up) * 1260
@@ -355,6 +365,7 @@ class game():
             xp.kill()
 
         self.state = 0
+        self.state_timeout = 0
 
         self.num_xp = 0
         self.level_up = 2
@@ -378,11 +389,13 @@ class game():
                     else:
                         self.is_paused = True
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0 and self.state_timeout == 0:
                     self.state -= 1
+                    self.state_timeout = pygame.time.get_ticks() + 5000
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state < 5 and self.state_timeout == 0:
                     self.state += 1
+                    self.state_timeout = pygame.time.get_ticks() + 5000
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     if "Trap" in self.powerups:
