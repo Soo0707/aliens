@@ -34,31 +34,35 @@ class Powerup_Menu:
         bg.fill((0, 0, 0))
         self.display_surface.blit(bg, (0,0))
         rect = pygame.FRect(self.left, self.top, 850, 550)
-        pygame.draw.rect(self.display_surface, 'light gray', rect, 0, 4)
-        pygame.draw.rect(self.display_surface, 'gray', rect, 4, 4)
+        border_color = pygame.Color(246, 224, 200, 255)
+        main_color = pygame.Color(24, 33, 93, 255)
+        pygame.draw.rect(self.display_surface, main_color, rect, 0, 4)
+        pygame.draw.rect(self.display_surface, border_color, rect, 4, 4)
         
         #menu
         cols, rows = 1, 3
         for col in range(cols):
             for row in range(rows):
-                x = rect.left + rect.width / 5
+                x = rect.left + rect.width / 2
                 y = rect.top + (rect.height / 4) + (rect.height / 4) * row
                 i = row     #the equation for i/index will change depending on the amount of rows and columns
-                a = rect.left + 3.7 * rect.width / 5
+                a = rect.top + (rect.height / 3) + (rect.height / 4) * row
                 if col == self.general_index['col'] and row == self.general_index['row']: 
-                    color = pygame.Color(190, 190, 190, 255)
+                    color = pygame.Color(235, 206, 17, 255)
+                    desc_color = color
                 else: 
-                    color = pygame.Color(0, 0, 0, 255),
+                    color = pygame.Color(191, 83, 201, 255)
+                    desc_color = pygame.Color(246, 224, 200, 255)
                 
                 text_surf = self.font.render(self.general_options[i], True, color)
                 #desc powerups surface
                 powerup_name = self.general_options[i]
                 desc = self.powerup_definitions[powerup_name]
-                desc_surf = self.font.render(desc, True, (0, 0, 0, 255)) #<---- need to change font color
+                desc_surf = self.font.render(desc, True, desc_color) #<---- need to change font color
                 
                 text_rect = text_surf.get_frect(center = (x,y))
                 #desc powerups rect
-                desc_rect = desc_surf.get_frect(center = (a,y))
+                desc_rect = desc_surf.get_frect(center = (x,a))
                 self.display_surface.blit(text_surf, text_rect)
                 self.display_surface.blit(desc_surf, desc_rect)
                 
