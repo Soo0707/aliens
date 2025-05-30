@@ -115,7 +115,7 @@ class game():
                                          powerup_timers = self.powerup_timers,
                                          powerup_definitions = self.powerup_definitions
                                         )
-        self.pause_menu = Pause()
+        self.pause_menu = Pause(state = self.state)
         self.is_paused = False
 
         self.map_loopover_x = 0
@@ -347,6 +347,7 @@ class game():
                         self.powerups["Trap"] +=1
 
             if self.is_paused:
+                self.pause_menu = Pause(state = self.state)
                 self.pause_menu.do_pause()
             else:
                 self.screen.fill("#18215d00")

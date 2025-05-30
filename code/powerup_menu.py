@@ -34,8 +34,8 @@ class Powerup_Menu:
         bg.fill((0, 0, 0))
         self.display_surface.blit(bg, (0,0))
         rect = pygame.FRect(self.left, self.top, 850, 550)
-        border_color = pygame.Color(24, 33, 93, 200)
-        main_color = (246, 224, 200, 255)
+        border_color = pygame.Color(246, 224, 200, 255)
+        main_color = pygame.Color(24, 33, 93, 255)
         pygame.draw.rect(self.display_surface, main_color, rect, 0, 4)
         pygame.draw.rect(self.display_surface, border_color, rect, 4, 4)
         
@@ -52,7 +52,7 @@ class Powerup_Menu:
                     desc_color = color
                 else: 
                     color = pygame.Color(191, 83, 201, 255)
-                    desc_color = pygame.Color(80, 49, 151, 255)
+                    desc_color = pygame.Color(246, 224, 200, 255)
                 
                 text_surf = self.font.render(self.general_options[i], True, color)
                 #desc powerups surface
