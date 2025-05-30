@@ -60,6 +60,13 @@ class Walls(Collidable):
         super().__init__(location, texture, groups)
        
 
+class DecorTiles(pygame.sprite.Sprite):
+    def __init__(self, location, texture, group):
+        super().__init__(group)
+        group.change_layer(self, 3)
+        self.image = texture
+        self.rect = self.image.get_frect(center = location)
+
 class MapTiles(pygame.sprite.Sprite):
     def __init__(self, location, texture, groups):
         super().__init__(groups)
