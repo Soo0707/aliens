@@ -35,6 +35,9 @@ class Enemy(pygame.sprite.Sprite):
         self.xp_texture = xp_texture
         self.powerups = powerups
 
+        self.animation_speed = 30
+        self.flash = False
+
     def set_direction(self):
         player_pos = pygame.math.Vector2(self.player.rect.center)
         enemy_pos = pygame.math.Vector2(self.rect.center)
@@ -53,7 +56,14 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.y += self.direction.y * self.speed * dt
 
     def animate(self, dt):
-        pass
+        if self.direction:
+            self.image_index += self.animation_speed * dt
+            self.image = self.images[int(self.image_index) % len(self.images)]
+        elif self.flash:
+            self.image = self.image_flash
+        else:
+            self.image_index = 0
+            self.image = self.images[0] # the 0th image is always the idle frame
     
     def secondary(self):
         pass
