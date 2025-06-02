@@ -120,6 +120,7 @@ class Powerup_Menu:
                 
                 if "Poison" in self.powerups:
                     del self.powerups["Poison"]
+                    
             elif powerup == "Magnetism":
                 self.powerups["Magnetism"] = 0
                 self.powerup_timers["Magnetism"] = pygame.time.get_ticks() + 100000

@@ -37,8 +37,8 @@ class game():
         self.powerup_definitions = {
                 "Greenbull" : "Time limited invincibility",
                 "Milk" : "Removes and prevents debuffs", 
-                "Lazers" : "+DMG, -Timeout",
-                "Projectiles" : "+SPD, +DMG, -Timeout",
+                "Lazers" : "Increase DMG & Reduced Cooldown of RMB",
+                "Projectiles" : "Increase SPD, DMG & Reduced Cooldown of LMB",
                 "Blood Sacrifice" : "Sacrificing Health for Speed",
                 "Blood Regeneration" : "Regains Health after killing",
                 "Shield" : "Regains health after some time",
@@ -46,7 +46,7 @@ class game():
                 "Buckshot": "+1 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
-                "Orb" : "+DMG , +SIZE, +SPD"
+                "Orb" : "Increase DMG, SIZE, SPD of Orb"
                 }
         
         # sprite groups, useful for collision detection and camera later on
@@ -103,7 +103,8 @@ class game():
                 "lmb": None,
                 "rmb": None,
                 "xp": None,
-                "damage": None
+                "damage": None,
+                "poison": None
                 }
         
         self.load_sounds()
@@ -216,6 +217,7 @@ class game():
                     del self.powerup_timers[powerup]
 
         if "Poison" in self.powerups and now - self.powerups["Poison"] > 1000:
+            self.sounds["poison"].play()
             self.player.health -= 5
             self.powerups["Poison"] = now
         
