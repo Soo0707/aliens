@@ -7,7 +7,8 @@ class Bomber(Enemy):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.player = player
-        self.images = textures
+        self.images = textures["normal"]
+        self.images_flash = textures["flash"]
         self.image = self.images[0]
         self.image_index = 0
         self.speed = 700
@@ -19,14 +20,8 @@ class Bomber(Enemy):
         self.explode_image = self.explode_images[0]
 
         self.attack = 15
+
     
-    def animate(self, dt):
-        if self.direction:
-            self.image_index += 100 * dt
-            self.image = self.images[int(self.image_index) % len(self.images)]
-        else:
-            self.image_index = 0
-            self.image = self.images[0] # the 0th image is always the idle frame
 
     def explode(self , dt):
         self.plode_index += 50 * dt

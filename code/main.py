@@ -73,13 +73,13 @@ class game():
         self.level_up = 2
 
         self.textures = {
-                "bomber": [],
+                "bomber": {"normal": [], "flash" : []},
                 "bomber_explosion" : [],
-                "drunkard": [],
-                "big_man": [],
-                "poison": [],
-                "trapper": [],
-                "australian": [],
+                "drunkard": {"normal": [], "flash" : []},
+                "big_man": {"normal": [], "flash" : []},
+                "poison": {"normal": [], "flash" : []},
+                "trapper": {"normal": [], "flash" : []},
+                "australian": {"normal": [], "flash" : []},
                 "beer": [],
                 "xp": [],
                 "player" : {
@@ -193,7 +193,7 @@ class game():
 
             if key in enemies:
                 for item in sorted(listdir(join("..", "assets", "enemy", key, "normal"))):
-                    self.textures[key]["normal"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())
+                    self.textures[key]["normal"].append(pygame.image.load(join("..", "assets", "enemy", key, "normal", item)).convert_alpha())
 
                 for item in sorted(listdir(join("..", "assets", "enemy", key, "flash"))):
                     self.textures[key]["flash"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())
