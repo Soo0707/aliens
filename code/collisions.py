@@ -101,7 +101,7 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
             if projectile.rect.colliderect(wall.rect):
                 projectile.kill()
 
-def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
+def le_attack(player, enemy_group, powerups, powerup_timers, state, dt, sounds):
     now = pygame.time.get_ticks()
     for enemy in enemy_group:
         if enemy.state != state:
@@ -109,6 +109,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state,dt):
 
         if enemy.can_attack_primary and enemy.rect.colliderect(player.rect):
             player.health -= enemy.attack
+            sounds["damage"].play()
             enemy.can_attack_primary = False
             enemy.last_attack_primary = now
              
