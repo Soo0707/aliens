@@ -312,8 +312,8 @@ class game():
             if duration - now < flicker:
                 draw_mag = (now//250) % 2 == 0
 
-            self.magnet_half = (1130, 50 , 10 ,20)
-            self.magnet_other_half = (1120,50,10,20)
+            self.magnet_half = (1140, 50 , 10 ,20)
+            self.magnet_other_half = (1130,50,10,20)
 
             if draw_mag:
                 pygame.Surface.fill(self.screen, (0,0,255) , self.magnet_other_half)
