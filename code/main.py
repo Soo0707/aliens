@@ -102,7 +102,8 @@ class game():
                 "level_up" : None,
                 "lmb": None,
                 "rmb": None,
-                "xp": None
+                "xp": None,
+                "damage": None
                 }
         
         self.load_sounds()
@@ -448,7 +449,7 @@ class game():
                     collision_projectile(self.projectile_group, self.enemy_group, self.walls_group, self.powerups, self.state)
 
                     if "Greenbull" not in self.powerups:
-                        le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, self.dt)
+                        le_attack(self.player, self.enemy_group, self.powerups, self.powerup_timers, self.state, self.dt, self.sounds)
 
                     self.check_timers()
 
