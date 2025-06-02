@@ -57,10 +57,14 @@ class Enemy(pygame.sprite.Sprite):
 
     def animate(self, dt):
         if self.direction:
-            self.image_index += self.animation_speed * dt
-            self.image = self.images[int(self.image_index) % len(self.images)]
-        elif self.flash:
-            self.image = self.image_flash
+            if self.flash:
+                self.image = self.images_flash[int(self.image_index) % len(self.images_flash)]
+                self.image_index += self.animation_speed * dt
+                self.flash = False
+            else:
+                self.image_index += self.animation_speed * dt
+                self.image = self.images[int(self.image_index) % len(self.images)]
+        
         else:
             self.image_index = 0
             self.image = self.images[0] # the 0th image is always the idle frame

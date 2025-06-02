@@ -7,9 +7,9 @@ class Bomber(Enemy):
         super().__init__(player, state, location, powerups, xp_texture, xp_group, all_sprites_group, groups)
 
         self.player = player
-        self.images = textures
         self.images = textures["normal"]
         self.images_flash = textures["flash"]
+        self.image = self.images[0]
         self.image_index = 0
         self.speed = 700
         self.rect = self.image.get_rect(center = location)

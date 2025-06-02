@@ -193,7 +193,7 @@ class game():
 
             if key in enemies:
                 for item in sorted(listdir(join("..", "assets", "enemy", key, "normal"))):
-                    self.textures[key]["normal"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())
+                    self.textures[key]["normal"].append(pygame.image.load(join("..", "assets", "enemy", key, "normal", item)).convert_alpha())
 
                 for item in sorted(listdir(join("..", "assets", "enemy", key, "flash"))):
                     self.textures[key]["flash"].append(pygame.image.load(join("..", "assets", "enemy", key, "flash", item)).convert_alpha())

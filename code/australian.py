@@ -9,6 +9,7 @@ class Australian(Enemy):
         self.health = 75
         self.images = textures["normal"]
         self.images_flash = textures["flash"]
+        
         self.image = self.images[0]
         self.rect = self.image.get_rect(center = location)
         self.image_index = 0
