@@ -239,13 +239,7 @@ class game():
         pygame.Surface.fill(self.screen , (0,0,0), self.empty_rect )
         self.progress_rect = (10 , 690 , self.width , 10)
 
-        pygame.Surface.fill(self.screen , (0, 218, 254), self.progress_rect )
-
-        space_y = self.player.rect.centery + 20
-        space_x = self.player.rect.centerx + 20 
-        space_rect = (space_x , space_y , 20 , 20)
-        pygame.draw.rect(self.screen, (255,255,255), space_rect)
-
+        pygame.Surface.fill(self.screen , (0, 218, 254), self.progress_rect)
 
     def health_bar(self):
         self.width = 200  - (self.player.health / self.player.health_permanent) * 200
