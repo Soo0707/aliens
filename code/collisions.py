@@ -123,6 +123,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state, dt, sounds):
 
             elif type(enemy) == Bomber:
                 enemy.plode = True
+                sounds["explosion"].play()
                 enemy.explode(dt)
             
             elif type(enemy) == Trapper and "Milk" not in powerups:
