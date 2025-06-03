@@ -2,12 +2,15 @@ import pygame
 import random
 
 class Powerup_Menu:
-    def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions): #add powerup as attribute when done
+    def __init__(self, powerup_list, powerups, powerup_timers, powerup_definitions, sounds): #add powerup as attribute when done
         pygame.font.init()
         self.display_surface = pygame.display.get_surface()
         self.font = pygame.font.Font(None, 40)
         self.left = 215
         self.top = 85
+        
+        #sound
+        self.sounds = sounds
         
         #control
         self.powerup_list = powerup_list
@@ -22,8 +25,11 @@ class Powerup_Menu:
         keys = pygame.key.get_just_pressed()
         self.general_index['row'] = (self.general_index['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % 3
         self.general_index['col'] = (self.general_index['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % 1
+        if keys[pygame.K_w] or keys[pygame.K_s]:
+            self.sounds["menu_hover"].play()
         if keys[pygame.K_SPACE]:
             powerup = self.general_options[self.general_index['row']] # this equation will change depending on the equation for index
+            self.sounds["menu_select"].play()
             self.apply_powerups(powerup=powerup)
             
         

@@ -107,7 +107,12 @@ class game():
                 "rmb": None,
                 "xp": None,
                 "damage": None,
-                "poison": None
+                "poison": None,
+                "explosion": None,
+                "menu_select": None,
+                "menu_hover": None,
+                "pause": None,
+                "unpause": None
                 }
         
         self.load_sounds()
@@ -119,7 +124,8 @@ class game():
                                          powerup_list = self.powerup_list,
                                          powerups = self.powerups,
                                          powerup_timers = self.powerup_timers,
-                                         powerup_definitions = self.powerup_definitions
+                                         powerup_definitions = self.powerup_definitions,
+                                         sounds = self.sounds
                                         )
         self.pause_menu = Pause(state = self.state)
         self.is_paused = False
@@ -386,8 +392,10 @@ class game():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     if self.is_paused:
                         self.is_paused = False
+                        self.sounds["unpause"].play()
                     else:
                         self.is_paused = True
+                        self.sounds["pause"].play()
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0 and self.state_timeout == 0 and not self.is_paused:
                     self.state -= 1
