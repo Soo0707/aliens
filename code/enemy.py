@@ -1,7 +1,6 @@
 import pygame
 
 from allsprites import *
-from player import  *
 from xp import *
 
 class Enemy(pygame.sprite.Sprite):
@@ -98,4 +97,9 @@ class Enemy(pygame.sprite.Sprite):
 
         self.set_direction()
         self.animate(dt)
-        self.secondary()
+
+        if self.can_attack_secondary:
+            self.secondary()
+            self.last_attack_secondary = pygame.time.get_ticks()
+            self.can_attack_secondary = False
+

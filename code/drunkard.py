@@ -1,5 +1,3 @@
-import pygame
-from player import  *
 from enemy import *
 from projectiles import Beer
 
@@ -29,9 +27,4 @@ class Drunkard(Enemy):
         if direction:
             direction = direction.normalize()
 
-        if self.can_attack_secondary:
-            Beer(self.beer_textures, self.state, self.rect.center, direction, (self.enemy_projectile_group, self.all_sprites_group))
-            self.last_attack_secondary = pygame.time.get_ticks()
-            self.can_attack_secondary = False
-
-        
+        Beer(self.beer_textures, self.state, self.rect.center, direction, (self.enemy_projectile_group, self.all_sprites_group))       
