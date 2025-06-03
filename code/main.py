@@ -96,6 +96,9 @@ class game():
 
         self.load_textures()
         
+        pygame.display.set_icon(self.textures["player"]["S"][0])
+        pygame.display.set_caption("aliens")
+        
         #initialise mixer
         pygame.mixer.init()
         self.sounds = {
@@ -386,11 +389,11 @@ class game():
                     else:
                         self.is_paused = True
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0 and self.state_timeout == 0:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q and self.state > 0 and self.state_timeout == 0 and not self.is_paused:
                     self.state -= 1
                     self.state_timeout = pygame.time.get_ticks() + 5000
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state < 5 and self.state_timeout == 0:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_e and self.state < 5 and self.state_timeout == 0 and not self.is_paused:
                     self.state += 1
                     self.state_timeout = pygame.time.get_ticks() + 5000
 
@@ -428,12 +431,7 @@ class game():
                         if now - xp.birth > 5000:
                             xp.kill()
                     
-                    if "Magnetism" not in self.powerups:
-                        collect_xp(self, self.sounds)
-                    else:
-                        for xp in self.xp_group:
-                            self.num_xp += 1
-                            xp.kill()
+                    collect_xp(self)
 
                     for projectile in self.projectile_group:
                         if type(projectile) == Circle:

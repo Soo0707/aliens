@@ -13,6 +13,7 @@ def collision_x(target1, target2, update_distance, iterable, state):
             if item1.state != state: # used for enemies, the player transcends states, so the else case doesn't have it
                 continue
 
+            # skip if enemy offscreen
             if not item1.rect.colliderect(update_distance):
                 continue
 
@@ -41,6 +42,7 @@ def collision_y(target1, target2, update_distance, iterable, state):
             if item1.state != state: # used for enemies, the player transcends states, so the else case doesn't have it
                 continue
             
+            # skip if enemy offscreen
             if not item1.rect.colliderect(update_distance):
                 continue
             
@@ -65,7 +67,6 @@ def collision_y(target1, target2, update_distance, iterable, state):
 
 def collision_projectile(projectiles, enemies, walls, powerups, state):
     for projectile in projectiles:
-        
         if hasattr(projectile, "state") and projectile.state != state:
             continue
 
@@ -91,10 +92,9 @@ def check_enemy_projectiles(player, powerups, powerup_timers, enemy_projectile_g
         if projectile.state != state:
             continue
 
-        if projectile.rect.colliderect(player.rect):
-            if type(projectile) == Beer and "Milk" not in powerups:
-                powerups["Drunk"] = 0
-                powerup_timers["Drunk"] = now + 1000
+        if "Milk" not in powerups and projectile.rect.colliderect(player.rect):
+            powerups["Drunk"] = 0
+            powerup_timers["Drunk"] = now + 1000
             projectile.kill()
 
         for wall in walls:
@@ -128,14 +128,18 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state, dt, sounds):
             elif type(enemy) == Trapper and "Milk" not in powerups:
                 powerups["Trap"] = 0
 
-def collect_xp(self, sounds):
-    self.sounds = sounds
-    for orb in self.xp_group:
-        if self.player.rect.colliderect(orb.rect):
-            self.sounds["xp"].play()
-            self.num_xp = self.num_xp + 1
-            orb.kill()
-                
+def collect_xp(game):
+    if "Magnetism" not in game.powerups:
+        for orb in game.xp_group:
+            if game.player.rect.colliderect(orb.rect):
+                game.sounds["xp"].play()
+                game.num_xp = game.num_xp + 1
+                orb.kill()
+    else:
+        for xp in game.xp_group:
+            game.sounds["xp"].play()
+            game.num_xp += 1
+            xp.kill()
 
 def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
     for enemy in enemy_group:

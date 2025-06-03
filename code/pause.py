@@ -50,10 +50,4 @@ class Pause:
         
                 
     def update(self):
-        self.input()            
-                
-        
-    def draw(self):
-        match self.state:
-            case 'pause': 
-                self.do_pause()
+        self.input()               

@@ -1,5 +1,3 @@
-import pygame
-from player import  *
 from enemy import *
 
 class Poison(Enemy):

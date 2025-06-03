@@ -1,5 +1,3 @@
-import pygame
-from player import  *
 from enemy import *
 
 class Trapper(Enemy):
@@ -14,21 +12,4 @@ class Trapper(Enemy):
 
         self.attack = 10
 
-        self.animation_speed = 50
-
-    def update(self, dt):
-        now = pygame.time.get_ticks()
-        
-        if self.health <= 0:
-            Orb(self.xp_texture, self.rect.center, (self.all_sprites_group, self.xp_group))
-            self.kill()
-
-        if not self.can_attack_primary and now - self.last_attack_primary >= self.attack_cooldown_primary:
-            self.can_attack_primary = True
-
-        if not self.can_attack_secondary and now - self.last_attack_secondary >= self.attack_cooldown_secondary:
-            self.can_attack_secondary = True
-        
-        self.set_direction()
-        self.animate(dt)
-    
+        self.animation_speed = 50   

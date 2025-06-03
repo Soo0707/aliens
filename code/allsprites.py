@@ -2,7 +2,6 @@ import pygame
 
 from random import randint
 
-from enemy import *
 from australian import *
 from drunkard import *
 from poison import *
