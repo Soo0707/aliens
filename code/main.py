@@ -347,8 +347,8 @@ class game():
         for keys in self.powerup_timers.copy():
             del self.powerup_timers[keys]
 
-        for enemies in self.enemy_projectile_group:
-            enemies.kill()
+        for enemy in self.enemy_group:
+            enemy.kill()
 
         for enemy_projectiles in self.enemy_projectile_group:
             enemy_projectiles.kill()
