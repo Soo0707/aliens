@@ -107,7 +107,7 @@ class Spawner(Collidable):
         if self.can_spawn:
             n = self.rands[self.random_index]
             
-            if n < 10 and self.timeout_ticks <= 2000:
+            if n < 5 and self.timeout_ticks <= 1000:
                 BigMan(
                     player=self.player,
                     groups=(self.all_sprites_group, self.enemy_group),
@@ -120,7 +120,7 @@ class Spawner(Collidable):
                     powerups=self.powerups
                     )
 
-            if n >= 10 and n < 20:
+            if n >= 5 and n < 20:
                 Australian(
                     player=self.player,
                     groups=(self.all_sprites_group, self.enemy_group),
