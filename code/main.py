@@ -238,7 +238,7 @@ class game():
             self.state_timeout = 0
         
         for spawner in self.spawners_group:
-            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and spawner.rect.colliderect(self.player.update_distance) and self.state_timeout == 0:
+            if not spawner.can_spawn and now - spawner.last_spawn >= spawner.timeout_ticks and spawner.rect.colliderect(self.player.update_distance) and self.state_timeout == 0 and self.dt < 0.02:
                 spawner.can_spawn = True
 
     def xp_bar(self):
@@ -497,11 +497,11 @@ class game():
                         self.num_xp = 0
 
                         for spawner in self.spawners_group:
-                            if spawner.timeout_ticks > 50:
+                            if spawner.timeout_ticks > 100:
                                 spawner.timeout_ticks -= self.level_up * 5
 
-                            if spawner.timeout_ticks < 50:
-                                spawner.timeout_ticks = 50
+                            if spawner.timeout_ticks < 100:
+                                spawner.timeout_ticks = 100
                         
                         self.turn = -2
                         continue
