@@ -64,13 +64,13 @@ class DecorTiles(pygame.sprite.Sprite):
         super().__init__(group)
         group.change_layer(self, 3)
         self.image = texture
-        self.rect = self.image.get_frect(center = location)
+        self.rect = self.image.get_rect(center = location)
 
 class MapTiles(pygame.sprite.Sprite):
     def __init__(self, location, texture, groups):
         super().__init__(groups)
         self.image = texture
-        self.rect = self.image.get_frect(center = location)
+        self.rect = self.image.get_rect(center = location)
 
 class StatedGroup(pygame.sprite.LayeredUpdates):
     def __init__(self):

@@ -118,7 +118,7 @@ class game():
         self.load_sounds()
         
 
-        self.player = Player((1344, 3104), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group, self.sounds)
+        self.player = Player((1344, 2976), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group, self.sounds)
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
@@ -370,17 +370,20 @@ class game():
         for xp in self.xp_group:
             xp.kill()
 
+        for spawner in self.spawners_group:
+            spawner.timeout_ticks = 4000
+
         self.state = 0
         self.state_timeout = 0
 
         self.num_xp = 0
         self.level_up = 2
 
-        self.player.rect.center = (1344, 3104)
+        self.player.rect.center = (1344, 2976)
 
         self.player.health = 100
         self.player.health_permanent = 100
-        self.health_permanent_shield = 0
+        self.player.health_permanent_shield = 0
 
     def run(self):
         while self.running:
