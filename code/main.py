@@ -497,11 +497,11 @@ class game():
                         self.num_xp = 0
 
                         for spawner in self.spawners_group:
-                            if spawner.timeout_ticks > 100:
+                            if spawner.timeout_ticks > 1000:
                                 spawner.timeout_ticks -= self.level_up * 5
 
-                            if spawner.timeout_ticks < 100:
-                                spawner.timeout_ticks = 100
+                            if spawner.timeout_ticks < 1000:
+                                spawner.timeout_ticks = 1000
                         
                         self.turn = -2
                         continue
