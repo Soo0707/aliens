@@ -385,6 +385,8 @@ class game():
         self.player.health_permanent = 100
         self.player.health_permanent_shield = 0
 
+        self.player.speed = 300
+
     def run(self):
         while self.running:
             # quits elegantly, never use this for player input
