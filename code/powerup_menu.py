@@ -91,7 +91,7 @@ class Powerup_Menu:
                     self.powerups["Projectiles"][1] -= 100 # cooldown
                 self.powerups["Projectiles"][2] += 10 # damage
             elif powerup == "Buckshot":
-                self.powerups["Buckshot"] += 1
+                self.powerups["Buckshot"] += 2
             elif powerup == "Greenbull":
                 self.powerup_timers["Greenbull"] = pygame.time.get_ticks() + 100000
             elif powerup == "Magnetism":

@@ -43,7 +43,7 @@ class game():
                 "Blood Regeneration" : "Regains Health after killing",
                 "Shield" : "Regains health after some time",
                 "Aura" : "Damages surrounding enemies",
-                "Buckshot": "+1 projectile for LMB",
+                "Buckshot": "+2 projectile for LMB",
                 "Magnetism": "Directly collect XP",
                 "Block Breaker": "Why Not? Just be fast",
                 "Orb" : "Increase DMG, SIZE & SPD of Orb"
