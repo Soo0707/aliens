@@ -117,8 +117,14 @@ class game():
         
         self.load_sounds()
         
+        self.player_spawn = (0, 0)
+        with open(join("..", "assets", "map", "spawn.txt"), "r") as file:
+            x = int(file.readline().strip())
+            y = int(file.readline().strip())
+            self.player_spawn = (x, y)
 
-        self.player = Player((1344, 2976), self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group, self.sounds)
+
+        self.player = Player(self.player_spawn, self.textures["player"], self.collidable_group, self.all_sprites_group, self.powerups, self.projectile_group, self.all_sprites_group, self.sounds)
 
         self.powerup_menu = Powerup_Menu(
                                          powerup_list = self.powerup_list,
@@ -379,7 +385,7 @@ class game():
         self.num_xp = 0
         self.level_up = 2
 
-        self.player.rect.center = (1344, 2976)
+        self.player.rect.center = self.player_spawn
 
         self.player.health = 100
         self.player.health_permanent = 100
