@@ -115,7 +115,7 @@ def le_attack(player, enemy_group, powerups, powerup_timers, state, dt, sounds):
              
             if type(enemy) == Australian and "Milk" not in powerups:
                 powerups["Aussie"] = 0
-                powerup_timers["Aussie"] = now + 500
+                powerup_timers["Aussie"] = now + 1000
             
             elif type(enemy) == Poison and "Milk" not in powerups:
                 powerups["Poison"] = pygame.time.get_ticks()
