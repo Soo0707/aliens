@@ -4,6 +4,10 @@ About
 A simple, idle, poorly balanced, bullet heaven made in pygame for a university subject with meme powerups, and debuffs.
 
 Enemies
+
+Pleb
+Base enemy
+
 Australian man
 Flips screen when touched
 
