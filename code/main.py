@@ -80,6 +80,7 @@ class game():
                 "poison": {"normal": [], "flash" : []},
                 "trapper": {"normal": [], "flash" : []},
                 "australian": {"normal": [], "flash" : []},
+                "pleb": {"normal": [], "flash" : []},
                 "beer": [],
                 "xp": [],
                 "player" : {
@@ -203,7 +204,7 @@ class game():
             self.visible_menu_pixels_group.add(pixel)
 
     def load_textures(self):
-        enemies = {"australian", "big_man", "bomber", "drunkard", "poison", "trapper"}
+        enemies = {"australian", "big_man", "bomber", "drunkard", "poison", "trapper", "pleb"}
         for key in self.textures:
             if key == "player":
                 continue
