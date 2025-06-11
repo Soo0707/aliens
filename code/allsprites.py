@@ -189,17 +189,18 @@ class Spawner(Collidable):
                     powerups=self.powerups
                     )
                 
-            Pleb(
-                    player=self.player,
-                    groups=(self.all_sprites_group, self.enemy_group),
-                    state = state,
-                    location=self.rect.center,
-                    textures = self.enemy_textures["pleb"],
-                    xp_group=self.xp_group,
-                    all_sprites_group = self.all_sprites_group,
-                    xp_texture = self.enemy_textures["xp"][0],
-                    powerups=self.powerups
-                    )
+            if n >= 0 and n < 10:  
+                Pleb(
+                        player=self.player,
+                        groups=(self.all_sprites_group, self.enemy_group),
+                        state = state,
+                        location=self.rect.center,
+                        textures = self.enemy_textures["pleb"],
+                        xp_group=self.xp_group,
+                        all_sprites_group = self.all_sprites_group,
+                        xp_texture = self.enemy_textures["xp"][0],
+                        powerups=self.powerups
+                        )
             
                 
             self.random_index = (self.random_index + 1) % 20
