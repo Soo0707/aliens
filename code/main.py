@@ -179,7 +179,7 @@ class game():
             Collidable((x * 32, y * 32), texture, (self.all_sprites_group, self.collidable_group))
 
         for x, y, texture in map_file.get_layer_by_name("Decorations").tiles():
-            DecorTiles((x * 32, y * 32), texture, self.all_sprites_group)
+            MapTiles((x * 32, y * 32), texture, self.all_sprites_group)
 
         for x, y, texture, in map_file.get_layer_by_name("Spawners").tiles():
             Spawner(
@@ -506,11 +506,11 @@ class game():
                         self.num_xp = 0
 
                         for spawner in self.spawners_group:
-                            if spawner.timeout_ticks > 1000:
+                            if spawner.timeout_ticks > 0:
                                 spawner.timeout_ticks -= self.level_up * 5
 
-                            if spawner.timeout_ticks < 1000:
-                                spawner.timeout_ticks = 1000
+                            if spawner.timeout_ticks < 0:
+                                spawner.timeout_ticks = 0
                         
                         self.turn = -2
                         continue
