@@ -58,14 +58,6 @@ class Collidable(pygame.sprite.Sprite):
 class Walls(Collidable):
     def __init__(self, location, texture, groups):
         super().__init__(location, texture, groups)
-       
-
-class DecorTiles(pygame.sprite.Sprite):
-    def __init__(self, location, texture, group):
-        super().__init__(group)
-        group.change_layer(self, 3)
-        self.image = texture
-        self.rect = self.image.get_rect(center = location)
 
 class MapTiles(pygame.sprite.Sprite):
     def __init__(self, location, texture, groups):

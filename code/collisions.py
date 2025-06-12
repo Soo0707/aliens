@@ -149,4 +149,5 @@ def AOE_collision(player, enemy_group, powerups, powerup_timers, state):
 
         if enemy.rect.colliderect(player.aoe):
             enemy.health -= 5
+            enemy.flash = True
                 
