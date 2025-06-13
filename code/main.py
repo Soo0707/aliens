@@ -143,7 +143,7 @@ class game():
 
     def load_sounds(self):
         for key in self.sounds:
-            self.sounds[key] = pygame.mixer.Sound(join("..","assets", "sounds", f"{key}.wav"))
+            self.sounds[key] = pygame.mixer.Sound(join("..", "assets", "sounds", f"{key}.wav"))
 
     def load_map(self):
         map_file = load_pygame(join("..", "assets", "map", "map.tmx"))
